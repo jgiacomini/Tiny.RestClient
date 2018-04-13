@@ -8,7 +8,6 @@ namespace TinyHttp
     {
         public DeserializeException(string message, Exception innerException, string dataToDeserialize)
             : base(message, innerException)
-
         {
             DataToDeserialize = dataToDeserialize;
         }

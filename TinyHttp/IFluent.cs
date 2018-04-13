@@ -6,7 +6,7 @@ namespace TinyHttp
     {
         Dictionary<string, string> DefaultHeaders { get; }
         IFluent AddHeader(string key, string value);
-        IFluent AddQueryParameter (string key, string value);
+        IFluent AddQueryParameter(string key, string value);
         IFluent AddFormParameter(string key, string value);
 
         IFluent FromStream();

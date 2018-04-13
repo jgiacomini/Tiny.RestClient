@@ -16,8 +16,6 @@ namespace TinyHttp
 
     ////        await client.Header("Test", "Test").
     ////           GetAsync(null);
-
-
     ////    }
     ////}
 }

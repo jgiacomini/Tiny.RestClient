@@ -5,7 +5,14 @@ VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinyHttp", "TinyHttp\TinyHttp.csproj", "{AE3327FF-7E49-467A-A410-8F151CCC30AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TinyHttp.Tests", "TinyHttp.Tests\TinyHttp.Tests.csproj", "{C48AB557-FF2E-4739-88A9-7A8F3B484FC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinyHttp.Tests", "TinyHttp.Tests\TinyHttp.Tests.csproj", "{C48AB557-FF2E-4739-88A9-7A8F3B484FC1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{BA692F65-6153-4BD7-8CE7-A3C478BB377E}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		ruleset.ruleset = ruleset.ruleset
+		stylecop.json = stylecop.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
