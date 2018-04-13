@@ -16,11 +16,9 @@ namespace TinyHttp
     public class TinyHttpClient : IDisposable
     {
         #region Fields
-
-        /// <summary>
-        /// The server address
-        /// </summary>
         private readonly string _serverAddress;
+
+        private ISerializer _defaultSerializer;
         #endregion
 
         /// <summary>
@@ -52,6 +50,24 @@ namespace TinyHttp
         public Dictionary<string, string> AdditionalHeaders
         {
             get; private set;
+        }
+
+        public ISerializer DefaultSerializer
+        {
+            get
+            {
+                return _defaultSerializer;
+            }
+
+            private set
+            {
+                if (value == null)
+                {
+                    throw new NullReferenceException();
+                }
+
+                _defaultSerializer = value;
+            }
         }
 
         /// <summary>
@@ -130,22 +146,29 @@ namespace TinyHttp
         /// <param name="data">data to post</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>return a task</returns>
-        public async Task<T> PostAsync<T>(string route, object data, CancellationToken cancellationToken)
+        public async Task<TResult> PostAsync<TResult, TData>(string route, TData data, CancellationToken cancellationToken)
         {
             using (var client = GetConfiguredHttpClient())
             {
                 var requestUri = BuildRequestUri(route);
-                var serializedContent = await Task.Factory
-                        .StartNew(() => JsonConvert.SerializeObject(data), cancellationToken)
-                        .ConfigureAwait(false);
-                var content = new StringContent(serializedContent);
-                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-                using (var response = await client.PostAsync(new Uri(requestUri), content, cancellationToken))
+                using (var response = await client.PostAsync(new Uri(requestUri), GetStringContent(data), cancellationToken))
                 {
-                    return await ReadResponseAsync<T>(response, cancellationToken);
+                    return await ReadResponseAsync<TResult>(response, cancellationToken);
                 }
             }
+        }
+
+        private StringContent GetStringContent<TData>(TData data)
+        {
+            var content = new StringContent(DefaultSerializer.Serialize(data));
+
+            if (_defaultSerializer.HasMediaType)
+            {
+                content.Headers.ContentType = new MediaTypeHeaderValue(_defaultSerializer.MediaType);
+            }
+
+            return content;
         }
 
         /// <summary>
@@ -155,18 +178,12 @@ namespace TinyHttp
         /// <param name="data">the data to post</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>return a task</returns>
-        public async Task PostAsync(string route, object data, CancellationToken cancellationToken)
+        public async Task PostAsync<TData>(string route, TData data, CancellationToken cancellationToken)
         {
             using (var client = GetConfiguredHttpClient())
             {
                 var requestUri = BuildRequestUri(route);
-                var serializedContent = await Task.Factory
-                        .StartNew(() => JsonConvert.SerializeObject(data), cancellationToken)
-                        .ConfigureAwait(false);
-                var content = new StringContent(serializedContent);
-                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-                using (var response = await client.PostAsync(new Uri(requestUri), content, cancellationToken))
+                using (var response = await client.PostAsync(new Uri(requestUri), GetStringContent(data), cancellationToken))
                 {
                     await ReadResponseAsync(response, cancellationToken);
                 }
@@ -184,20 +201,15 @@ namespace TinyHttp
         /// <param name="data">data to put</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>return a task</returns>
-        public async Task<T> PutAsync<T>(string route, object data, CancellationToken cancellationToken)
+        public async Task<TResult> PutAsync<TResult, TData>(string route, TData data, CancellationToken cancellationToken)
         {
             using (var client = GetConfiguredHttpClient())
             {
                 var requestUri = BuildRequestUri(route);
-                var serializedContent = await Task.Factory
-                        .StartNew(() => JsonConvert.SerializeObject(data), cancellationToken)
-                        .ConfigureAwait(false);
-                var content = new StringContent(serializedContent);
-                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-                using (var response = await client.PutAsync(new Uri(requestUri), content, cancellationToken))
+                using (var response = await client.PutAsync(new Uri(requestUri), GetStringContent(data), cancellationToken))
                 {
-                    return await ReadResponseAsync<T>(response, cancellationToken);
+                    return await ReadResponseAsync<TResult>(response, cancellationToken);
                 }
             }
         }
@@ -209,18 +221,13 @@ namespace TinyHttp
         /// <param name="data">the data to post</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>return a task</returns>
-        public async Task PutAsync(string route, object data, CancellationToken cancellationToken)
+        public async Task PutAsync<TData>(string route, TData data, CancellationToken cancellationToken)
         {
             using (var client = GetConfiguredHttpClient())
             {
                 var requestUri = BuildRequestUri(route);
-                var serializedContent = await Task.Factory
-                        .StartNew(() => JsonConvert.SerializeObject(data), cancellationToken)
-                        .ConfigureAwait(false);
-                var content = new StringContent(serializedContent);
-                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-                using (var response = await client.PutAsync(new Uri(requestUri), content, cancellationToken))
+                using (var response = await client.PutAsync(new Uri(requestUri), GetStringContent(data), cancellationToken))
                 {
                     await ReadResponseAsync(response, cancellationToken);
                 }

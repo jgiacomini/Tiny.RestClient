@@ -4,13 +4,9 @@ namespace TinyHttp
 {
     public class TinyJsonSerializer : ISerializer
     {
-        public string MediaType
-        {
-            get
-            {
-                return "application/json";
-            }
-        }
+        public string MediaType => "application/json";
+
+        public bool HasMediaType => true;
 
         public string Serialize<T>(T data)
         {
