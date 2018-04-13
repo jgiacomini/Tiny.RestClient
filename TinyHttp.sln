@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2005
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinyHttp", "TinyHttp\TinyHttp.csproj", "{AE3327FF-7E49-467A-A410-8F151CCC30AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TinyHttp.Tests", "TinyHttp.Tests\TinyHttp.Tests.csproj", "{C48AB557-FF2E-4739-88A9-7A8F3B484FC1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AE3327FF-7E49-467A-A410-8F151CCC30AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE3327FF-7E49-467A-A410-8F151CCC30AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE3327FF-7E49-467A-A410-8F151CCC30AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE3327FF-7E49-467A-A410-8F151CCC30AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C48AB557-FF2E-4739-88A9-7A8F3B484FC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C48AB557-FF2E-4739-88A9-7A8F3B484FC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C48AB557-FF2E-4739-88A9-7A8F3B484FC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C48AB557-FF2E-4739-88A9-7A8F3B484FC1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CA5D635D-59C9-4247-8C13-9D78B5834FC2}
+	EndGlobalSection
+EndGlobal
