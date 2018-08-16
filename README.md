@@ -1,6 +1,6 @@
 # TinyHttp
 
-### TODO : [@JeromeGiacomini]
+### TODO
 * Transfort to Fluent API
 * Add support of XML serialization
 * TI for POST / PUT / DELETE / PATCH
