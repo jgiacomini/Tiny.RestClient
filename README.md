@@ -2,6 +2,7 @@
 
 ### TODO : [@JeromeGiacomini]
 * Transfort to Fluent API
+* Add support of XML serialization
 * TI for POST / PUT / DELETE / PATCH
 * Add export resquest for PostMan
 
