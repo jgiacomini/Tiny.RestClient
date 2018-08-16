@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace TinyHttp
+namespace Tiny.Http
 {
     public class TinyJsonSerializer : ISerializer
     {

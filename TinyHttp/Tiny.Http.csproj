@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>1.0.0-alpha0002</Version>
+    <Copyright>Copyright © Jérôme Giacomini 2018</Copyright>
+    <NeutralLanguage>en</NeutralLanguage>
+    <Authors>Jérôme Giacomini</Authors>
+    <Description>TinyHttp make all http calls easily</Description>
+    <Title>TinyHttp</Title>
+    <PackageLicenseUrl>https://github.com/jgiacomini/TinyHttp/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/jgiacomini/TinyHttp</PackageProjectUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/jgiacomini/TinyHttp/master/icon.png</PackageIconUrl>
+    <PackageTags>httpClient</PackageTags>
+    <MinClientVersion>3.0.3</MinClientVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>7.2</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+</Project>

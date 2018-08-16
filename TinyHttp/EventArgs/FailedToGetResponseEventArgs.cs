@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TinyHttp
+namespace Tiny.Http
 {
     public class FailedToGetResponseEventArgs : HttpEventArgsBase
     {

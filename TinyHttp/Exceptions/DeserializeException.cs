@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TinyHttp
+namespace Tiny.Http
 {
     public class DeserializeException : TinyHttpException
     {

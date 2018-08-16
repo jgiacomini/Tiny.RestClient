@@ -1,4 +1,4 @@
-﻿namespace TinyHttp
+﻿namespace Tiny.Http
 {
     public class TestPoco
     {

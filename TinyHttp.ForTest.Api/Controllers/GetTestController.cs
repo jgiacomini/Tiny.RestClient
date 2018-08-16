@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace TinyHttp.ForTest.Api.Controllers
+namespace Tiny.Http.ForTest.Api.Controllers
 {
     [Route("api/GetTest")]
     [ApiController]

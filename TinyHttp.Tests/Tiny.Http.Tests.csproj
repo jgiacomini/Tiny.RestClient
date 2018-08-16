@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TinyHttp\TinyHttp.csproj" />
+    <ProjectReference Include="..\TinyHttp\Tiny.Http.csproj" />
   </ItemGroup>
 
 </Project>

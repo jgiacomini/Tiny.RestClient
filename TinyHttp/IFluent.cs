@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TinyHttp
+namespace Tiny.Http
 {
     public interface IFluent : ISerializableFluent, ISimpleRequest
     {

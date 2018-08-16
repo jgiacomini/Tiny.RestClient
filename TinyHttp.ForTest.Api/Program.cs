@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace TinyHttp.ForTest.Api
+namespace Tiny.Http.ForTest.Api
 {
     public class Program
     {

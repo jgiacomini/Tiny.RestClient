@@ -12,7 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace TinyHttp
+namespace Tiny.Http
 {
     public class TinyHttpClient
     {

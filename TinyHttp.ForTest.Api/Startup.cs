@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace TinyHttp.ForTest.Api
+namespace Tiny.Http.ForTest.Api
 {
     public class Startup
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TinyHttp
+namespace Tiny.Http
 {
     public abstract class HttpEventArgsBase : EventArgs
     {

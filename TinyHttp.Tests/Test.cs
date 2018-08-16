@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace TinyHttp
+namespace Tiny.Http
 {
     public class Test
     {

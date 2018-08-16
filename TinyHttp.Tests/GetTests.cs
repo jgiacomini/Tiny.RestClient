@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TinyHttp.Tests
+namespace Tiny.Http.Tests
 {
     [TestClass]
     public class GetTests : BaseTest

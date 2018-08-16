@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace TinyHttp
+namespace Tiny.Http
 {
     public class TinyJsonDeserializer : IDeserializer
     {

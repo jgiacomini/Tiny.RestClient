@@ -1,4 +1,4 @@
-﻿namespace TinyHttp
+﻿namespace Tiny.Http
 {
     public interface ISerializer
     {

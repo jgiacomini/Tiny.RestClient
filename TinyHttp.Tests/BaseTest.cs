@@ -1,4 +1,4 @@
-﻿namespace TinyHttp.Tests
+﻿namespace Tiny.Http.Tests
 {
     public class BaseTest
     {

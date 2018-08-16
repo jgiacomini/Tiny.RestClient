@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinyHttp", "TinyHttp\TinyHttp.csproj", "{AE3327FF-7E49-467A-A410-8F151CCC30AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tiny.Http", "TinyHttp\Tiny.Http.csproj", "{AE3327FF-7E49-467A-A410-8F151CCC30AD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinyHttp.Tests", "TinyHttp.Tests\TinyHttp.Tests.csproj", "{C48AB557-FF2E-4739-88A9-7A8F3B484FC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tiny.Http.Tests", "TinyHttp.Tests\Tiny.Http.Tests.csproj", "{C48AB557-FF2E-4739-88A9-7A8F3B484FC1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{BA692F65-6153-4BD7-8CE7-A3C478BB377E}"
 	ProjectSection(SolutionItems) = preProject
@@ -14,7 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{BA692F
 		stylecop.json = stylecop.json
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TinyHttp.ForTest.Api", "TinyHttp.ForTest.Api\TinyHttp.ForTest.Api.csproj", "{536D492A-5D23-484C-AD95-D021285724F8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tiny.Http.ForTest.Api", "TinyHttp.ForTest.Api\Tiny.Http.ForTest.Api.csproj", "{536D492A-5D23-484C-AD95-D021285724F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

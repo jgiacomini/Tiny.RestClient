@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-namespace TinyHttp
+namespace Tiny.Http
 {
     public interface IDeserializer
     {
