@@ -1,8 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 namespace Tiny.Http
 {
     public interface IDeserializer
     {
-        T Deserialize<T>(string data);
+        T Deserialize<T>(Stream stream);
     }
 }

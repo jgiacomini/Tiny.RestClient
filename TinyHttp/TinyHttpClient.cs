@@ -22,6 +22,8 @@ namespace Tiny.Http
         private readonly string _serverAddress;
 
         private ISerializer _defaultSerializer;
+
+        private IDeserializer _defaultDeserializer;
         #endregion
 
         #region Logging events
@@ -36,25 +38,30 @@ namespace Tiny.Http
         /// <param name="httpClient">The httpclient used</param>
         /// <param name="serverAddress">The server address.</param>
         public TinyHttpClient(HttpClient httpClient, string serverAddress)
+            : this(httpClient, serverAddress, new TinyJsonSerializer(), new TinyJsonDeserializer())
         {
-            if (serverAddress == null)
-            {
-                throw new ArgumentNullException(nameof(serverAddress));
-            }
+        }
 
-            if (httpClient == null)
-            {
-                throw new ArgumentNullException(nameof(httpClient));
-            }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HttpService"/> class.
+        /// </summary>
+        /// <param name="httpClient">The httpclient used</param>
+        /// <param name="serverAddress">The server address.</param>
+        /// /// <param name="defaultSerializer">The serializer used for serialize data</param>
+        /// <param name="defaultDeserializer">The deserializer used for deszerialiaze data.</param>
+        public TinyHttpClient(HttpClient httpClient, string serverAddress, ISerializer defaultSerializer, IDeserializer defaultDeserializer)
+        {
+            _serverAddress = serverAddress ?? throw new ArgumentNullException(nameof(serverAddress));
+            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            _defaultSerializer = defaultSerializer ?? throw new ArgumentNullException(nameof(defaultSerializer));
+            _defaultDeserializer = defaultDeserializer ?? throw new ArgumentNullException(nameof(defaultDeserializer));
 
-            if (!serverAddress.EndsWith("/"))
-            {
-                serverAddress += "/";
-            }
-
-            _serverAddress = serverAddress;
-            _httpClient = httpClient;
             AdditionalHeaders = new Dictionary<string, string>();
+
+            if (!_serverAddress.EndsWith("/"))
+            {
+                _serverAddress += "/";
+            }
         }
 
         /// <summary>
@@ -66,19 +73,6 @@ namespace Tiny.Http
         public Dictionary<string, string> AdditionalHeaders
         {
             get; private set;
-        }
-
-        public ISerializer DefaultSerializer
-        {
-            get
-            {
-                return _defaultSerializer;
-            }
-
-            private set
-            {
-                _defaultSerializer = value ?? throw new NullReferenceException();
-            }
         }
 
         #region Get
@@ -167,7 +161,7 @@ namespace Tiny.Http
         public async Task<TResult> PostAsync<TResult, TInput>(string route, TInput data, CancellationToken cancellationToken)
         {
             var requestUri = BuildRequestUri(route);
-            using (var response = await SendRequestAsync(HttpMethod.Post, requestUri, GetStringContent(data), cancellationToken))
+            using (var response = await SendRequestAsync(HttpMethod.Post, requestUri, GetStringContent(data, _defaultSerializer), cancellationToken))
             {
                 return await ReadResponseAsync<TResult>(response, cancellationToken);
             }
@@ -184,7 +178,7 @@ namespace Tiny.Http
         {
             var requestUri = BuildRequestUri(route);
 
-            using (var response = await SendRequestAsync(HttpMethod.Post, requestUri, GetStringContent(data), cancellationToken))
+            using (var response = await SendRequestAsync(HttpMethod.Post, requestUri, GetStringContent(data, _defaultSerializer), cancellationToken))
             {
                 await ReadResponseAsync(response, cancellationToken);
             }
@@ -206,7 +200,7 @@ namespace Tiny.Http
         {
             var requestUri = BuildRequestUri(route);
 
-            using (var response = await SendRequestAsync(HttpMethod.Put, requestUri, GetStringContent(data), cancellationToken))
+            using (var response = await SendRequestAsync(HttpMethod.Put, requestUri, GetStringContent(data, _defaultSerializer), cancellationToken))
             {
                 return await ReadResponseAsync<TResult>(response, cancellationToken);
             }
@@ -222,7 +216,7 @@ namespace Tiny.Http
         public async Task PutAsync<T>(string route, T data, CancellationToken cancellationToken)
         {
             var requestUri = BuildRequestUri(route);
-            using (var response = await SendRequestAsync(HttpMethod.Put, requestUri, GetStringContent(data), cancellationToken))
+            using (var response = await SendRequestAsync(HttpMethod.Put, requestUri, GetStringContent(data, _defaultSerializer), cancellationToken))
             {
                 await ReadResponseAsync(response, cancellationToken);
             }
@@ -292,16 +286,7 @@ namespace Tiny.Http
                 return default;
             }
 
-            using (var sr = new StreamReader(stream))
-            {
-                using (var jtr = new JsonTextReader(sr))
-                {
-                    var js = new JsonSerializer();
-
-                    var searchResult = js.Deserialize<T>(jtr);
-                    return searchResult;
-                }
-            }
+            return _defaultDeserializer.Deserialize<T>(stream);
         }
 
         /// <summary>
@@ -408,9 +393,9 @@ namespace Tiny.Http
             }
         }
 
-        private StringContent GetStringContent<TData>(TData data)
+        private StringContent GetStringContent<TData>(TData data, ISerializer serializer)
         {
-            var content = new StringContent(DefaultSerializer.Serialize(data), Encoding.UTF8);
+            var content = new StringContent(serializer.Serialize(data), Encoding.UTF8);
 
             if (_defaultSerializer.HasMediaType)
             {
