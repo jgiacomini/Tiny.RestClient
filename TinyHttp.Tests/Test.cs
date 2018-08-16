@@ -2,20 +2,23 @@
 
 namespace TinyHttp
 {
-    ////public class Test
-    ////{
-    ////    async Task MakeTest()
-    ////    {
+    public class Test
+    {
+        public async Task MakeTest()
+        {
+            IFluent client = null;
 
-    ////        IFluent client = null;
+            await client.AddHeader("Test", "Test").
+                SerializeWith(new TinyJsonSerializer()).
+                DeserializeWith(new TinyJsonDeserializer()).
+                PostAsync<TestPoco>(null);
 
-    ////        await client.Header("Test", "Test").
-    ////        SerializeWith(new TinyJsonSerializer()).
-    ////        DeserializeWith(new TinyJsonDeserializer()).
-    ////        PostAsync<TestPoco>(null);
-
-    ////        await client.Header("Test", "Test").
-    ////           GetAsync(null);
-    ////    }
-    ////}
+            await client.AddFormParameter("resource", "resource").
+                AddFormParameter("password", "password").
+                AddFormParameter("client_id", "clientId").
+                AddFormParameter("username", "username").
+                AddFormParameter("password", "password").
+                PostAsync<TestPoco>("route");
+        }
+    }
 }

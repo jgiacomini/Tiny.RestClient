@@ -5,7 +5,7 @@ namespace TinyHttp
     public class ConnectionException : TinyHttpException
     {
         public ConnectionException(string message, string url, string verb, Exception innerException)
-            : base(message, innerException)
+            : base($"{message} url : {url}, Verb {verb}", innerException)
         {
             Url = url;
             Verb = verb;

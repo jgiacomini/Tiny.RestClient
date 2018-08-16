@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -13,23 +14,37 @@ using System.Web;
 
 namespace TinyHttp
 {
-    public class TinyHttpClient : IDisposable
+    public class TinyHttpClient
     {
         #region Fields
+        private readonly HttpClient _httpClient;
+
         private readonly string _serverAddress;
 
         private ISerializer _defaultSerializer;
         #endregion
 
+        #region Logging events
+        public event EventHandler<HttpSendingRequestEventArgs> SendingRequest;
+        public event EventHandler<HttpReceivedResponseEventArgs> ReceivedResponse;
+        public event EventHandler<FailedToGetResponseEventArgs> FailedToGetResponse;
+        #endregion
+
         /// <summary>
         /// Initializes a new instance of the <see cref="HttpService"/> class.
         /// </summary>
+        /// <param name="httpClient">The httpclient used</param>
         /// <param name="serverAddress">The server address.</param>
-        public TinyHttpClient(string serverAddress)
+        public TinyHttpClient(HttpClient httpClient, string serverAddress)
         {
             if (serverAddress == null)
             {
                 throw new ArgumentNullException(nameof(serverAddress));
+            }
+
+            if (httpClient == null)
+            {
+                throw new ArgumentNullException(nameof(httpClient));
             }
 
             if (!serverAddress.EndsWith("/"))
@@ -38,6 +53,7 @@ namespace TinyHttp
             }
 
             _serverAddress = serverAddress;
+            _httpClient = httpClient;
             AdditionalHeaders = new Dictionary<string, string>();
         }
 
@@ -61,12 +77,25 @@ namespace TinyHttp
 
             private set
             {
-                if (value == null)
-                {
-                    throw new NullReferenceException();
-                }
+                _defaultSerializer = value ?? throw new NullReferenceException();
+            }
+        }
 
-                _defaultSerializer = value;
+        #region Get
+
+        /// <summary>
+        /// Gets the asynchronous.
+        /// </summary>
+        /// <param name="route">The route.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        /// <exception cref="Exception">URL : {requestUri}</exception>
+        public async Task GetAsync(string route, CancellationToken cancellationToken = default)
+        {
+            var requestUri = BuildRequestUri(route);
+            using (var response = await SendRequestAsync(HttpMethod.Get, requestUri, null, cancellationToken))
+            {
+                await ReadResponseAsync(response, cancellationToken);
             }
         }
 
@@ -78,97 +107,70 @@ namespace TinyHttp
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         /// <exception cref="Exception">URL : {requestUri}</exception>
-        public async Task<T> GetAsync<T>(string route, CancellationToken cancellationToken)
+        public async Task<T> GetAsync<T>(string route, CancellationToken cancellationToken = default)
         {
-            using (var client = GetConfiguredHttpClient())
+            var requestUri = BuildRequestUri(route);
+
+            using (var response = await SendRequestAsync(HttpMethod.Get, requestUri, null, cancellationToken))
             {
-                var requestUri = BuildRequestUri(route);
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                using (var response = await client.GetAsync(new Uri(requestUri), cancellationToken))
-                {
-                    return await ReadResponseAsync<T>(response, cancellationToken);
-                }
+                return await ReadResponseAsync<T>(response, cancellationToken);
             }
         }
 
-        /// <summary>
-        /// Gets the asynchronous.
-        /// </summary>
-        /// <param name="route">The route.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        /// <exception cref="Exception">URL : {requestUri}</exception>
-        public async Task GetAsync(string route, CancellationToken cancellationToken)
+        public async Task<Stream> GetStreamAsync(string route, CancellationToken cancellationToken = default)
         {
-            using (var client = GetConfiguredHttpClient())
-            {
-                var requestUri = BuildRequestUri(route);
+            var requestUri = BuildRequestUri(route);
 
-                using (var response = await client.GetAsync(new Uri(requestUri), cancellationToken))
-                {
-                    await ReadResponseAsync(response, cancellationToken);
-                }
+            var response = await SendRequestAsync(HttpMethod.Get, requestUri, null, cancellationToken);
+            var stream = await ReadResponseAsync(response, cancellationToken);
+            if (stream == null || stream.CanRead == false)
+            {
+                return default;
             }
+
+            return stream;
         }
+        #endregion
 
         #region Post
 
         public async Task<T> PostAsync<T>(IEnumerable<KeyValuePair<string, string>> data, CancellationToken cancellationToken)
         {
-            using (var client = GetConfiguredHttpClient())
+            var requestUri = new Uri(_serverAddress);
+
+            var stringBuilder = new StringBuilder();
+            foreach (var item in data)
             {
-                var requestUri = _serverAddress;
-
-                var stringBuilder = new StringBuilder();
-                foreach (var item in data)
+                stringBuilder.Append($"{item.Key}={HttpUtility.UrlEncode(item.Value)}");
+                if (item.Key != data.Last().Key)
                 {
-                    stringBuilder.Append($"{item.Key}={HttpUtility.UrlEncode(item.Value)}");
-                    if (item.Key != data.Last().Key)
-                    {
-                        stringBuilder.Append($"&");
-                    }
+                    stringBuilder.Append("&");
                 }
+            }
 
-                using (var content = new FormUrlEncodedContent(data))
-                {
-                    HttpResponseMessage response = await client.PostAsync(requestUri, content);
+            using (var content = new FormUrlEncodedContent(data))
+            {
+                HttpResponseMessage response = await SendRequestAsync(HttpMethod.Post, requestUri, content, cancellationToken);
 
-                    return await ReadResponseAsync<T>(response, cancellationToken);
-                }
+                return await ReadResponseAsync<T>(response, cancellationToken);
             }
         }
 
         /// <summary>
         /// Post data
         /// </summary>
-        /// <typeparam name="T">type of response</typeparam>
+        /// <typeparam name="TResult">type of response</typeparam>
         /// <param name="route">route</param>
         /// <param name="data">data to post</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>return a task</returns>
-        public async Task<TResult> PostAsync<TResult, TData>(string route, TData data, CancellationToken cancellationToken)
+        public async Task<TResult> PostAsync<TResult, TInput>(string route, TInput data, CancellationToken cancellationToken)
         {
-            using (var client = GetConfiguredHttpClient())
+            var requestUri = BuildRequestUri(route);
+            using (var response = await SendRequestAsync(HttpMethod.Post, requestUri, ToJsonStringContent(data), cancellationToken))
             {
-                var requestUri = BuildRequestUri(route);
-
-                using (var response = await client.PostAsync(new Uri(requestUri), GetStringContent(data), cancellationToken))
-                {
-                    return await ReadResponseAsync<TResult>(response, cancellationToken);
-                }
+                return await ReadResponseAsync<TResult>(response, cancellationToken);
             }
-        }
-
-        private StringContent GetStringContent<TData>(TData data)
-        {
-            var content = new StringContent(DefaultSerializer.Serialize(data));
-
-            if (_defaultSerializer.HasMediaType)
-            {
-                content.Headers.ContentType = new MediaTypeHeaderValue(_defaultSerializer.MediaType);
-            }
-
-            return content;
         }
 
         /// <summary>
@@ -178,15 +180,13 @@ namespace TinyHttp
         /// <param name="data">the data to post</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>return a task</returns>
-        public async Task PostAsync<TData>(string route, TData data, CancellationToken cancellationToken)
+        public async Task PostAsync<TInput>(string route, TInput data, CancellationToken cancellationToken)
         {
-            using (var client = GetConfiguredHttpClient())
+            var requestUri = BuildRequestUri(route);
+
+            using (var response = await SendRequestAsync(HttpMethod.Post, requestUri, ToJsonStringContent(data), cancellationToken))
             {
-                var requestUri = BuildRequestUri(route);
-                using (var response = await client.PostAsync(new Uri(requestUri), GetStringContent(data), cancellationToken))
-                {
-                    await ReadResponseAsync(response, cancellationToken);
-                }
+                await ReadResponseAsync(response, cancellationToken);
             }
         }
         #endregion
@@ -196,21 +196,19 @@ namespace TinyHttp
         /// <summary>
         /// Put the data
         /// </summary>
-        /// <typeparam name="T">type of result</typeparam>
+        /// <typeparam name="TResult">type of result</typeparam>
+        /// <typeparam name="TInput">type of input</typeparam>
         /// <param name="route">route</param>
         /// <param name="data">data to put</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>return a task</returns>
-        public async Task<TResult> PutAsync<TResult, TData>(string route, TData data, CancellationToken cancellationToken)
+        public async Task<TResult> PutAsync<TResult, TInput>(string route, TInput data, CancellationToken cancellationToken)
         {
-            using (var client = GetConfiguredHttpClient())
-            {
-                var requestUri = BuildRequestUri(route);
+            var requestUri = BuildRequestUri(route);
 
-                using (var response = await client.PutAsync(new Uri(requestUri), GetStringContent(data), cancellationToken))
-                {
-                    return await ReadResponseAsync<TResult>(response, cancellationToken);
-                }
+            using (var response = await SendRequestAsync(HttpMethod.Put, requestUri, ToJsonStringContent(data), cancellationToken))
+            {
+                return await ReadResponseAsync<TResult>(response, cancellationToken);
             }
         }
 
@@ -221,16 +219,12 @@ namespace TinyHttp
         /// <param name="data">the data to post</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>return a task</returns>
-        public async Task PutAsync<TData>(string route, TData data, CancellationToken cancellationToken)
+        public async Task PutAsync<T>(string route, T data, CancellationToken cancellationToken)
         {
-            using (var client = GetConfiguredHttpClient())
+            var requestUri = BuildRequestUri(route);
+            using (var response = await SendRequestAsync(HttpMethod.Put, requestUri, ToJsonStringContent(data), cancellationToken))
             {
-                var requestUri = BuildRequestUri(route);
-
-                using (var response = await client.PutAsync(new Uri(requestUri), GetStringContent(data), cancellationToken))
-                {
-                    await ReadResponseAsync(response, cancellationToken);
-                }
+                await ReadResponseAsync(response, cancellationToken);
             }
         }
         #endregion
@@ -245,14 +239,11 @@ namespace TinyHttp
         /// <returns>return a task</returns>
         public async Task DeleteAsync(string route, CancellationToken cancellationToken)
         {
-            using (var client = GetConfiguredHttpClient())
-            {
-                var requestUri = string.Concat(_serverAddress, route);
+            var requestUri = BuildRequestUri(route);
 
-                using (var response = await client.DeleteAsync(new Uri(requestUri), cancellationToken))
-                {
-                    await ReadResponseAsync(response, cancellationToken);
-                }
+            using (var response = await SendRequestAsync(HttpMethod.Delete, requestUri, null, cancellationToken))
+            {
+                await ReadResponseAsync(response, cancellationToken);
             }
         }
 
@@ -264,14 +255,11 @@ namespace TinyHttp
         /// <returns>return a task</returns>
         public async Task<T> DeleteAsync<T>(string route, CancellationToken cancellationToken)
         {
-            using (var client = GetConfiguredHttpClient())
-            {
-                var requestUri = string.Concat(_serverAddress, route);
+            var requestUri = BuildRequestUri(route);
 
-                using (var response = await client.DeleteAsync(new Uri(requestUri), cancellationToken))
-                {
-                    return await ReadResponseAsync<T>(response, cancellationToken);
-                }
+            using (var response = await SendRequestAsync(HttpMethod.Delete, requestUri, null, cancellationToken))
+            {
+                return await ReadResponseAsync<T>(response, cancellationToken);
             }
         }
         #endregion
@@ -279,30 +267,13 @@ namespace TinyHttp
         #region Private
 
         /// <summary>
-        /// Gets the configured HTTP client.
-        /// </summary>
-        /// <returns>return the http client</returns>
-        private HttpClient GetConfiguredHttpClient()
-        {
-            var client = new HttpClient();
-
-            client.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue(CultureInfo.CurrentCulture.TwoLetterISOLanguageName));
-            foreach (var header in AdditionalHeaders)
-            {
-                client.DefaultRequestHeaders.Add(header.Key, header.Value);
-            }
-
-            return client;
-        }
-
-        /// <summary>
         /// Builds the request URI.
         /// </summary>
         /// <param name="route">The route.</param>
         /// <returns>the buided uri</returns>
-        private string BuildRequestUri(string route)
+        private Uri BuildRequestUri(string route)
         {
-            return string.Concat(_serverAddress, route);
+            return new Uri(string.Concat(_serverAddress, route));
         }
 
         /// <summary>
@@ -326,6 +297,7 @@ namespace TinyHttp
                 using (var jtr = new JsonTextReader(sr))
                 {
                     var js = new JsonSerializer();
+
                     var searchResult = js.Deserialize<T>(jtr);
                     return searchResult;
                 }
@@ -390,40 +362,92 @@ namespace TinyHttp
             return content;
         }
 
-        #endregion
-
-        #region IDisposable Support
-        private bool _disposedValue = false; // To detect redundant calls
-
-        protected virtual void Dispose(bool disposing)
+        private async Task<HttpResponseMessage> SendRequestAsync(HttpMethod httpMethod, Uri uri, HttpContent content, CancellationToken cancellationToken)
         {
-            if (!_disposedValue)
+            var requestId = Guid.NewGuid().ToString();
+            Stopwatch sw = new Stopwatch();
+            try
             {
-                if (disposing)
+                using (var request = new HttpRequestMessage(httpMethod, uri))
                 {
-                    // TODO: dispose managed state (managed objects).
-                }
+                    // TODO : get from deserializer
+                    request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-                // TODO: set large fields to null.
-                _disposedValue = true;
+                    // TODO : add something to customize that stuff
+                    request.Headers.AcceptLanguage.Add(new StringWithQualityHeaderValue(CultureInfo.CurrentCulture.TwoLetterISOLanguageName));
+                    request.Headers.AcceptCharset.Add(new StringWithQualityHeaderValue("utf-8"));
+                    foreach (var item in AdditionalHeaders)
+                    {
+                        request.Headers.Add(item.Key, item.Value);
+                    }
+
+                    if (content != null)
+                    {
+                        request.Content = content;
+                    }
+
+                    OnSendingRequest(requestId, uri, httpMethod);
+                    sw.Start();
+                    var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken);
+                    sw.Stop();
+                    OnReceivedResponse(requestId, uri, httpMethod, response, sw.Elapsed);
+                    return response;
+                }
+            }
+            catch (Exception ex)
+            {
+                sw.Stop();
+
+                OnFailedToReceiveResponse(requestId, uri, httpMethod, ex, sw.Elapsed);
+
+                throw new ConnectionException(
+                   "Failed to get a response from server",
+                   uri.AbsoluteUri,
+                   httpMethod.Method,
+                   ex);
             }
         }
 
-        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-        // ~TinyHttpClient() {
-        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-        //   Dispose(false);
-        // }
-
-        // This code added to correctly implement the disposable pattern.
-        public void Dispose()
+        private HttpContent ToJsonStringContent<T>(T item)
         {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(true);
+            var content = JsonConvert.SerializeObject(item);
+            return new StringContent(content, Encoding.UTF8, "application/json");
+        }
 
-            // TODO: uncomment the following line if the finalizer is overridden above.
-            // GC.SuppressFinalize(this);
+        private void OnSendingRequest(string requestId, Uri url, HttpMethod httpMethod)
+        {
+            try
+            {
+                SendingRequest?.Invoke(this, new HttpSendingRequestEventArgs(requestId, url.ToString(), httpMethod.Method));
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+
+        private void OnReceivedResponse(string requestId, Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan elapsedTime)
+        {
+            try
+            {
+                ReceivedResponse?.Invoke(this, new HttpReceivedResponseEventArgs(requestId, uri.AbsoluteUri, httpMethod.Method, response.StatusCode, response.ReasonPhrase, elapsedTime));
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+
+        private void OnFailedToReceiveResponse(string requestId, Uri uri, HttpMethod httpMethod, Exception exception, TimeSpan elapsedTime)
+        {
+            try
+            {
+                FailedToGetResponse?.Invoke(this, new FailedToGetResponseEventArgs(requestId, uri.AbsoluteUri, httpMethod.Method, exception, elapsedTime));
+            }
+            catch
+            {
+                // ignored
+            }
         }
         #endregion
     }
