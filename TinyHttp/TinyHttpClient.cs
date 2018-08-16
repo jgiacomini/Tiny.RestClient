@@ -167,7 +167,7 @@ namespace TinyHttp
         public async Task<TResult> PostAsync<TResult, TInput>(string route, TInput data, CancellationToken cancellationToken)
         {
             var requestUri = BuildRequestUri(route);
-            using (var response = await SendRequestAsync(HttpMethod.Post, requestUri, ToJsonStringContent(data), cancellationToken))
+            using (var response = await SendRequestAsync(HttpMethod.Post, requestUri, GetStringContent(data), cancellationToken))
             {
                 return await ReadResponseAsync<TResult>(response, cancellationToken);
             }
@@ -184,7 +184,7 @@ namespace TinyHttp
         {
             var requestUri = BuildRequestUri(route);
 
-            using (var response = await SendRequestAsync(HttpMethod.Post, requestUri, ToJsonStringContent(data), cancellationToken))
+            using (var response = await SendRequestAsync(HttpMethod.Post, requestUri, GetStringContent(data), cancellationToken))
             {
                 await ReadResponseAsync(response, cancellationToken);
             }
@@ -206,7 +206,7 @@ namespace TinyHttp
         {
             var requestUri = BuildRequestUri(route);
 
-            using (var response = await SendRequestAsync(HttpMethod.Put, requestUri, ToJsonStringContent(data), cancellationToken))
+            using (var response = await SendRequestAsync(HttpMethod.Put, requestUri, GetStringContent(data), cancellationToken))
             {
                 return await ReadResponseAsync<TResult>(response, cancellationToken);
             }
@@ -222,7 +222,7 @@ namespace TinyHttp
         public async Task PutAsync<T>(string route, T data, CancellationToken cancellationToken)
         {
             var requestUri = BuildRequestUri(route);
-            using (var response = await SendRequestAsync(HttpMethod.Put, requestUri, ToJsonStringContent(data), cancellationToken))
+            using (var response = await SendRequestAsync(HttpMethod.Put, requestUri, GetStringContent(data), cancellationToken))
             {
                 await ReadResponseAsync(response, cancellationToken);
             }
@@ -408,10 +408,16 @@ namespace TinyHttp
             }
         }
 
-        private HttpContent ToJsonStringContent<T>(T item)
+        private StringContent GetStringContent<TData>(TData data)
         {
-            var content = JsonConvert.SerializeObject(item);
-            return new StringContent(content, Encoding.UTF8, "application/json");
+            var content = new StringContent(DefaultSerializer.Serialize(data), Encoding.UTF8);
+
+            if (_defaultSerializer.HasMediaType)
+            {
+                content.Headers.ContentType = new MediaTypeHeaderValue(_defaultSerializer.MediaType);
+            }
+
+            return content;
         }
 
         private void OnSendingRequest(string requestId, Uri url, HttpMethod httpMethod)
