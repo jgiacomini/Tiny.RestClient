@@ -12,6 +12,9 @@
     <PackageIconUrl>https://raw.githubusercontent.com/jgiacomini/TinyHttp/master/icon.png</PackageIconUrl>
     <PackageTags>httpClient</PackageTags>
     <MinClientVersion>3.0.3</MinClientVersion>
+    <PackageReleaseNotes>
+      - 1.0.0 : first version
+    </PackageReleaseNotes>
   </PropertyGroup>
   <PropertyGroup>
     <LangVersion>7.2</LangVersion>
