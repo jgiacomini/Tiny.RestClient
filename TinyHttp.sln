@@ -18,6 +18,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tiny.Http.ModelsForTest", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tiny.Http.ForTest.Api", "Tests\TinyHttp.ForTest.Api\Tiny.Http.ForTest.Api.csproj", "{FD51EA34-F479-4CCA-B2AC-7AC17638A261}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tiny.Http.Tests", "Tests\TinyHttp.Tests\Tiny.Http.Tests.csproj", "{6F1FB439-F177-4682-99FB-164323945A5D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +38,10 @@ Global
 		{FD51EA34-F479-4CCA-B2AC-7AC17638A261}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD51EA34-F479-4CCA-B2AC-7AC17638A261}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD51EA34-F479-4CCA-B2AC-7AC17638A261}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F1FB439-F177-4682-99FB-164323945A5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F1FB439-F177-4682-99FB-164323945A5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F1FB439-F177-4682-99FB-164323945A5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F1FB439-F177-4682-99FB-164323945A5D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -43,6 +49,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{7DCA55C9-4E70-4ED8-A2A7-B3F00F5FD426} = {04546413-FE1B-43A1-B36C-9991DF5D5C4F}
 		{FD51EA34-F479-4CCA-B2AC-7AC17638A261} = {04546413-FE1B-43A1-B36C-9991DF5D5C4F}
+		{6F1FB439-F177-4682-99FB-164323945A5D} = {04546413-FE1B-43A1-B36C-9991DF5D5C4F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CA5D635D-59C9-4247-8C13-9D78B5834FC2}

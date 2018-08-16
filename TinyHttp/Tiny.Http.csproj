@@ -11,6 +11,8 @@
     <PackageProjectUrl>https://github.com/jgiacomini/TinyHttp</PackageProjectUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/jgiacomini/TinyHttp/master/icon.png</PackageIconUrl>
     <PackageTags>httpClient</PackageTags>
+    <RepositoryUrl>https://github.com/jgiacomini/TinyHttp.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <MinClientVersion>3.0.3</MinClientVersion>
     <PackageReleaseNotes>
       - 1.0.0 : first version
