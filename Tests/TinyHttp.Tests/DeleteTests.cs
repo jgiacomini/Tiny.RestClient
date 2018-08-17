@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Tiny.Http.Models;
 
@@ -13,6 +12,9 @@ namespace Tiny.Http.Tests
         {
             var client = GetClient();
             await client.DeleteAsync("DeleteTest/noResponse");
+
+            client = GetClientWithXMLSerialization();
+            await client.DeleteAsync("DeleteTest/noResponse");
         }
 
         [TestMethod]
@@ -23,6 +25,11 @@ namespace Tiny.Http.Tests
             string data = "DATA";
             var response = await client.DeleteAsync<PostResponse>($"DeleteTest/complex?id={id}&data={data}");
 
+            Assert.AreEqual(id, response.Id);
+            Assert.AreEqual(data, response.ResponseData);
+
+            client = GetClientWithXMLSerialization();
+            response = await client.DeleteAsync<PostResponse>($"DeleteTest/complex?id={id}&data={data}");
             Assert.AreEqual(id, response.Id);
             Assert.AreEqual(data, response.ResponseData);
         }

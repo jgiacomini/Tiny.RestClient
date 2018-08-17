@@ -34,6 +34,9 @@ namespace Tiny.Http.Tests
             postRequest.Id = 42;
             postRequest.Data = "DATA";
             await client.PostAsync("PostTest/noResponse", postRequest);
+
+            client = GetClientWithXMLSerialization();
+            await client.PostAsync("PostTest/noResponse", postRequest);
         }
 
         [TestMethod]
@@ -45,6 +48,11 @@ namespace Tiny.Http.Tests
             postRequest.Data = "DATA";
             var response = await client.PostAsync<PostResponse, PostRequest>("PostTest/complex", postRequest);
 
+            Assert.AreEqual(postRequest.Id, response.Id);
+            Assert.AreEqual(postRequest.Data, response.ResponseData);
+
+            client = GetClientWithXMLSerialization();
+            response = await client.PostAsync<PostResponse, PostRequest>("PostTest/complex", postRequest);
             Assert.AreEqual(postRequest.Id, response.Id);
             Assert.AreEqual(postRequest.Data, response.ResponseData);
         }

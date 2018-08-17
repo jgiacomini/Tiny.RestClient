@@ -17,5 +17,18 @@
 
             return _httpClient;
         }
+
+        protected TinyHttpClient GetClientWithXMLSerialization()
+        {
+            lock (_toLock)
+            {
+                if (_httpClient == null)
+                {
+                    _httpClient = new TinyHttpClient(new System.Net.Http.HttpClient(), "http://localhost:53095/api/", new TinyXmlSerializer(), new TinyXmlDeserializer());
+                }
+            }
+
+            return _httpClient;
+        }
     }
 }
