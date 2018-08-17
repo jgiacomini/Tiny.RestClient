@@ -5,33 +5,27 @@ using Tiny.Http.Models;
 
 namespace Tiny.Http.ForTest.Api.Controllers
 {
-    [Route("api/PostTest")]
+    [Route("api/DeleteTest")]
     [ApiController]
-    public class PostTestController : ControllerBase
+    public class DeleteTestController : ControllerBase
     {
-        public PostTestController()
+        public DeleteTestController()
         {
         }
 
-        [HttpPost("FromForm")]
-        public PostResponse FromForm([FromForm] int id, [FromForm] string data)
-        {
-            return new PostResponse { Id = id, ResponseData = data };
-        }
-
-        [HttpPost("NoResponse")]
-        public Task NoResponse([FromBody] PostRequest postRequest)
+        [HttpDelete("NoResponse")]
+        public Task NoResponse()
         {
             return Task.Delay(1);
         }
 
-        [HttpPost("Complex")]
-        public PostResponse Complex([FromBody] PostRequest postRequest)
+        [HttpDelete("Complex")]
+        public PostResponse Complex(int id, string data)
         {
-            return new PostResponse() { Id = postRequest.Id, ResponseData = postRequest.Data };
+            return new PostResponse() { Id = id, ResponseData = data };
         }
 
-        [HttpPost("Stream")]
+        [HttpDelete("Stream")]
         public Stream Stream([FromBody] PostRequest postRequest)
         {
             byte[] byteArray = new byte[postRequest.Id];

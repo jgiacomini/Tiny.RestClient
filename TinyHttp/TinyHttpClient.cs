@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -127,11 +126,9 @@ namespace Tiny.Http
         #endregion
 
         #region Post
-
-        public async Task<T> PostAsync<T>(IEnumerable<KeyValuePair<string, string>> data, CancellationToken cancellationToken)
+        public async Task<TResult> PostAsync<TResult>(string route, IEnumerable<KeyValuePair<string, string>> data, CancellationToken cancellationToken = default)
         {
-            var requestUri = new Uri(_serverAddress);
-
+            var requestUri = BuildRequestUri(route);
             var stringBuilder = new StringBuilder();
             foreach (var item in data)
             {
@@ -146,7 +143,7 @@ namespace Tiny.Http
             {
                 HttpResponseMessage response = await SendRequestAsync(HttpMethod.Post, requestUri, content, cancellationToken);
 
-                return await ReadResponseAsync<T>(response, cancellationToken);
+                return await ReadResponseAsync<TResult>(response, cancellationToken);
             }
         }
 
@@ -158,7 +155,7 @@ namespace Tiny.Http
         /// <param name="data">data to post</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>return a task</returns>
-        public async Task<TResult> PostAsync<TResult, TInput>(string route, TInput data, CancellationToken cancellationToken)
+        public async Task<TResult> PostAsync<TResult, TInput>(string route, TInput data, CancellationToken cancellationToken = default)
         {
             var requestUri = BuildRequestUri(route);
             using (var response = await SendRequestAsync(HttpMethod.Post, requestUri, GetStringContent(data, _defaultSerializer), cancellationToken))
@@ -174,7 +171,7 @@ namespace Tiny.Http
         /// <param name="data">the data to post</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>return a task</returns>
-        public async Task PostAsync<TInput>(string route, TInput data, CancellationToken cancellationToken)
+        public async Task PostAsync<TInput>(string route, TInput data, CancellationToken cancellationToken = default)
         {
             var requestUri = BuildRequestUri(route);
 
@@ -196,7 +193,7 @@ namespace Tiny.Http
         /// <param name="data">data to put</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>return a task</returns>
-        public async Task<TResult> PutAsync<TResult, TInput>(string route, TInput data, CancellationToken cancellationToken)
+        public async Task<TResult> PutAsync<TResult, TInput>(string route, TInput data, CancellationToken cancellationToken = default)
         {
             var requestUri = BuildRequestUri(route);
 
@@ -213,7 +210,7 @@ namespace Tiny.Http
         /// <param name="data">the data to post</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>return a task</returns>
-        public async Task PutAsync<T>(string route, T data, CancellationToken cancellationToken)
+        public async Task PutAsync<T>(string route, T data, CancellationToken cancellationToken = default)
         {
             var requestUri = BuildRequestUri(route);
             using (var response = await SendRequestAsync(HttpMethod.Put, requestUri, GetStringContent(data, _defaultSerializer), cancellationToken))
@@ -231,7 +228,7 @@ namespace Tiny.Http
         /// <param name="route">the route to delete</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>return a task</returns>
-        public async Task DeleteAsync(string route, CancellationToken cancellationToken)
+        public async Task DeleteAsync(string route, CancellationToken cancellationToken = default)
         {
             var requestUri = BuildRequestUri(route);
 
@@ -247,7 +244,7 @@ namespace Tiny.Http
         /// <param name="route">the route to delete</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>return a task</returns>
-        public async Task<T> DeleteAsync<T>(string route, CancellationToken cancellationToken)
+        public async Task<T> DeleteAsync<T>(string route, CancellationToken cancellationToken = default)
         {
             var requestUri = BuildRequestUri(route);
 
