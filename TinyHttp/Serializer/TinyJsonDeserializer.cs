@@ -7,6 +7,9 @@ namespace Tiny.Http
 {
     public class TinyJsonDeserializer : IDeserializer
     {
+        public string MediaType => "application/json";
+        public bool HasMediaType => true;
+
         public T Deserialize<T>(Stream stream)
         {
             try

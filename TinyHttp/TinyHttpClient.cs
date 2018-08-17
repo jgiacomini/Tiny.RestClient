@@ -20,9 +20,9 @@ namespace Tiny.Http
 
         private readonly string _serverAddress;
 
-        private ISerializer _defaultSerializer;
+        private readonly ISerializer _defaultSerializer;
 
-        private IDeserializer _defaultDeserializer;
+        private readonly IDeserializer _defaultDeserializer;
         #endregion
 
         #region Logging events
@@ -86,7 +86,7 @@ namespace Tiny.Http
         public async Task GetAsync(string route, CancellationToken cancellationToken = default)
         {
             var requestUri = BuildRequestUri(route);
-            using (var response = await SendRequestAsync(HttpMethod.Get, requestUri, null, cancellationToken))
+            using (var response = await SendRequestAsync(HttpMethod.Get, requestUri, null, _defaultDeserializer, cancellationToken))
             {
                 await ReadResponseAsync(response, cancellationToken);
             }
@@ -104,7 +104,7 @@ namespace Tiny.Http
         {
             var requestUri = BuildRequestUri(route);
 
-            using (var response = await SendRequestAsync(HttpMethod.Get, requestUri, null, cancellationToken))
+            using (var response = await SendRequestAsync(HttpMethod.Get, requestUri, null, _defaultDeserializer, cancellationToken))
             {
                 return await ReadResponseAsync<T>(response, cancellationToken);
             }
@@ -114,7 +114,7 @@ namespace Tiny.Http
         {
             var requestUri = BuildRequestUri(route);
 
-            var response = await SendRequestAsync(HttpMethod.Get, requestUri, null, cancellationToken);
+            var response = await SendRequestAsync(HttpMethod.Get, requestUri, null, _defaultDeserializer, cancellationToken);
             var stream = await ReadResponseAsync(response, cancellationToken);
             if (stream == null || stream.CanRead == false)
             {
@@ -141,7 +141,7 @@ namespace Tiny.Http
 
             using (var content = new FormUrlEncodedContent(data))
             {
-                HttpResponseMessage response = await SendRequestAsync(HttpMethod.Post, requestUri, content, cancellationToken);
+                HttpResponseMessage response = await SendRequestAsync(HttpMethod.Post, requestUri, content, _defaultDeserializer, cancellationToken);
 
                 return await ReadResponseAsync<TResult>(response, cancellationToken);
             }
@@ -158,7 +158,7 @@ namespace Tiny.Http
         public async Task<TResult> PostAsync<TResult, TInput>(string route, TInput data, CancellationToken cancellationToken = default)
         {
             var requestUri = BuildRequestUri(route);
-            using (var response = await SendRequestAsync(HttpMethod.Post, requestUri, GetStringContent(data, _defaultSerializer), cancellationToken))
+            using (var response = await SendRequestAsync(HttpMethod.Post, requestUri, GetStringContent(data, _defaultSerializer), _defaultDeserializer, cancellationToken))
             {
                 return await ReadResponseAsync<TResult>(response, cancellationToken);
             }
@@ -175,7 +175,7 @@ namespace Tiny.Http
         {
             var requestUri = BuildRequestUri(route);
 
-            using (var response = await SendRequestAsync(HttpMethod.Post, requestUri, GetStringContent(data, _defaultSerializer), cancellationToken))
+            using (var response = await SendRequestAsync(HttpMethod.Post, requestUri, GetStringContent(data, _defaultSerializer), _defaultDeserializer, cancellationToken))
             {
                 await ReadResponseAsync(response, cancellationToken);
             }
@@ -197,7 +197,7 @@ namespace Tiny.Http
         {
             var requestUri = BuildRequestUri(route);
 
-            using (var response = await SendRequestAsync(HttpMethod.Put, requestUri, GetStringContent(data, _defaultSerializer), cancellationToken))
+            using (var response = await SendRequestAsync(HttpMethod.Put, requestUri, GetStringContent(data, _defaultSerializer), _defaultDeserializer, cancellationToken))
             {
                 return await ReadResponseAsync<TResult>(response, cancellationToken);
             }
@@ -213,7 +213,7 @@ namespace Tiny.Http
         public async Task PutAsync<T>(string route, T data, CancellationToken cancellationToken = default)
         {
             var requestUri = BuildRequestUri(route);
-            using (var response = await SendRequestAsync(HttpMethod.Put, requestUri, GetStringContent(data, _defaultSerializer), cancellationToken))
+            using (var response = await SendRequestAsync(HttpMethod.Put, requestUri, GetStringContent(data, _defaultSerializer), _defaultDeserializer, cancellationToken))
             {
                 await ReadResponseAsync(response, cancellationToken);
             }
@@ -232,7 +232,7 @@ namespace Tiny.Http
         {
             var requestUri = BuildRequestUri(route);
 
-            using (var response = await SendRequestAsync(HttpMethod.Delete, requestUri, null, cancellationToken))
+            using (var response = await SendRequestAsync(HttpMethod.Delete, requestUri, null, _defaultDeserializer, cancellationToken))
             {
                 await ReadResponseAsync(response, cancellationToken);
             }
@@ -248,7 +248,7 @@ namespace Tiny.Http
         {
             var requestUri = BuildRequestUri(route);
 
-            using (var response = await SendRequestAsync(HttpMethod.Delete, requestUri, null, cancellationToken))
+            using (var response = await SendRequestAsync(HttpMethod.Delete, requestUri, null, _defaultDeserializer, cancellationToken))
             {
                 return await ReadResponseAsync<T>(response, cancellationToken);
             }
@@ -344,7 +344,7 @@ namespace Tiny.Http
             return content;
         }
 
-        private async Task<HttpResponseMessage> SendRequestAsync(HttpMethod httpMethod, Uri uri, HttpContent content, CancellationToken cancellationToken)
+        private async Task<HttpResponseMessage> SendRequestAsync(HttpMethod httpMethod, Uri uri, HttpContent content, IDeserializer deserializer, CancellationToken cancellationToken)
         {
             var requestId = Guid.NewGuid().ToString();
             Stopwatch sw = new Stopwatch();
@@ -352,8 +352,10 @@ namespace Tiny.Http
             {
                 using (var request = new HttpRequestMessage(httpMethod, uri))
                 {
-                    // TODO : get from deserializer
-                    request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    if (deserializer.HasMediaType)
+                    {
+                        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(deserializer.MediaType));
+                    }
 
                     // TODO : add something to customize that stuff
                     request.Headers.AcceptLanguage.Add(new StringWithQualityHeaderValue(CultureInfo.CurrentCulture.TwoLetterISOLanguageName));
