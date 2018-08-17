@@ -5,6 +5,7 @@
 * Add support of PATCH, HEAD, COPY verb
 * Add support of stream result for all requests
 * Add support of octet-stream for all requests
+* Expose response headers
 * Documentation code
 * Documentation wiki
 * Add export resquest for PostMan
