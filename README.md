@@ -5,7 +5,8 @@
 * Add support of PATCH verb
 * Add support of stream result for all requests
 * Add support of octet-stream for all requests
-* Documentation
+* Documentation code
+* Documentation wiki
 * Add export resquest for PostMan
 
 ### Created By: [@JeromeGiacomini](https://twitter.com/jeromegiacomini)
