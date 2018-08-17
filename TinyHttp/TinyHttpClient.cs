@@ -387,7 +387,6 @@ namespace Tiny.Http
 
                     // TODO : add something to customize that stuff
                     request.Headers.AcceptLanguage.Add(new StringWithQualityHeaderValue(CultureInfo.CurrentCulture.TwoLetterISOLanguageName));
-                    request.Headers.AcceptCharset.Add(new StringWithQualityHeaderValue("utf-8"));
                     foreach (var item in DefaultHeaders)
                     {
                         request.Headers.Add(item.Key, item.Value);
@@ -422,7 +421,7 @@ namespace Tiny.Http
 
         private StringContent GetStringContent<TData>(TData data, ISerializer serializer)
         {
-            var content = new StringContent(serializer.Serialize(data), _encoding);
+            var content = new StringContent(serializer.Serialize(data, Encoding));
             if (_defaultSerializer.HasMediaType)
             {
                 content.Headers.ContentType = new MediaTypeHeaderValue(_defaultSerializer.MediaType);

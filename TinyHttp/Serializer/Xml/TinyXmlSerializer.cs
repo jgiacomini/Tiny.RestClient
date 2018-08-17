@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 using System.Xml.Serialization;
 
 namespace Tiny.Http
@@ -9,14 +10,30 @@ namespace Tiny.Http
 
         public bool HasMediaType => true;
 
-        public string Serialize<T>(T data)
+        public string Serialize<T>(T data, Encoding encoding)
         {
-            var serializer = new XmlSerializer(typeof(T));
-            using (StringWriter stringWriter = new StringWriter())
+            if (data == default)
+            {
+                return null;
+            }
+
+            var serializer = new XmlSerializer(data.GetType());
+            using (var stringWriter = new DynamicEncodingStringWriter(encoding))
             {
                 serializer.Serialize(stringWriter, data);
                 return stringWriter.ToString();
             }
         }
+    }
+
+    public class DynamicEncodingStringWriter : StringWriter
+    {
+        private readonly Encoding _encoding;
+        public DynamicEncodingStringWriter(Encoding encoding)
+        {
+            _encoding = encoding;
+        }
+
+        public override Encoding Encoding { get { return _encoding; } }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Text;
 
 namespace Tiny.Http
 {
@@ -8,7 +9,7 @@ namespace Tiny.Http
 
         public bool HasMediaType => true;
 
-        public string Serialize<T>(T data)
+        public string Serialize<T>(T data, Encoding encoding)
         {
             return JsonConvert.SerializeObject(data);
         }
