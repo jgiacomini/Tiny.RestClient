@@ -173,9 +173,13 @@ namespace Tiny.Http
         public async Task<TResult> PostAsync<TResult, TInput>(string route, TInput data, CancellationToken cancellationToken = default)
         {
             var requestUri = BuildRequestUri(route);
-            using (var response = await SendRequestAsync(HttpMethod.Post, requestUri, GetStringContent(data, _defaultSerializer), _defaultDeserializer, cancellationToken))
+
+            using (var content = GetStringContent(data, _defaultSerializer))
             {
-                return await ReadResponseAsync<TResult>(response, cancellationToken);
+                using (var response = await SendRequestAsync(HttpMethod.Post, requestUri, content, _defaultDeserializer, cancellationToken))
+                {
+                    return await ReadResponseAsync<TResult>(response, cancellationToken);
+                }
             }
         }
 
@@ -189,10 +193,12 @@ namespace Tiny.Http
         public async Task PostAsync<TInput>(string route, TInput data, CancellationToken cancellationToken = default)
         {
             var requestUri = BuildRequestUri(route);
-
-            using (var response = await SendRequestAsync(HttpMethod.Post, requestUri, GetStringContent(data, _defaultSerializer), _defaultDeserializer, cancellationToken))
+            using (var content = GetStringContent(data, _defaultSerializer))
             {
-                await ReadResponseAsync(response, cancellationToken);
+                using (var response = await SendRequestAsync(HttpMethod.Post, requestUri, content, _defaultDeserializer, cancellationToken))
+                {
+                    await ReadResponseAsync(response, cancellationToken);
+                }
             }
         }
         #endregion
@@ -212,9 +218,12 @@ namespace Tiny.Http
         {
             var requestUri = BuildRequestUri(route);
 
-            using (var response = await SendRequestAsync(HttpMethod.Put, requestUri, GetStringContent(data, _defaultSerializer), _defaultDeserializer, cancellationToken))
+            using (var content = GetStringContent(data, _defaultSerializer))
             {
-                return await ReadResponseAsync<TResult>(response, cancellationToken);
+                using (var response = await SendRequestAsync(HttpMethod.Put, requestUri, content, _defaultDeserializer, cancellationToken))
+                {
+                    return await ReadResponseAsync<TResult>(response, cancellationToken);
+                }
             }
         }
 
@@ -228,9 +237,13 @@ namespace Tiny.Http
         public async Task PutAsync<T>(string route, T data, CancellationToken cancellationToken = default)
         {
             var requestUri = BuildRequestUri(route);
-            using (var response = await SendRequestAsync(HttpMethod.Put, requestUri, GetStringContent(data, _defaultSerializer), _defaultDeserializer, cancellationToken))
+
+            using (var content = GetStringContent(data, _defaultSerializer))
             {
-                await ReadResponseAsync(response, cancellationToken);
+                using (var response = await SendRequestAsync(HttpMethod.Put, requestUri, GetStringContent(data, _defaultSerializer), _defaultDeserializer, cancellationToken))
+                {
+                    await ReadResponseAsync(response, cancellationToken);
+                }
             }
         }
         #endregion
@@ -410,7 +423,6 @@ namespace Tiny.Http
         private StringContent GetStringContent<TData>(TData data, ISerializer serializer)
         {
             var content = new StringContent(serializer.Serialize(data), _encoding);
-
             if (_defaultSerializer.HasMediaType)
             {
                 content.Headers.ContentType = new MediaTypeHeaderValue(_defaultSerializer.MediaType);
