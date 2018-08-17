@@ -4,4 +4,9 @@
     {
         public string Toto { get; set; }
     }
+
+    public class TestResult
+    {
+        public string Toto { get; set; }
+    }
 }

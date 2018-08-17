@@ -9,7 +9,6 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace Tiny.Http
 {
@@ -17,11 +16,8 @@ namespace Tiny.Http
     {
         #region Fields
         private readonly HttpClient _httpClient;
-
         private readonly string _serverAddress;
-
         private readonly ISerializer _defaultSerializer;
-
         private readonly IDeserializer _defaultDeserializer;
         private Encoding _encoding;
         #endregion
@@ -33,7 +29,7 @@ namespace Tiny.Http
         #endregion
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HttpService"/> class.
+        /// Initializes a new instance of the <see cref="TinyHttpClient"/> class.
         /// </summary>
         /// <param name="httpClient">The httpclient used</param>
         /// <param name="serverAddress">The server address.</param>
@@ -43,7 +39,7 @@ namespace Tiny.Http
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HttpService"/> class.
+        /// Initializes a new instance of the <see cref="TinyHttpClient"/> class.
         /// </summary>
         /// <param name="httpClient">The httpclient used</param>
         /// <param name="serverAddress">The server address.</param>
@@ -89,237 +85,289 @@ namespace Tiny.Http
             }
         }
 
-        #region Get
-
-        /// <summary>
-        /// Gets the asynchronous.
-        /// </summary>
-        /// <param name="route">The route.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        /// <exception cref="Exception">URL : {requestUri}</exception>
-        public async Task GetAsync(string route, CancellationToken cancellationToken = default)
+        public IRequest NewRequest(HttpVerb verb, string route = null)
         {
-            var requestUri = BuildRequestUri(route);
-            using (var response = await SendRequestAsync(HttpMethod.Get, requestUri, null, _defaultDeserializer, cancellationToken))
+            return new TinyRequest(verb, route, this);
+        }
+
+       internal async Task<TResult> ExecuteAsync<TResult>(
+           HttpVerb httpVerb,
+           string route,
+           Dictionary<string, string> headers,
+           Dictionary<string, string> queryParameters,
+           IEnumerable<KeyValuePair<string, string>> formsParameters,
+           ISerializer serializer,
+           IDeserializer deserializer,
+           ContentType contentType,
+           object data,
+           CancellationToken cancellationToken)
+        {
+            if (deserializer == null)
             {
-                await ReadResponseAsync(response, cancellationToken);
+                deserializer = _defaultDeserializer;
+            }
+
+            if (serializer == null)
+            {
+                serializer = _defaultSerializer;
+            }
+
+            using (var content = CreateContent(contentType, serializer, data, formsParameters))
+            {
+                using (var stream = await InternalExecuteRequestAsync(route, headers, queryParameters, formsParameters, deserializer, httpVerb, content, cancellationToken))
+                {
+                    if (stream == null)
+                    {
+                        return default;
+                    }
+
+                    return deserializer.Deserialize<TResult>(stream);
+                }
             }
         }
 
-        /// <summary>
-        /// Gets data.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="route">The route.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        /// <exception cref="Exception">URL : {requestUri}</exception>
-        public async Task<T> GetAsync<T>(string route, CancellationToken cancellationToken = default)
+        internal async Task ExecuteAsync(
+            HttpVerb httpVerb,
+            string route,
+            Dictionary<string, string> headers,
+            Dictionary<string, string> queryParameters,
+            IEnumerable<KeyValuePair<string, string>> formsParameters,
+            ISerializer serializer,
+            IDeserializer deserializer,
+            ContentType contentType,
+            object data,
+            CancellationToken cancellationToken)
         {
-            var requestUri = BuildRequestUri(route);
-
-            using (var response = await SendRequestAsync(HttpMethod.Get, requestUri, null, _defaultDeserializer, cancellationToken))
+            if (deserializer == null)
             {
-                return await ReadResponseAsync<T>(response, cancellationToken);
+                deserializer = _defaultDeserializer;
+            }
+
+            if (serializer == null)
+            {
+                serializer = _defaultSerializer;
+            }
+
+            using (var content = CreateContent(contentType, serializer, data, formsParameters))
+            {
+                await InternalExecuteRequestAsync(route, headers, queryParameters, formsParameters, deserializer, httpVerb, content, cancellationToken);
             }
         }
 
-        public async Task<Stream> GetStreamAsync(string route, CancellationToken cancellationToken = default)
+        internal async Task<byte[]> ExecuteByteArrayResultAsync(
+           HttpVerb httpVerb,
+           string route,
+           Dictionary<string, string> headers,
+           Dictionary<string, string> queryParameters,
+           IEnumerable<KeyValuePair<string, string>> formsParameters,
+           ISerializer serializer,
+           IDeserializer deserializer,
+           ContentType contentType,
+           object data,
+           CancellationToken cancellationToken)
         {
-            var requestUri = BuildRequestUri(route);
+            if (deserializer == null)
+            {
+                deserializer = _defaultDeserializer;
+            }
 
-            var response = await SendRequestAsync(HttpMethod.Get, requestUri, null, _defaultDeserializer, cancellationToken);
+            if (serializer == null)
+            {
+                serializer = _defaultSerializer;
+            }
+
+            using (var content = CreateContent(contentType, serializer, data, formsParameters))
+            {
+                using (var stream = await InternalExecuteRequestAsync(route, headers, queryParameters, formsParameters, deserializer, httpVerb, content, cancellationToken))
+                {
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        stream.CopyTo(ms);
+                        return ms.ToArray();
+                    }
+                }
+            }
+        }
+
+        internal Task<Stream> ExecuteWithStreamResultAsync(
+           HttpVerb httpVerb,
+           string route,
+           Dictionary<string, string> headers,
+           Dictionary<string, string> queryParameters,
+           IEnumerable<KeyValuePair<string, string>> formsParameters,
+           ISerializer serializer,
+           IDeserializer deserializer,
+           ContentType contentType,
+           object data,
+           CancellationToken cancellationToken)
+        {
+            if (deserializer == null)
+            {
+                deserializer = _defaultDeserializer;
+            }
+
+            if (serializer == null)
+            {
+                serializer = _defaultSerializer;
+            }
+
+            using (var content = CreateContent(contentType, serializer, null, formsParameters))
+            {
+                return InternalExecuteRequestAsync(route, headers, queryParameters, formsParameters, deserializer, httpVerb, content, cancellationToken);
+            }
+        }
+
+        private HttpContent CreateContent(
+            ContentType contentType,
+            ISerializer serializer,
+            object data,
+            IEnumerable<KeyValuePair<string, string>> formsParameters)
+        {
+            switch (contentType)
+            {
+                case ContentType.Stream:
+                case ContentType.String:
+
+                    if (data == null)
+                    {
+                        return null;
+                    }
+
+                    var content = new StringContent(serializer.Serialize(data, _encoding), _encoding);
+                    if (_defaultSerializer.HasMediaType)
+                    {
+                        content.Headers.ContentType = new MediaTypeHeaderValue(_defaultSerializer.MediaType);
+                    }
+
+                    return content;
+                case ContentType.Forms:
+                    return new FormUrlEncodedContent(formsParameters);
+                case ContentType.ByteArray:
+                    if (data == null)
+                    {
+                        return null;
+                    }
+
+                    var contentArray = new ByteArrayContent(data as byte[]);
+                    contentArray.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+                    return contentArray;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        private async Task<Stream> InternalExecuteRequestAsync(
+            string route,
+               Dictionary<string, string> headers,
+               Dictionary<string, string> queryParameters,
+               IEnumerable<KeyValuePair<string, string>> formsParameters,
+               IDeserializer deserializer,
+               HttpVerb httpVerb,
+               HttpContent content,
+               CancellationToken cancellationToken)
+        {
+            var requestUri = BuildRequestUri(route, queryParameters);
+            HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(httpVerb), requestUri, content, deserializer, cancellationToken);
             var stream = await ReadResponseAsync(response, cancellationToken);
             if (stream == null || stream.CanRead == false)
             {
-                return default;
+                return null;
             }
 
             return stream;
         }
-        #endregion
 
-        #region Post
-        public async Task<TResult> PostAsync<TResult>(string route, IEnumerable<KeyValuePair<string, string>> data, CancellationToken cancellationToken = default)
+        private Uri BuildRequestUri(string route, Dictionary<string, string> queryParameters)
         {
-            var requestUri = BuildRequestUri(route);
-            var stringBuilder = new StringBuilder();
-            foreach (var item in data)
+            var stringBuilder = new StringBuilder(string.Concat(_serverAddress, route));
+
+            if (queryParameters.Any())
             {
-                stringBuilder.Append($"{item.Key}={HttpUtility.UrlEncode(item.Value)}");
-                if (item.Key != data.Last().Key)
+                var last = queryParameters.Last();
+                stringBuilder.Append("?");
+                for (int i = 0; i < queryParameters.Count; i++)
                 {
-                    stringBuilder.Append("&");
+                    var item = queryParameters.ElementAt(i);
+                    var separator = i == queryParameters.Count - 1 ? string.Empty : "&";
+                    stringBuilder.Append($"{item.Key}={item.Value}{separator}");
                 }
             }
 
-            using (var content = new FormUrlEncodedContent(data))
-            {
-                HttpResponseMessage response = await SendRequestAsync(HttpMethod.Post, requestUri, content, _defaultDeserializer, cancellationToken);
-
-                return await ReadResponseAsync<TResult>(response, cancellationToken);
-            }
+            return new Uri(stringBuilder.ToString());
         }
 
-        /// <summary>
-        /// Post data
-        /// </summary>
-        /// <typeparam name="TResult">type of response</typeparam>
-        /// <param name="route">route</param>
-        /// <param name="data">data to post</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>return a task</returns>
-        public async Task<TResult> PostAsync<TResult, TInput>(string route, TInput data, CancellationToken cancellationToken = default)
+        private async Task<HttpResponseMessage> SendRequestAsync(HttpMethod httpMethod, Uri uri, HttpContent content, IDeserializer deserializer, CancellationToken cancellationToken)
         {
-            var requestUri = BuildRequestUri(route);
-
-            using (var content = GetStringContent(data, _defaultSerializer))
+            var requestId = Guid.NewGuid().ToString();
+            Stopwatch sw = new Stopwatch();
+            try
             {
-                using (var response = await SendRequestAsync(HttpMethod.Post, requestUri, content, _defaultDeserializer, cancellationToken))
+                using (var request = new HttpRequestMessage(httpMethod, uri))
                 {
-                    return await ReadResponseAsync<TResult>(response, cancellationToken);
+                    if (deserializer.HasMediaType)
+                    {
+                        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(deserializer.MediaType));
+                    }
+
+                    // TODO : add something to customize that stuff
+                    request.Headers.AcceptLanguage.Add(new StringWithQualityHeaderValue(CultureInfo.CurrentCulture.TwoLetterISOLanguageName));
+                    request.Headers.AcceptCharset.Add(new StringWithQualityHeaderValue("utf-8"));
+                    foreach (var item in DefaultHeaders)
+                    {
+                        request.Headers.Add(item.Key, item.Value);
+                    }
+
+                    if (content != null)
+                    {
+                        request.Content = content;
+                    }
+
+                    OnSendingRequest(requestId, uri, httpMethod);
+                    sw.Start();
+                    var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken);
+                    sw.Stop();
+                    OnReceivedResponse(requestId, uri, httpMethod, response, sw.Elapsed);
+                    return response;
                 }
             }
-        }
-
-        /// <summary>
-        /// Post a data
-        /// </summary>
-        /// <param name="route">the route</param>
-        /// <param name="data">the data to post</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>return a task</returns>
-        public async Task PostAsync<TInput>(string route, TInput data, CancellationToken cancellationToken = default)
-        {
-            var requestUri = BuildRequestUri(route);
-            using (var content = GetStringContent(data, _defaultSerializer))
+            catch (Exception ex)
             {
-                using (var response = await SendRequestAsync(HttpMethod.Post, requestUri, content, _defaultDeserializer, cancellationToken))
-                {
-                    await ReadResponseAsync(response, cancellationToken);
-                }
-            }
-        }
-        #endregion
+                sw.Stop();
 
-        #region Put
+                OnFailedToReceiveResponse(requestId, uri, httpMethod, ex, sw.Elapsed);
 
-        /// <summary>
-        /// Put the data
-        /// </summary>
-        /// <typeparam name="TResult">type of result</typeparam>
-        /// <typeparam name="TInput">type of input</typeparam>
-        /// <param name="route">route</param>
-        /// <param name="data">data to put</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>return a task</returns>
-        public async Task<TResult> PutAsync<TResult, TInput>(string route, TInput data, CancellationToken cancellationToken = default)
-        {
-            var requestUri = BuildRequestUri(route);
-
-            using (var content = GetStringContent(data, _defaultSerializer))
-            {
-                using (var response = await SendRequestAsync(HttpMethod.Put, requestUri, content, _defaultDeserializer, cancellationToken))
-                {
-                    return await ReadResponseAsync<TResult>(response, cancellationToken);
-                }
+                throw new ConnectionException(
+                   "Failed to get a response from server",
+                   uri.AbsoluteUri,
+                   httpMethod.Method,
+                   ex);
             }
         }
 
-        /// <summary>
-        /// Put the data async
-        /// </summary>
-        /// <param name="route">the route</param>
-        /// <param name="data">the data to post</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>return a task</returns>
-        public async Task PutAsync<T>(string route, T data, CancellationToken cancellationToken = default)
+        private HttpMethod ConvertToHttpMethod(HttpVerb httpVerb)
         {
-            var requestUri = BuildRequestUri(route);
-
-            using (var content = GetStringContent(data, _defaultSerializer))
+            switch (httpVerb)
             {
-                using (var response = await SendRequestAsync(HttpMethod.Put, requestUri, GetStringContent(data, _defaultSerializer), _defaultDeserializer, cancellationToken))
-                {
-                    await ReadResponseAsync(response, cancellationToken);
-                }
-            }
-        }
-        #endregion
-
-        #region Delete
-
-        /// <summary>
-        /// Delete async
-        /// </summary>
-        /// <param name="route">the route to delete</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>return a task</returns>
-        public async Task DeleteAsync(string route, CancellationToken cancellationToken = default)
-        {
-            var requestUri = BuildRequestUri(route);
-
-            using (var response = await SendRequestAsync(HttpMethod.Delete, requestUri, null, _defaultDeserializer, cancellationToken))
-            {
-                await ReadResponseAsync(response, cancellationToken);
+                case HttpVerb.Get:
+                    return HttpMethod.Get;
+                case HttpVerb.Post:
+                    return HttpMethod.Post;
+                case HttpVerb.Put:
+                    return HttpMethod.Put;
+                case HttpVerb.Delete:
+                    return HttpMethod.Delete;
+                case HttpVerb.Head:
+                    return HttpMethod.Head;
+                case HttpVerb.Patch:
+                    return new HttpMethod("PATCH");
+                case HttpVerb.Copy:
+                    return new HttpMethod("COPY");
+                default:
+                    throw new NotImplementedException();
             }
         }
 
-        /// <summary>
-        /// Delete async
-        /// </summary>
-        /// <param name="route">the route to delete</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>return a task</returns>
-        public async Task<T> DeleteAsync<T>(string route, CancellationToken cancellationToken = default)
-        {
-            var requestUri = BuildRequestUri(route);
-
-            using (var response = await SendRequestAsync(HttpMethod.Delete, requestUri, null, _defaultDeserializer, cancellationToken))
-            {
-                return await ReadResponseAsync<T>(response, cancellationToken);
-            }
-        }
-        #endregion
-
-        #region Private
-
-        /// <summary>
-        /// Builds the request URI.
-        /// </summary>
-        /// <param name="route">The route.</param>
-        /// <returns>the buided uri</returns>
-        private Uri BuildRequestUri(string route)
-        {
-            return new Uri(string.Concat(_serverAddress, route));
-        }
-
-        /// <summary>
-        /// Reads the response asynchronous.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="response">The response.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>return the response</returns>
-        private async Task<T> ReadResponseAsync<T>(HttpResponseMessage response, CancellationToken cancellationToken)
-        {
-            var stream = await ReadResponseAsync(response, cancellationToken);
-
-            if (stream == null || stream.CanRead == false)
-            {
-                return default;
-            }
-
-            return _defaultDeserializer.Deserialize<T>(stream);
-        }
-
-        /// <summary>
-        /// Reads the response asynchronous.
-        /// </summary>
-        /// <param name="response">The response.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>return a tas</returns>
+        #region Read response
         private async Task<Stream> ReadResponseAsync(HttpResponseMessage response, CancellationToken cancellationToken)
         {
             Stream stream = null;
@@ -371,65 +419,9 @@ namespace Tiny.Http
 
             return content;
         }
+        #endregion
 
-        private async Task<HttpResponseMessage> SendRequestAsync(HttpMethod httpMethod, Uri uri, HttpContent content, IDeserializer deserializer, CancellationToken cancellationToken)
-        {
-            var requestId = Guid.NewGuid().ToString();
-            Stopwatch sw = new Stopwatch();
-            try
-            {
-                using (var request = new HttpRequestMessage(httpMethod, uri))
-                {
-                    if (deserializer.HasMediaType)
-                    {
-                        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(deserializer.MediaType));
-                    }
-
-                    // TODO : add something to customize that stuff
-                    request.Headers.AcceptLanguage.Add(new StringWithQualityHeaderValue(CultureInfo.CurrentCulture.TwoLetterISOLanguageName));
-                    foreach (var item in DefaultHeaders)
-                    {
-                        request.Headers.Add(item.Key, item.Value);
-                    }
-
-                    if (content != null)
-                    {
-                        request.Content = content;
-                    }
-
-                    OnSendingRequest(requestId, uri, httpMethod);
-                    sw.Start();
-                    var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken);
-                    sw.Stop();
-                    OnReceivedResponse(requestId, uri, httpMethod, response, sw.Elapsed);
-                    return response;
-                }
-            }
-            catch (Exception ex)
-            {
-                sw.Stop();
-
-                OnFailedToReceiveResponse(requestId, uri, httpMethod, ex, sw.Elapsed);
-
-                throw new ConnectionException(
-                   "Failed to get a response from server",
-                   uri.AbsoluteUri,
-                   httpMethod.Method,
-                   ex);
-            }
-        }
-
-        private StringContent GetStringContent<TData>(TData data, ISerializer serializer)
-        {
-            var content = new StringContent(serializer.Serialize(data, Encoding));
-            if (_defaultSerializer.HasMediaType)
-            {
-                content.Headers.ContentType = new MediaTypeHeaderValue(_defaultSerializer.MediaType);
-            }
-
-            return content;
-        }
-
+        #region Events invoker
         private void OnSendingRequest(string requestId, Uri url, HttpMethod httpMethod)
         {
             try

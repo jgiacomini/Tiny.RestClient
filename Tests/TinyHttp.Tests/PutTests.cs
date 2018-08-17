@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Tiny.Http.Models;
 
@@ -11,30 +10,43 @@ namespace Tiny.Http.Tests
         [TestMethod]
         public async Task PutWithoutResponse()
         {
-            var client = GetClient();
             var postRequest = new PostRequest();
             postRequest.Id = 42;
             postRequest.Data = "DATA";
-            await client.PutAsync("PutTest/noResponse", postRequest);
 
-            client = GetClientWithXMLSerialization();
-            await client.PutAsync("PutTest/noResponse", postRequest);
+            var client = GetClient();
+            await client.
+                NewRequest(HttpVerb.Put, "PutTest/noResponse").
+                AddContent(postRequest).
+                ExecuteAsync();
+
+            client = GetClientXML();
+            await client.
+                NewRequest(HttpVerb.Put, "PutTest/noResponse").
+                AddContent(postRequest).
+                SerializeWith(new TinyXmlSerializer()).
+                ExecuteAsync();
         }
 
         [TestMethod]
         public async Task PutComplexData()
         {
-            var client = GetClient();
             var postRequest = new PostRequest();
             postRequest.Id = 42;
             postRequest.Data = "DATA";
-            var response = await client.PutAsync<PostResponse, PostRequest>("PutTest/complex", postRequest);
+            var client = GetClient();
+            var response = await client.
+                NewRequest(HttpVerb.Put, "PutTest/complex").
+                AddContent(postRequest).
+                ExecuteAsync<PostResponse>();
 
             Assert.AreEqual(postRequest.Id, response.Id);
             Assert.AreEqual(postRequest.Data, response.ResponseData);
-
-            client = GetClientWithXMLSerialization();
-            response = await client.PutAsync<PostResponse, PostRequest>("PutTest/complex", postRequest);
+            client = GetClientXML();
+            response = await client.
+                NewRequest(HttpVerb.Put, "PutTest/complex").
+                AddContent(postRequest).
+                ExecuteAsync<PostResponse>();
 
             Assert.AreEqual(postRequest.Id, response.Id);
             Assert.AreEqual(postRequest.Data, response.ResponseData);

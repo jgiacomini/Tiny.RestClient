@@ -11,8 +11,6 @@ namespace Tiny.Http.Tests
         [TestMethod]
         public async Task PostFromFrom()
         {
-            var client = GetClient();
-
             int id = 42;
             string data = "DATA";
             var dictionary = new Dictionary<string, string>
@@ -21,7 +19,10 @@ namespace Tiny.Http.Tests
                 { "data", data }
             };
 
-            var response = await client.PostAsync<PostResponse>("PostTest/FromForm", dictionary);
+            var client = GetClient();
+            var response = await client.NewRequest(HttpVerb.Post, "PostTest/FromForm").
+                AddFormParameter("id", id.ToString()).
+                AddFormParameter("data", data).ExecuteAsync<PostResponse>();
             Assert.AreEqual(id, response.Id);
             Assert.AreEqual(data, response.ResponseData);
         }
@@ -29,30 +30,28 @@ namespace Tiny.Http.Tests
         [TestMethod]
         public async Task PostWithoutResponse()
         {
-            var client = GetClient();
             var postRequest = new PostRequest();
             postRequest.Id = 42;
             postRequest.Data = "DATA";
-            await client.PostAsync("PostTest/noResponse", postRequest);
 
-            client = GetClientWithXMLSerialization();
-            await client.PostAsync("PostTest/noResponse", postRequest);
+            var client = GetClient();
+            await client.NewRequest(HttpVerb.Post, "PostTest/noResponse").
+                AddContent(postRequest).
+                ExecuteAsync();
         }
 
         [TestMethod]
         public async Task PostComplexData()
         {
-            var client = GetClient();
             var postRequest = new PostRequest();
             postRequest.Id = 42;
             postRequest.Data = "DATA";
-            var response = await client.PostAsync<PostResponse, PostRequest>("PostTest/complex", postRequest);
 
-            Assert.AreEqual(postRequest.Id, response.Id);
-            Assert.AreEqual(postRequest.Data, response.ResponseData);
+            var client = GetClient();
+            var response = await client.NewRequest(HttpVerb.Post, "PostTest/complex").
+                AddContent(postRequest).
+                ExecuteAsync<PostResponse>();
 
-            client = GetClientWithXMLSerialization();
-            response = await client.PostAsync<PostResponse, PostRequest>("PostTest/complex", postRequest);
             Assert.AreEqual(postRequest.Id, response.Id);
             Assert.AreEqual(postRequest.Data, response.ResponseData);
         }

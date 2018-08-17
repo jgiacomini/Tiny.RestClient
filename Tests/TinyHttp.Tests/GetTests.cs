@@ -9,34 +9,32 @@ namespace Tiny.Http.Tests
         [TestMethod]
         public async Task GetWithoutResponse()
         {
-            var client = GetClient();
-            await client.GetAsync("GetTest/noResponse");
+            var fluentClient = GetClient();
+            await fluentClient.NewRequest(HttpVerb.Get, "GetTest/noResponse").ExecuteAsync();
         }
 
         [TestMethod]
         public async Task GetSimpleData()
         {
-            var client = GetClient();
-            var data = await client.GetAsync<bool>("GetTest/simple");
-
+            var fluentClient = GetClient();
+            var data = await fluentClient.NewRequest(HttpVerb.Get, "GetTest/simple").ExecuteAsync<bool>();
             Assert.AreEqual(data, true);
-            client = GetClientWithXMLSerialization();
-            data = await client.GetAsync<bool>("GetTest/simple");
+            fluentClient = GetClientXML();
+            data = await fluentClient.NewRequest(HttpVerb.Get, "GetTest/simple").ExecuteAsync<bool>();
             Assert.AreEqual(data, true);
         }
 
         [TestMethod]
         public async Task GetComplexData()
         {
-            var client = GetClient();
-            var data = await client.GetAsync<string[]>("GetTest/complex");
-
+            var fluentClient = GetClient();
+            var data = await fluentClient.NewRequest(HttpVerb.Get, "GetTest/complex").ExecuteAsync<string[]>();
             Assert.AreEqual(data.Length, 2);
             Assert.AreEqual(data[0], "value1");
             Assert.AreEqual(data[1], "value2");
 
-            client = GetClientWithXMLSerialization();
-            data = await client.GetAsync<string[]>("GetTest/complex");
+            fluentClient = GetClientXML();
+            data = await fluentClient.NewRequest(HttpVerb.Get, "GetTest/complex").ExecuteAsync<string[]>();
             Assert.AreEqual(data.Length, 2);
             Assert.AreEqual(data[0], "value1");
             Assert.AreEqual(data[1], "value2");
@@ -45,8 +43,8 @@ namespace Tiny.Http.Tests
         [TestMethod]
         public async Task GetStreamData()
         {
-            var client = GetClient();
-            var stream = await client.GetStreamAsync("GetTest/stream");
+            var fluentClient = GetClientXML();
+            var stream = await fluentClient.NewRequest(HttpVerb.Get, "GetTest/stream").WithStreamResponse().ExecuteAsync();
             Assert.AreEqual(stream.Length, 42);
         }
     }

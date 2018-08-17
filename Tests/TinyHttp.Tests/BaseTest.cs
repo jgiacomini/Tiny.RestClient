@@ -3,32 +3,33 @@
     public class BaseTest
     {
         private object _toLock = new object();
-        private TinyHttpClient _httpClient;
+        private TinyHttpClient _client;
+        private TinyHttpClient _clientXML;
 
         protected TinyHttpClient GetClient()
         {
             lock (_toLock)
             {
-                if (_httpClient == null)
+                if (_client == null)
                 {
-                    _httpClient = new TinyHttpClient(new System.Net.Http.HttpClient(), "http://localhost:53095/api/");
+                    _client = new TinyHttpClient(new System.Net.Http.HttpClient(), "http://localhost:53095/api/");
                 }
             }
 
-            return _httpClient;
+            return _client;
         }
 
-        protected TinyHttpClient GetClientWithXMLSerialization()
+        protected TinyHttpClient GetClientXML()
         {
             lock (_toLock)
             {
-                if (_httpClient == null)
+                if (_clientXML == null)
                 {
-                    _httpClient = new TinyHttpClient(new System.Net.Http.HttpClient(), "http://localhost:53095/api/", new TinyXmlSerializer(), new TinyXmlDeserializer());
+                    _clientXML = new TinyHttpClient(new System.Net.Http.HttpClient(), "http://localhost:53095/api/", new TinyXmlSerializer(), new TinyXmlDeserializer());
                 }
             }
 
-            return _httpClient;
+            return _clientXML;
         }
     }
 }
