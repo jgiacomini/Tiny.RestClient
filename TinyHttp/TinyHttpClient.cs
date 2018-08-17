@@ -23,6 +23,7 @@ namespace Tiny.Http
         private readonly ISerializer _defaultSerializer;
 
         private readonly IDeserializer _defaultDeserializer;
+        private Encoding _encoding;
         #endregion
 
         #region Logging events
@@ -55,23 +56,37 @@ namespace Tiny.Http
             _defaultSerializer = defaultSerializer ?? throw new ArgumentNullException(nameof(defaultSerializer));
             _defaultDeserializer = defaultDeserializer ?? throw new ArgumentNullException(nameof(defaultDeserializer));
 
-            AdditionalHeaders = new Dictionary<string, string>();
+            DefaultHeaders = new Dictionary<string, string>();
 
             if (!_serverAddress.EndsWith("/"))
             {
                 _serverAddress += "/";
             }
+
+            _encoding = Encoding.UTF8;
         }
 
         /// <summary>
-        /// Gets the additional headers.
+        /// Gets the default headers.
         /// </summary>
         /// <value>
-        /// The additional headers.
+        /// The default headers.
         /// </value>
-        public Dictionary<string, string> AdditionalHeaders
+        public Dictionary<string, string> DefaultHeaders
         {
             get; private set;
+        }
+
+        public Encoding Encoding
+        {
+            get
+            {
+                return _encoding;
+            }
+            set
+            {
+                _encoding = value ?? throw new ArgumentNullException(nameof(Encoding));
+            }
         }
 
         #region Get
@@ -93,7 +108,7 @@ namespace Tiny.Http
         }
 
         /// <summary>
-        /// Gets the asynchronous.
+        /// Gets data.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="route">The route.</param>
@@ -360,7 +375,7 @@ namespace Tiny.Http
                     // TODO : add something to customize that stuff
                     request.Headers.AcceptLanguage.Add(new StringWithQualityHeaderValue(CultureInfo.CurrentCulture.TwoLetterISOLanguageName));
                     request.Headers.AcceptCharset.Add(new StringWithQualityHeaderValue("utf-8"));
-                    foreach (var item in AdditionalHeaders)
+                    foreach (var item in DefaultHeaders)
                     {
                         request.Headers.Add(item.Key, item.Value);
                     }
@@ -394,7 +409,7 @@ namespace Tiny.Http
 
         private StringContent GetStringContent<TData>(TData data, ISerializer serializer)
         {
-            var content = new StringContent(serializer.Serialize(data), Encoding.UTF8);
+            var content = new StringContent(serializer.Serialize(data), _encoding);
 
             if (_defaultSerializer.HasMediaType)
             {
