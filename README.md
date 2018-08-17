@@ -2,7 +2,6 @@
 
 ### TODO
 * Transfort to Fluent API
-* Add support of XML serialization
 * Add support of PATCH verb
 * Documentation
 * Add export resquest for PostMan
