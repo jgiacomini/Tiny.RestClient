@@ -29,6 +29,9 @@ var cities = client.
 // Will call POST http://MyAPI.com/api/City with city as content
 
 ```
+## Nuget
+* Available on NuGet: [Tiny.Http](http://www.nuget.org/packages/Tiny.Http) [![NuGet](https://img.shields.io/nuget/v/Tiny.Http.svg?label=NuGet)](https://www.nuget.org/packages/Tiny.Http/)
+
 ### Created By: [@JeromeGiacomini](https://twitter.com/jeromegiacomini)
 * Twitter: [@JeromeGiacomini](http://twitter.com/jeromegiacomini)
 * Blog: [Blog perso](http://jeromegiacomini.net/Blog/), [Blog pro](http://blogs.infinitesquare.com/users/jgiacomini)
