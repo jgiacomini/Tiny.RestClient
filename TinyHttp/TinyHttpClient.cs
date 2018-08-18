@@ -9,6 +9,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Tiny.Http
 {
@@ -289,7 +290,7 @@ namespace Tiny.Http
                 {
                     var item = queryParameters.ElementAt(i);
                     var separator = i == queryParameters.Count - 1 ? string.Empty : "&";
-                    stringBuilder.Append($"{item.Key}={item.Value}{separator}");
+                    stringBuilder.Append($"{item.Key}={HttpUtility.UrlEncode(item.Value)}{separator}");
                 }
             }
 
