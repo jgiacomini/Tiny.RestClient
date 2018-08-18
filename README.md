@@ -1,4 +1,7 @@
 # TinyHttp
+TinyHttp make esier the dialog between you API and your application.
+It hide all the complexity of communication, deserialisation ...
+
 
 Simple use :
 ```cs
@@ -31,6 +34,12 @@ var cities = client.
 ```
 ## Nuget
 * Available on NuGet: [Tiny.Http](http://www.nuget.org/packages/Tiny.Http) [![NuGet](https://img.shields.io/nuget/v/Tiny.Http.svg?label=NuGet)](https://www.nuget.org/packages/Tiny.Http/)
+
+## Platform Support
+|Platform|Supported|Version|
+| ------------------- | :-----------: | :------------------: |
+|.Net Standard|Yes|2.0|
+
 
 ### Created By: [@JeromeGiacomini](https://twitter.com/jeromegiacomini)
 * Twitter: [@JeromeGiacomini](http://twitter.com/jeromegiacomini)
