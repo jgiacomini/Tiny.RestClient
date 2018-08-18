@@ -128,7 +128,7 @@ namespace Tiny.Http
         }
 
         /// <summary>
-        /// News the request.
+        /// Create a new request.
         /// </summary>
         /// <param name="verb">The verb.</param>
         /// <param name="route">The route.</param>
