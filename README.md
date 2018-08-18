@@ -3,7 +3,7 @@ TinyHttp make esier the dialog between you API and your application.
 It hide all the complexity of communication, deserialisation ...
 
 
-Simple use :
+## Basic usage :
 ```cs
 using Tiny.Http;
 
