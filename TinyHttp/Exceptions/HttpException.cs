@@ -13,13 +13,14 @@ namespace Tiny.Http
     /// <summary>
     /// A httpexception
     /// </summary>
-    /// <seealso cref="System.Exception" />
+    /// <seealso cref="TinyHttpException" />
     public class HttpException : TinyHttpException
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="HttpException"/> class.
         /// </summary>
         /// <param name="message">The message.</param>
+        /// <param name="headers">The headers of the request</param>
         /// <param name="reasonPhrase">The reason phrase.</param>
         /// <param name="url">The URL.</param>
         /// <param name="verb">The verb.</param>

@@ -10,9 +10,11 @@ namespace Tiny.Http.Tests
         [TestMethod]
         public async Task PutWithoutResponse()
         {
-            var postRequest = new PostRequest();
-            postRequest.Id = 42;
-            postRequest.Data = "DATA";
+            var postRequest = new PostRequest
+            {
+                Id = 42,
+                Data = "DATA"
+            };
 
             var client = GetClient();
             await client.
@@ -31,9 +33,11 @@ namespace Tiny.Http.Tests
         [TestMethod]
         public async Task PutComplexData()
         {
-            var postRequest = new PostRequest();
-            postRequest.Id = 42;
-            postRequest.Data = "DATA";
+            var postRequest = new PostRequest
+            {
+                Id = 42,
+                Data = "DATA"
+            };
             var client = GetClient();
             var response = await client.
                 NewRequest(HttpVerb.Put, "PutTest/complex").

@@ -3,9 +3,13 @@ using System.Net;
 
 namespace Tiny.Http
 {
+    /// <summary>
+    /// Class HttpReceivedResponseEventArgs.
+    /// </summary>
+    /// <seealso cref="Tiny.Http.HttpEventArgsBase" />
     public class HttpReceivedResponseEventArgs : HttpEventArgsBase
     {
-        public HttpReceivedResponseEventArgs(string requestId, string uri, string method, HttpStatusCode statusCode, string reasonPhrase, TimeSpan elapsedTime)
+        internal HttpReceivedResponseEventArgs(string requestId, string uri, string method, HttpStatusCode statusCode, string reasonPhrase, TimeSpan elapsedTime)
             : base(requestId, uri, method)
         {
             StatusCode = statusCode;
@@ -13,8 +17,22 @@ namespace Tiny.Http
             ElapsedTime = elapsedTime;
         }
 
+        /// <summary>
+        /// Gets the status code.
+        /// </summary>
+        /// <value>The status code.</value>
         public HttpStatusCode StatusCode { get; }
+
+        /// <summary>
+        /// Gets the reason phrase.
+        /// </summary>
+        /// <value>The reason phrase.</value>
         public string ReasonPhrase { get; }
+
+        /// <summary>
+        /// Gets the elapsed time.
+        /// </summary>
+        /// <value>The elapsed time.</value>
         public TimeSpan ElapsedTime { get; }
     }
 }

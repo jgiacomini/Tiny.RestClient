@@ -2,7 +2,7 @@
 {
     public class BaseTest
     {
-        private object _toLock = new object();
+        private readonly object _toLock = new object();
         private TinyHttpClient _client;
         private TinyHttpClient _clientXML;
 

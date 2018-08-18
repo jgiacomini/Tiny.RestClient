@@ -13,6 +13,9 @@ using System.Web;
 
 namespace Tiny.Http
 {
+    /// <summary>
+    /// Class TinyHttpClient.
+    /// </summary>
     public class TinyHttpClient
     {
         #region Fields
@@ -24,10 +27,44 @@ namespace Tiny.Http
         #endregion
 
         #region Logging events
+
+        /// <summary>
+        /// Raised whenever a request is sending.
+        /// </summary>
         public event EventHandler<HttpSendingRequestEventArgs> SendingRequest;
+
+        /// <summary>
+        /// Raised whenever a response of resquest is received.
+        /// </summary>
         public event EventHandler<HttpReceivedResponseEventArgs> ReceivedResponse;
+
+        /// <summary>
+        /// Raised whenever it failed to get of resquest.
+        /// </summary>
         public event EventHandler<FailedToGetResponseEventArgs> FailedToGetResponse;
         #endregion
+
+        #region constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TinyHttpClient" /> class.
+        /// </summary>
+        /// <param name="serverAddress">The server address.</param>
+        public TinyHttpClient(string serverAddress)
+            : this(new HttpClient(), serverAddress, new TinyJsonSerializer(), new TinyJsonDeserializer())
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TinyHttpClient"/> class.
+        /// </summary>
+        /// <param name="serverAddress">The server address.</param>
+        /// <param name="defaultSerializer">The default serializer.</param>
+        /// <param name="defaultDeserializer">The default deserializer.</param>
+        public TinyHttpClient(string serverAddress, ISerializer defaultSerializer, IDeserializer defaultDeserializer)
+            : this(new HttpClient(), serverAddress, defaultSerializer, defaultDeserializer)
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TinyHttpClient"/> class.
@@ -62,6 +99,7 @@ namespace Tiny.Http
 
             _encoding = Encoding.UTF8;
         }
+        #endregion
 
         /// <summary>
         /// Gets the default headers.
@@ -74,6 +112,9 @@ namespace Tiny.Http
             get; private set;
         }
 
+        /// <summary>
+        /// Gets or set the encoding use by the client
+        /// </summary>
         public Encoding Encoding
         {
             get
@@ -86,22 +127,28 @@ namespace Tiny.Http
             }
         }
 
+        /// <summary>
+        /// News the request.
+        /// </summary>
+        /// <param name="verb">The verb.</param>
+        /// <param name="route">The route.</param>
+        /// <returns>The new request.</returns>
         public IRequest NewRequest(HttpVerb verb, string route = null)
         {
             return new TinyRequest(verb, route, this);
         }
 
-       internal async Task<TResult> ExecuteAsync<TResult>(
-           HttpVerb httpVerb,
-           string route,
-           Dictionary<string, string> headers,
-           Dictionary<string, string> queryParameters,
-           IEnumerable<KeyValuePair<string, string>> formsParameters,
-           ISerializer serializer,
-           IDeserializer deserializer,
-           ContentType contentType,
-           object data,
-           CancellationToken cancellationToken)
+        internal async Task<TResult> ExecuteAsync<TResult>(
+            HttpVerb httpVerb,
+            string route,
+            Dictionary<string, string> headers,
+            Dictionary<string, string> queryParameters,
+            IEnumerable<KeyValuePair<string, string>> formsParameters,
+            ISerializer serializer,
+            IDeserializer deserializer,
+            ContentType contentType,
+            object data,
+            CancellationToken cancellationToken)
         {
             if (deserializer == null)
             {
@@ -115,14 +162,18 @@ namespace Tiny.Http
 
             using (var content = CreateContent(contentType, serializer, data, formsParameters))
             {
-                using (var stream = await InternalExecuteRequestAsync(route, headers, queryParameters, formsParameters, deserializer, httpVerb, content, cancellationToken))
+                var requestUri = BuildRequestUri(route, queryParameters);
+                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(httpVerb), requestUri, content, deserializer, cancellationToken).ConfigureAwait(false))
                 {
-                    if (stream == null)
+                    using (var stream = await ReadResponseAsync(response, cancellationToken).ConfigureAwait(false))
                     {
-                        return default;
-                    }
+                        if (stream == null || stream.CanRead == false)
+                        {
+                            return default;
+                        }
 
-                    return deserializer.Deserialize<TResult>(stream);
+                        return deserializer.Deserialize<TResult>(stream);
+                    }
                 }
             }
         }
@@ -151,7 +202,13 @@ namespace Tiny.Http
 
             using (var content = CreateContent(contentType, serializer, data, formsParameters))
             {
-                await InternalExecuteRequestAsync(route, headers, queryParameters, formsParameters, deserializer, httpVerb, content, cancellationToken);
+                var requestUri = BuildRequestUri(route, queryParameters);
+                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(httpVerb), requestUri, content, deserializer, cancellationToken).ConfigureAwait(false))
+                {
+                    using (var stream = await ReadResponseAsync(response, cancellationToken).ConfigureAwait(false))
+                    {
+                    }
+                }
             }
         }
 
@@ -179,18 +236,27 @@ namespace Tiny.Http
 
             using (var content = CreateContent(contentType, serializer, data, formsParameters))
             {
-                using (var stream = await InternalExecuteRequestAsync(route, headers, queryParameters, formsParameters, deserializer, httpVerb, content, cancellationToken))
+                var requestUri = BuildRequestUri(route, queryParameters);
+                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(httpVerb), requestUri, content, deserializer, cancellationToken).ConfigureAwait(false))
                 {
-                    using (MemoryStream ms = new MemoryStream())
+                    using (var stream = await ReadResponseAsync(response, cancellationToken).ConfigureAwait(false))
                     {
-                        stream.CopyTo(ms);
-                        return ms.ToArray();
+                        if (stream == null || !stream.CanRead)
+                        {
+                            return null;
+                        }
+
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            stream.CopyTo(ms);
+                            return ms.ToArray();
+                        }
                     }
                 }
             }
         }
 
-        internal Task<Stream> ExecuteWithStreamResultAsync(
+        internal async Task<Stream> ExecuteWithStreamResultAsync(
            HttpVerb httpVerb,
            string route,
            Dictionary<string, string> headers,
@@ -214,7 +280,15 @@ namespace Tiny.Http
 
             using (var content = CreateContent(contentType, serializer, null, formsParameters))
             {
-                return InternalExecuteRequestAsync(route, headers, queryParameters, formsParameters, deserializer, httpVerb, content, cancellationToken);
+                var requestUri = BuildRequestUri(route, queryParameters);
+                HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(httpVerb), requestUri, content, deserializer, cancellationToken).ConfigureAwait(false);
+                var stream = await ReadResponseAsync(response, cancellationToken).ConfigureAwait(false);
+                if (stream == null || !stream.CanRead)
+                {
+                    return null;
+                }
+
+                return stream;
             }
         }
 
@@ -257,27 +331,6 @@ namespace Tiny.Http
             }
         }
 
-        private async Task<Stream> InternalExecuteRequestAsync(
-            string route,
-               Dictionary<string, string> headers,
-               Dictionary<string, string> queryParameters,
-               IEnumerable<KeyValuePair<string, string>> formsParameters,
-               IDeserializer deserializer,
-               HttpVerb httpVerb,
-               HttpContent content,
-               CancellationToken cancellationToken)
-        {
-            var requestUri = BuildRequestUri(route, queryParameters);
-            HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(httpVerb), requestUri, content, deserializer, cancellationToken);
-            var stream = await ReadResponseAsync(response, cancellationToken);
-            if (stream == null || stream.CanRead == false)
-            {
-                return null;
-            }
-
-            return stream;
-        }
-
         private Uri BuildRequestUri(string route, Dictionary<string, string> queryParameters)
         {
             var stringBuilder = new StringBuilder(string.Concat(_serverAddress, route));
@@ -312,6 +365,8 @@ namespace Tiny.Http
 
                     // TODO : add something to customize that stuff
                     request.Headers.AcceptLanguage.Add(new StringWithQualityHeaderValue(CultureInfo.CurrentCulture.TwoLetterISOLanguageName));
+
+                    // TODO : remove that ?
                     request.Headers.AcceptCharset.Add(new StringWithQualityHeaderValue("utf-8"));
                     foreach (var item in DefaultHeaders)
                     {
@@ -325,7 +380,7 @@ namespace Tiny.Http
 
                     OnSendingRequest(requestId, uri, httpMethod);
                     sw.Start();
-                    var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken);
+                    var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
                     sw.Stop();
                     OnReceivedResponse(requestId, uri, httpMethod, response, sw.Elapsed);
                     return response;
@@ -361,8 +416,6 @@ namespace Tiny.Http
                     return HttpMethod.Head;
                 case HttpVerb.Patch:
                     return new HttpMethod("PATCH");
-                case HttpVerb.Copy:
-                    return new HttpMethod("COPY");
                 default:
                     throw new NotImplementedException();
             }
@@ -375,7 +428,7 @@ namespace Tiny.Http
             string content = null;
             try
             {
-                stream = await response.Content.ReadAsStreamAsync();
+                stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -383,7 +436,7 @@ namespace Tiny.Http
                 }
                 else
                 {
-                    content = await StreamToStringAsync(stream);
+                    content = await StreamToStringAsync(stream).ConfigureAwait(false);
                 }
 
                 response.EnsureSuccessStatusCode();
@@ -414,7 +467,7 @@ namespace Tiny.Http
             {
                 using (var sr = new StreamReader(stream))
                 {
-                    content = await sr.ReadToEndAsync();
+                    content = await sr.ReadToEndAsync().ConfigureAwait(false);
                 }
             }
 

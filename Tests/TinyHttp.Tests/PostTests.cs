@@ -43,9 +43,11 @@ namespace Tiny.Http.Tests
         [TestMethod]
         public async Task PostComplexData()
         {
-            var postRequest = new PostRequest();
-            postRequest.Id = 42;
-            postRequest.Data = "DATA";
+            var postRequest = new PostRequest
+            {
+                Id = 42,
+                Data = "DATA"
+            };
 
             var client = GetClient();
             var response = await client.NewRequest(HttpVerb.Post, "PostTest/complex").

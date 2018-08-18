@@ -1,15 +1,33 @@
-﻿using System.IO;
-using System.Text;
+﻿using System.Text;
 using System.Xml.Serialization;
 
 namespace Tiny.Http
 {
+    /// <summary>
+    /// Class TinyXmlSerializer.
+    /// </summary>
+    /// <seealso cref="Tiny.Http.ISerializer" />
     public class TinyXmlSerializer : ISerializer
     {
+        /// <summary>
+        /// Gets the type of the media.
+        /// </summary>
+        /// <value>The type of the media.</value>
         public string MediaType => "application/xml";
 
+        /// <summary>
+        /// Gets a value indicating whether this instance has media type.
+        /// </summary>
+        /// <value><c>true</c> if this instance has media type; otherwise, <c>false</c>.</value>
         public bool HasMediaType => true;
 
+        /// <summary>
+        /// Serializes the specified data.
+        /// </summary>
+        /// <typeparam name="T">type of the data to serialize</typeparam>
+        /// <param name="data">The data.</param>
+        /// <param name="encoding">The encoding.</param>
+        /// <returns>The serialized data.</returns>
         public string Serialize<T>(T data, Encoding encoding)
         {
             if (data == default)
@@ -24,16 +42,5 @@ namespace Tiny.Http
                 return stringWriter.ToString();
             }
         }
-    }
-
-    public class DynamicEncodingStringWriter : StringWriter
-    {
-        private readonly Encoding _encoding;
-        public DynamicEncodingStringWriter(Encoding encoding)
-        {
-            _encoding = encoding;
-        }
-
-        public override Encoding Encoding { get { return _encoding; } }
     }
 }

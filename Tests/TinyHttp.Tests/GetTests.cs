@@ -9,32 +9,32 @@ namespace Tiny.Http.Tests
         [TestMethod]
         public async Task GetWithoutResponse()
         {
-            var fluentClient = GetClient();
-            await fluentClient.NewRequest(HttpVerb.Get, "GetTest/noResponse").ExecuteAsync();
+            var client = GetClient();
+            await client.NewRequest(HttpVerb.Get, "GetTest/noResponse").ExecuteAsync();
         }
 
         [TestMethod]
         public async Task GetSimpleData()
         {
-            var fluentClient = GetClient();
-            var data = await fluentClient.NewRequest(HttpVerb.Get, "GetTest/simple").ExecuteAsync<bool>();
+            var client = GetClient();
+            var data = await client.NewRequest(HttpVerb.Get, "GetTest/simple").ExecuteAsync<bool>();
             Assert.AreEqual(data, true);
-            fluentClient = GetClientXML();
-            data = await fluentClient.NewRequest(HttpVerb.Get, "GetTest/simple").ExecuteAsync<bool>();
+            client = GetClientXML();
+            data = await client.NewRequest(HttpVerb.Get, "GetTest/simple").ExecuteAsync<bool>();
             Assert.AreEqual(data, true);
         }
 
         [TestMethod]
         public async Task GetComplexData()
         {
-            var fluentClient = GetClient();
-            var data = await fluentClient.NewRequest(HttpVerb.Get, "GetTest/complex").ExecuteAsync<string[]>();
+            var client = GetClient();
+            var data = await client.NewRequest(HttpVerb.Get, "GetTest/complex").ExecuteAsync<string[]>();
             Assert.AreEqual(data.Length, 2);
             Assert.AreEqual(data[0], "value1");
             Assert.AreEqual(data[1], "value2");
 
-            fluentClient = GetClientXML();
-            data = await fluentClient.NewRequest(HttpVerb.Get, "GetTest/complex").ExecuteAsync<string[]>();
+            client = GetClientXML();
+            data = await client.NewRequest(HttpVerb.Get, "GetTest/complex").ExecuteAsync<string[]>();
             Assert.AreEqual(data.Length, 2);
             Assert.AreEqual(data[0], "value1");
             Assert.AreEqual(data[1], "value2");
@@ -43,8 +43,8 @@ namespace Tiny.Http.Tests
         [TestMethod]
         public async Task GetStreamData()
         {
-            var fluentClient = GetClientXML();
-            var stream = await fluentClient.NewRequest(HttpVerb.Get, "GetTest/stream").WithStreamResponse().ExecuteAsync();
+            var client = GetClientXML();
+            var stream = await client.NewRequest(HttpVerb.Get, "GetTest/stream").WithStreamResponse().ExecuteAsync();
             Assert.AreEqual(stream.Length, 42);
         }
     }

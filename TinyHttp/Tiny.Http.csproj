@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Copyright>Copyright © Jérôme Giacomini 2018</Copyright>
     <NeutralLanguage>en</NeutralLanguage>
     <Authors>Jérôme Giacomini</Authors>
-    <Description>TinyHttp make all http calls easily</Description>
+    <Description>TinyHttp make http calls easily</Description>
     <Title>TinyHttp</Title>
     <PackageLicenseUrl>https://github.com/jgiacomini/TinyHttp/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/jgiacomini/TinyHttp</PackageProjectUrl>
@@ -16,10 +16,14 @@
     <MinClientVersion>3.0.3</MinClientVersion>
     <PackageReleaseNotes>
       - 1.0.0 : first version
+      - 1.0.1 : query parameters are url encoded. Otpimizations. Add documentation
     </PackageReleaseNotes>
   </PropertyGroup>
   <PropertyGroup>
-    <LangVersion>7.2</LangVersion>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DocumentationFile>$(TargetDir)\Tiny.Http.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="publish\**" />

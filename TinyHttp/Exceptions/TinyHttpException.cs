@@ -4,9 +4,13 @@ using System.Text;
 
 namespace Tiny.Http
 {
+    /// <summary>
+    /// Base Class of all TinyHttpException.
+    /// </summary>
+    /// <seealso cref="System.Exception" />
     public abstract class TinyHttpException : Exception
     {
-        public TinyHttpException(string message, Exception innerException)
+        internal TinyHttpException(string message, Exception innerException)
             : base(message, innerException)
         {
         }
