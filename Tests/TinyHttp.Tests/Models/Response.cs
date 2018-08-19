@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Tiny.Http.Models
+namespace Tiny.Http.Tests.Models
 {
-    public class PostResponse
+    public class Response
     {
         public int Id { get; set; }
         public string ResponseData { get; set; }

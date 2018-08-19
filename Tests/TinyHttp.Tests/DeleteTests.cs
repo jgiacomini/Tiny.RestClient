@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
-using Tiny.Http.Models;
+using Tiny.Http.Tests.Models;
 
 namespace Tiny.Http.Tests
 {
@@ -31,7 +31,7 @@ namespace Tiny.Http.Tests
                 NewRequest(HttpVerb.Delete, "DeleteTest/complex").
                 AddQueryParameter("id", id).
                 AddQueryParameter("data", data).
-                ExecuteAsync<PostResponse>();
+                ExecuteAsync<Response>();
 
             Assert.AreEqual(id, response.Id);
             Assert.AreEqual(data, response.ResponseData);
@@ -40,7 +40,7 @@ namespace Tiny.Http.Tests
                 NewRequest(HttpVerb.Delete, "DeleteTest/complex").
                 AddQueryParameter("id", id).
                 AddQueryParameter("data", data).
-                ExecuteAsync<PostResponse>();
+                ExecuteAsync<Response>();
 
             Assert.AreEqual(id, response.Id);
             Assert.AreEqual(data, response.ResponseData);

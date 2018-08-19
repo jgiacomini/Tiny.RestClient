@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Tiny.Http.Models;
+using Tiny.Http.Tests.Models;
 
 namespace Tiny.Http.Tests
 {
@@ -22,7 +22,7 @@ namespace Tiny.Http.Tests
             var client = GetClient();
             var response = await client.NewRequest(HttpVerb.Post, "PostTest/FromForm").
                 AddFormParameter("id", id.ToString()).
-                AddFormParameter("data", data).ExecuteAsync<PostResponse>();
+                AddFormParameter("data", data).ExecuteAsync<Response>();
             Assert.AreEqual(id, response.Id);
             Assert.AreEqual(data, response.ResponseData);
         }
@@ -30,7 +30,7 @@ namespace Tiny.Http.Tests
         [TestMethod]
         public async Task PostWithoutResponse()
         {
-            var postRequest = new PostRequest();
+            var postRequest = new Request();
             postRequest.Id = 42;
             postRequest.Data = "DATA";
 
@@ -43,7 +43,7 @@ namespace Tiny.Http.Tests
         [TestMethod]
         public async Task PostComplexData()
         {
-            var postRequest = new PostRequest
+            var postRequest = new Request
             {
                 Id = 42,
                 Data = "DATA"
@@ -52,7 +52,7 @@ namespace Tiny.Http.Tests
             var client = GetClient();
             var response = await client.NewRequest(HttpVerb.Post, "PostTest/complex").
                 AddContent(postRequest).
-                ExecuteAsync<PostResponse>();
+                ExecuteAsync<Response>();
 
             Assert.AreEqual(postRequest.Id, response.Id);
             Assert.AreEqual(postRequest.Data, response.ResponseData);
