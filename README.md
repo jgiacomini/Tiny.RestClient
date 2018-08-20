@@ -58,7 +58,7 @@ catch (HttpException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFou
 }
 catch (HttpException ex) when (ex.StatusCode == System.Net.HttpStatusCode.InternalServerError)
 {
-   throw new ServerErrorException(ex.Message);
+   throw new ServerErrorException($"{ex.Message} {ex.ReasonPhrase}");
 }
 ```
 
