@@ -1,9 +1,9 @@
 # TinyHttp
-TinyHttp make esier the dialog between you API and your application.
+TinyHttp make easier the dialog between you API and your application.
 It hide all the complexity of communication, deserialisation ...
 
 
-## Basic usage :
+## Basic usage 
 ```cs
 using Tiny.Http;
 
@@ -32,6 +32,17 @@ var cities = client.
 // Will call POST http://MyAPI.com/api/City with city as content
 
 ```
+
+
+## Error handling
+All request can throw 3 exceptions : 
+
+* ConnectionException : thrown when the request can't reach the server
+* HttpException : thrown when the request can't reach the server
+TODO finish this part
+
+
+
 ## Nuget
 * Available on NuGet: [Tiny.Http](http://www.nuget.org/packages/Tiny.Http) [![NuGet](https://img.shields.io/nuget/v/Tiny.Http.svg?label=NuGet)](https://www.nuget.org/packages/Tiny.Http/)
 
