@@ -5,16 +5,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\TinyHttp.Tests\Models\Request.cs" Link="Models\Request.cs" />
+    <Compile Include="..\TinyHttp.Tests\Models\Response.cs" Link="Models\Response.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
-
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Tiny.Http.ModelsForTest\Tiny.Http.ModelsForTest.csproj" />
   </ItemGroup>
 
 </Project>

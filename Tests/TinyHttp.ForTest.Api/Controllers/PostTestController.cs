@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.IO;
 using System.Threading.Tasks;
-using Tiny.Http.Models;
+using Tiny.Http.Tests.Models;
 
 namespace Tiny.Http.ForTest.Api.Controllers
 {
@@ -14,25 +14,25 @@ namespace Tiny.Http.ForTest.Api.Controllers
         }
 
         [HttpPost("FromForm")]
-        public PostResponse FromForm([FromForm] int id, [FromForm] string data)
+        public Response FromForm([FromForm] int id, [FromForm] string data)
         {
-            return new PostResponse { Id = id, ResponseData = data };
+            return new Response { Id = id, ResponseData = data };
         }
 
         [HttpPost("NoResponse")]
-        public Task NoResponse([FromBody] PostRequest postRequest)
+        public Task NoResponse([FromBody] Request postRequest)
         {
             return Task.Delay(1);
         }
 
         [HttpPost("Complex")]
-        public PostResponse Complex([FromBody] PostRequest postRequest)
+        public Response Complex([FromBody] Request postRequest)
         {
-            return new PostResponse() { Id = postRequest.Id, ResponseData = postRequest.Data };
+            return new Response() { Id = postRequest.Id, ResponseData = postRequest.Data };
         }
 
         [HttpPost("Stream")]
-        public Stream Stream([FromBody] PostRequest postRequest)
+        public Stream Stream([FromBody] Request postRequest)
         {
             byte[] byteArray = new byte[postRequest.Id];
 
