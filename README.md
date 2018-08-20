@@ -38,7 +38,10 @@ var cities = client.
 All request can throw 3 exceptions : 
 
 * ConnectionException : thrown when the request can't reach the server
-* HttpException : thrown when the request can't reach the server
+* HttpException : thrown when the server has invalid error code
+* DeserializeException : thrown when the deserializer can't deserialize the response
+
+
 TODO finish this part
 
 
