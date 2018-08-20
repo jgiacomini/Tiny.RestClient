@@ -41,7 +41,7 @@ All request can throw 3 exceptions :
 * HttpException : thrown when the server has invalid error code
 * DeserializeException : thrown when the deserializer can't deserialize the response
 
-### Catch specific error code
+### Catch a specific error code
 ```cs
 using Tiny.Http;
 string cityName = "Paris";
