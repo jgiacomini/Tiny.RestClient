@@ -88,12 +88,12 @@ namespace Tiny.Http
         public HttpRequestHeaders Headers { get; private set; }
 
         /// <summary>
-        /// Gets or sets the reason phrase.
+        /// Gets the reason phrase.
         /// </summary>
         /// <value>
         /// The reason phrase.
         /// </value>
-        public string ReasonPhrase { get; set; }
+        public string ReasonPhrase { get;  private set; }
 
         /// <summary>
         /// Gets the URL.

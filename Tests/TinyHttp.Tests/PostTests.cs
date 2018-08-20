@@ -20,9 +20,11 @@ namespace Tiny.Http.Tests
             };
 
             var client = GetClient();
-            var response = await client.NewRequest(HttpVerb.Post, "PostTest/FromForm").
+            var response = await client.
+                NewRequest(HttpVerb.Post, "PostTest/FromForm").
                 AddFormParameter("id", id.ToString()).
-                AddFormParameter("data", data).ExecuteAsync<Response>();
+                AddFormParameter("data", data).
+                ExecuteAsync<Response>();
             Assert.AreEqual(id, response.Id);
             Assert.AreEqual(data, response.ResponseData);
         }
@@ -35,7 +37,8 @@ namespace Tiny.Http.Tests
             postRequest.Data = "DATA";
 
             var client = GetClient();
-            await client.NewRequest(HttpVerb.Post, "PostTest/noResponse").
+            await client.
+                NewRequest(HttpVerb.Post, "PostTest/noResponse").
                 AddContent(postRequest).
                 ExecuteAsync();
         }
@@ -50,7 +53,8 @@ namespace Tiny.Http.Tests
             };
 
             var client = GetClient();
-            var response = await client.NewRequest(HttpVerb.Post, "PostTest/complex").
+            var response = await client.
+                NewRequest(HttpVerb.Post, "PostTest/complex").
                 AddContent(postRequest).
                 ExecuteAsync<Response>();
 
