@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
-using Tiny.Http.Models;
+using Tiny.Http.Tests.Models;
 
 namespace Tiny.Http.Tests
 {
@@ -26,21 +26,24 @@ namespace Tiny.Http.Tests
             int id = 42;
             string data = "DATA=32";
 
-            var clientFluent = GetClient();
-            var response = await clientFluent.
+            var client = GetClient();
+
+            var response = await client.
                 NewRequest(HttpVerb.Delete, "DeleteTest/complex").
                 AddQueryParameter("id", id).
                 AddQueryParameter("data", data).
-                ExecuteAsync<PostResponse>();
+                ExecuteAsync<Response>();
 
             Assert.AreEqual(id, response.Id);
             Assert.AreEqual(data, response.ResponseData);
-            clientFluent = GetClientXML();
-            response = await clientFluent.
+            client = GetClientXML();
+            response = await client.
                 NewRequest(HttpVerb.Delete, "DeleteTest/complex").
                 AddQueryParameter("id", id).
                 AddQueryParameter("data", data).
-                ExecuteAsync<PostResponse>();
+                ExecuteAsync<Response>();
+
+            await client.NewRequest(HttpVerb.Delete, "toto").AddHeader("toto", "tutu").WithByteArrayResponse().ExecuteAsync();
 
             Assert.AreEqual(id, response.Id);
             Assert.AreEqual(data, response.ResponseData);

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.IO;
 using System.Threading.Tasks;
-using Tiny.Http.Models;
+using Tiny.Http.Tests.Models;
 
 namespace Tiny.Http.ForTest.Api.Controllers
 {
@@ -20,13 +20,13 @@ namespace Tiny.Http.ForTest.Api.Controllers
         }
 
         [HttpDelete("Complex")]
-        public PostResponse Complex(int id, string data)
+        public Response Complex(int id, string data)
         {
-            return new PostResponse() { Id = id, ResponseData = data };
+            return new Response() { Id = id, ResponseData = data };
         }
 
         [HttpDelete("Stream")]
-        public Stream Stream([FromBody] PostRequest postRequest)
+        public Stream Stream([FromBody] Request postRequest)
         {
             byte[] byteArray = new byte[postRequest.Id];
 

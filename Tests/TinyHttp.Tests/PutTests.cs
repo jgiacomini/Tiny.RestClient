@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
-using Tiny.Http.Models;
+using Tiny.Http.Tests.Models;
 
 namespace Tiny.Http.Tests
 {
@@ -10,7 +10,7 @@ namespace Tiny.Http.Tests
         [TestMethod]
         public async Task PutWithoutResponse()
         {
-            var postRequest = new PostRequest
+            var postRequest = new Request
             {
                 Id = 42,
                 Data = "DATA"
@@ -33,7 +33,7 @@ namespace Tiny.Http.Tests
         [TestMethod]
         public async Task PutComplexData()
         {
-            var postRequest = new PostRequest
+            var postRequest = new Request
             {
                 Id = 42,
                 Data = "DATA"
@@ -42,7 +42,7 @@ namespace Tiny.Http.Tests
             var response = await client.
                 NewRequest(HttpVerb.Put, "PutTest/complex").
                 AddContent(postRequest).
-                ExecuteAsync<PostResponse>();
+                ExecuteAsync<Response>();
 
             Assert.AreEqual(postRequest.Id, response.Id);
             Assert.AreEqual(postRequest.Data, response.ResponseData);
@@ -50,7 +50,7 @@ namespace Tiny.Http.Tests
             response = await client.
                 NewRequest(HttpVerb.Put, "PutTest/complex").
                 AddContent(postRequest).
-                ExecuteAsync<PostResponse>();
+                ExecuteAsync<Response>();
 
             Assert.AreEqual(postRequest.Id, response.Id);
             Assert.AreEqual(postRequest.Data, response.ResponseData);

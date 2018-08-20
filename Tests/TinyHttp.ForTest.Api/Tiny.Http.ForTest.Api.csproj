@@ -10,11 +10,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
-
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Tiny.Http.ModelsForTest\Tiny.Http.ModelsForTest.csproj" />
   </ItemGroup>
 
 </Project>

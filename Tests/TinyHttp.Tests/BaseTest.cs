@@ -12,7 +12,7 @@
             {
                 if (_client == null)
                 {
-                    _client = new TinyHttpClient(new System.Net.Http.HttpClient(), "http://localhost:53095/api/");
+                    _client = new TinyHttpClient(Program.Client, "http://localhost:4242/api/");
                 }
             }
 
@@ -25,7 +25,7 @@
             {
                 if (_clientXML == null)
                 {
-                    _clientXML = new TinyHttpClient(new System.Net.Http.HttpClient(), "http://localhost:53095/api/", new TinyXmlSerializer(), new TinyXmlDeserializer());
+                    _clientXML = new TinyHttpClient(Program.Client, "http://localhost:4242/api/", new TinyXmlSerializer(), new TinyXmlDeserializer());
                 }
             }
 
