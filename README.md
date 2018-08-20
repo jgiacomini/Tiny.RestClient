@@ -35,7 +35,7 @@ var cities = client.
 
 
 ## Error handling
-All request can throw 3 exceptions : 
+All requests can throw 3 exceptions : 
 
 * ConnectionException : thrown when the request can't reach the server
 * HttpException : thrown when the server has invalid error code
