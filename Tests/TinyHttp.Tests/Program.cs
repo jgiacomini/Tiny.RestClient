@@ -25,6 +25,7 @@ namespace Tiny.Http.Tests
         public static void Cleanup()
         {
             _server?.Dispose();
+            Client?.Dispose();
         }
 
         public static HttpClient Client { get; set; }
