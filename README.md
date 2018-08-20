@@ -41,9 +41,26 @@ All request can throw 3 exceptions :
 * HttpException : thrown when the server has invalid error code
 * DeserializeException : thrown when the deserializer can't deserialize the response
 
-
-TODO finish this part
-
+### Catch specific error code
+```cs
+using Tiny.Http;
+string cityName = "Paris";
+try
+{ 
+   var response = await client.
+     NewRequest(HttpVerb.Get, "City").
+     AddQueryParameter("Name", cityName).
+     ExecuteAsync<City>();
+}
+catch (HttpException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+{
+   throw new CityNotFoundException(cityName);
+}
+catch (HttpException ex) when (ex.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+{
+   throw new ServerErrorException(ex.Message);
+}
+```
 
 
 ## Nuget
