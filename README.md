@@ -19,6 +19,7 @@ It hide all the complexity of communication, deserialisation ...
 * Support of multi-part form data
 * Optimized http calls
 * Typed Exception which easier to interpret
+* Logging events
 
 ## Basic usage
 
