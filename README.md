@@ -66,7 +66,7 @@ var response = await client.
 ```
 
 #### Streams and bytes array
-You can use as content streams and byte arrays.
+You can use as content : streams or byte arrays.
 If you use these methods no serializer will be used.
 
 #### Streams
