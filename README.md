@@ -91,6 +91,7 @@ byte[] byteArray = await client.
 // Post  byte array as content
 await client.
             NewRequest(HttpVerb.Post, "File/Add").
+            WithByteArrayResponse().
             ExecuteAsync();
 ```
 
