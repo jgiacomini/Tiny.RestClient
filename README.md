@@ -19,7 +19,7 @@ It hide all the complexity of communication, deserialisation ...
 * Support of multi-part form data
 * Optimized http calls
 * Typed Exception which easier to interpret
-* Logging events
+* Provide an easy way to log : all sending of request, failed to get response,  and the time get response.
 
 ## Basic usage
 
@@ -169,6 +169,30 @@ ISerializer xmlDeserializer = new TinyXmlDeserializer();
      AddQueryParameter("Name", cityName).
      DeserializeWith(xmlDeserializer).
      ExecuteAsync<City>();
+```
+
+## Logging events
+
+```cs
+using Tiny.Http;
+var client = new TinyHttpClient("http://MyAPI.com/api");
+
+
+client.SendingRequest += (sender , e) =>
+{    
+    Debug.WriteLine($"Sending RequestId = {e.RequestId}, Method = {e.Method}, Uri = {e.Uri}");
+};
+
+client.ReceivedResponse += (sender , e)=>
+{
+    Debug.WriteLine($"Received RequestId = {e.RequestId}, Method = {e.Method}, Uri = {e.Uri}, StatusCode = {e.StatusCode}, ElapsedTime = {ToReadableString(e.ElapsedTime)}");
+};
+
+client.FailedToGetResponse  += (sender , e)=>
+{
+    Debug.WriteLine($"FailedToGetResponse RequestId = {e.RequestId}, Method = {e.Method}, Uri = {e.Uri}, ElapsedTime = {ToReadableString(e.ElapsedTime)}");
+}
+
 ```
 
 ## License
