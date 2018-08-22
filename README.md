@@ -18,7 +18,7 @@ It hide all the complexity of communication, deserialisation ...
 * Support of custom serialisation / deserialisation
 * Support of multi-part form data
 * Optimized http calls
-* Typed Exception which easier to interpret
+* Typed exceptions which are easier to interpret
 * Provide an easy way to log : all sending of request, failed to get response,  and the time get response.
 
 ## Basic usage
