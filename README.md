@@ -5,7 +5,13 @@ It hide all the complexity of communication, deserialisation ...
 ## Nuget
 * Available on NuGet: [Tiny.Http](http://www.nuget.org/packages/Tiny.Http) [![NuGet](https://img.shields.io/nuget/v/Tiny.Http.svg?label=NuGet)](https://www.nuget.org/packages/Tiny.Http/)
 
-Features : 
+## Platform Support
+|Platform|Supported|Version|
+| ------------------- | :-----------: | :------------------: |
+|.Net Standard|Yes|2.0|
+
+
+## Features
 * Modern async http client for REST API.
 * Support of verbs : GET, POST , PUT, HEAD, DELETE, HEAD, PATCH 
 * Automatic XML and JSON deserialization
@@ -162,12 +168,6 @@ ISerializer xmlDeserializer = new TinyXmlDeserializer();
      DeserializeWith(xmlDeserializer).
      ExecuteAsync<City>();
 ```
-
-## Platform Support
-|Platform|Supported|Version|
-| ------------------- | :-----------: | :------------------: |
-|.Net Standard|Yes|2.0|
-
 
 ## License
 MIT © JGI
