@@ -2,6 +2,9 @@
 TinyHttp make easier the dialog between you API and your application.
 It hide all the complexity of communication, deserialisation ...
 
+## Nuget
+* Available on NuGet: [Tiny.Http](http://www.nuget.org/packages/Tiny.Http) [![NuGet](https://img.shields.io/nuget/v/Tiny.Http.svg?label=NuGet)](https://www.nuget.org/packages/Tiny.Http/)
+
 Features : 
 * Modern async http client for REST API.
 * Support of verbs : GET, POST , PUT, HEAD, DELETE, HEAD, PATCH 
@@ -124,9 +127,41 @@ catch (HttpException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Intern
 }
 ```
 
+## Serialization / Deserialization
 
-## Nuget
-* Available on NuGet: [Tiny.Http](http://www.nuget.org/packages/Tiny.Http) [![NuGet](https://img.shields.io/nuget/v/Tiny.Http.svg?label=NuGet)](https://www.nuget.org/packages/Tiny.Http/)
+By default the Json is used as default serializer and default deserializer.
+
+### Define xml as default serializer and deserializer.
+```cs
+ISerializer xmlSerializer = new TinyXmlSerializer();
+ISerializer xmlDeserializer = new TinyXmlDeserializer();
+
+var client = new TinyHttpClient("http://MYApi.com", xmlSerializer, xmlDeserializer);
+```
+### Custom serializer/deserializer.
+
+You create your own serializers/deserializer by implementing  ISerializer / IDeserializer
+
+### Define a specific serializer for one request
+```cs
+ISerializer xmlDeserializer = new TinyXmlDeserializer();
+ var response = await client.
+     NewRequest(HttpVerb.Post, "City").
+     AddContent(city).
+     SerializeWith(xmlDeserializer).
+     ExecuteAsync();
+```
+
+### Define a specific deserializer for one request
+```cs
+ISerializer xmlDeserializer = new TinyXmlDeserializer();
+
+ var response = await client.
+     NewRequest(HttpVerb.Get, "City").
+     AddQueryParameter("Name", cityName).
+     DeserializeWith(xmlDeserializer).
+     ExecuteAsync<City>();
+```
 
 ## Platform Support
 |Platform|Supported|Version|
