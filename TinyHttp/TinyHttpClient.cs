@@ -139,17 +139,12 @@ namespace Tiny.Http
         }
 
         internal async Task<TResult> ExecuteAsync<TResult>(
-            HttpVerb httpVerb,
-            string route,
-            Dictionary<string, string> headers,
-            Dictionary<string, string> queryParameters,
-            IEnumerable<KeyValuePair<string, string>> formsParameters,
-            ISerializer serializer,
-            IDeserializer deserializer,
-            ContentType contentType,
-            object data,
+            TinyRequest tinyRequest,
             CancellationToken cancellationToken)
         {
+            IDeserializer deserializer = tinyRequest.Deserializer;
+            ISerializer serializer = tinyRequest.Serializer;
+
             if (deserializer == null)
             {
                 deserializer = _defaultDeserializer;
@@ -160,10 +155,10 @@ namespace Tiny.Http
                 serializer = _defaultSerializer;
             }
 
-            using (var content = CreateContent(contentType, serializer, data, formsParameters))
+            using (var content = CreateContent(tinyRequest.ContentType, serializer, tinyRequest.GetContent(), tinyRequest.FormParameters, tinyRequest.MultiPartFormData))
             {
-                var requestUri = BuildRequestUri(route, queryParameters);
-                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(httpVerb), requestUri, content, deserializer, cancellationToken).ConfigureAwait(false))
+                var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
+                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, content, deserializer, cancellationToken).ConfigureAwait(false))
                 {
                     using (var stream = await ReadResponseAsync(response, cancellationToken).ConfigureAwait(false))
                     {
@@ -179,17 +174,12 @@ namespace Tiny.Http
         }
 
         internal async Task ExecuteAsync(
-            HttpVerb httpVerb,
-            string route,
-            Dictionary<string, string> headers,
-            Dictionary<string, string> queryParameters,
-            IEnumerable<KeyValuePair<string, string>> formsParameters,
-            ISerializer serializer,
-            IDeserializer deserializer,
-            ContentType contentType,
-            object data,
+            TinyRequest tinyRequest,
             CancellationToken cancellationToken)
         {
+            IDeserializer deserializer = tinyRequest.Deserializer;
+            ISerializer serializer = tinyRequest.Serializer;
+
             if (deserializer == null)
             {
                 deserializer = _defaultDeserializer;
@@ -200,10 +190,10 @@ namespace Tiny.Http
                 serializer = _defaultSerializer;
             }
 
-            using (var content = CreateContent(contentType, serializer, data, formsParameters))
+            using (var content = CreateContent(tinyRequest.ContentType, serializer, tinyRequest.GetContent(), tinyRequest.FormParameters, tinyRequest.MultiPartFormData))
             {
-                var requestUri = BuildRequestUri(route, queryParameters);
-                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(httpVerb), requestUri, content, deserializer, cancellationToken).ConfigureAwait(false))
+                var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
+                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, content, deserializer, cancellationToken).ConfigureAwait(false))
                 {
                     using (var stream = await ReadResponseAsync(response, cancellationToken).ConfigureAwait(false))
                     {
@@ -213,17 +203,12 @@ namespace Tiny.Http
         }
 
         internal async Task<byte[]> ExecuteByteArrayResultAsync(
-           HttpVerb httpVerb,
-           string route,
-           Dictionary<string, string> headers,
-           Dictionary<string, string> queryParameters,
-           IEnumerable<KeyValuePair<string, string>> formsParameters,
-           ISerializer serializer,
-           IDeserializer deserializer,
-           ContentType contentType,
-           object data,
+           TinyRequest tinyRequest,
            CancellationToken cancellationToken)
         {
+            IDeserializer deserializer = tinyRequest.Deserializer;
+            ISerializer serializer = tinyRequest.Serializer;
+
             if (deserializer == null)
             {
                 deserializer = _defaultDeserializer;
@@ -234,10 +219,10 @@ namespace Tiny.Http
                 serializer = _defaultSerializer;
             }
 
-            using (var content = CreateContent(contentType, serializer, data, formsParameters))
+            using (var content = CreateContent(tinyRequest.ContentType, serializer, tinyRequest.GetContent(), tinyRequest.FormParameters, tinyRequest.MultiPartFormData))
             {
-                var requestUri = BuildRequestUri(route, queryParameters);
-                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(httpVerb), requestUri, content, deserializer, cancellationToken).ConfigureAwait(false))
+                var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
+                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, content, deserializer, cancellationToken).ConfigureAwait(false))
                 {
                     using (var stream = await ReadResponseAsync(response, cancellationToken).ConfigureAwait(false))
                     {
@@ -246,7 +231,7 @@ namespace Tiny.Http
                             return null;
                         }
 
-                        using (MemoryStream ms = new MemoryStream())
+                        using (var ms = new MemoryStream())
                         {
                             stream.CopyTo(ms);
                             return ms.ToArray();
@@ -257,17 +242,12 @@ namespace Tiny.Http
         }
 
         internal async Task<Stream> ExecuteWithStreamResultAsync(
-           HttpVerb httpVerb,
-           string route,
-           Dictionary<string, string> headers,
-           Dictionary<string, string> queryParameters,
-           IEnumerable<KeyValuePair<string, string>> formsParameters,
-           ISerializer serializer,
-           IDeserializer deserializer,
-           ContentType contentType,
-           object data,
+           TinyRequest tinyRequest,
            CancellationToken cancellationToken)
         {
+            IDeserializer deserializer = tinyRequest.Deserializer;
+            ISerializer serializer = tinyRequest.Serializer;
+
             if (deserializer == null)
             {
                 deserializer = _defaultDeserializer;
@@ -278,10 +258,10 @@ namespace Tiny.Http
                 serializer = _defaultSerializer;
             }
 
-            using (var content = CreateContent(contentType, serializer, null, formsParameters))
+            using (var content = CreateContent(tinyRequest.ContentType, serializer, tinyRequest.GetContent(), tinyRequest.FormParameters, tinyRequest.MultiPartFormData))
             {
-                var requestUri = BuildRequestUri(route, queryParameters);
-                HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(httpVerb), requestUri, content, deserializer, cancellationToken).ConfigureAwait(false);
+                var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
+                HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, content, deserializer, cancellationToken).ConfigureAwait(false);
                 var stream = await ReadResponseAsync(response, cancellationToken).ConfigureAwait(false);
                 if (stream == null || !stream.CanRead)
                 {
@@ -296,11 +276,15 @@ namespace Tiny.Http
             ContentType contentType,
             ISerializer serializer,
             object data,
-            IEnumerable<KeyValuePair<string, string>> formsParameters)
+            IEnumerable<KeyValuePair<string, string>> formsParameters,
+            IEnumerable<MultiPartData> multiParts)
         {
             switch (contentType)
             {
                 case ContentType.Stream:
+                    var contentStream = new StreamContent(data as Stream);
+                    contentStream.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+                    return contentStream;
                 case ContentType.String:
 
                     if (data == null)
@@ -326,6 +310,51 @@ namespace Tiny.Http
                     var contentArray = new ByteArrayContent(data as byte[]);
                     contentArray.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
                     return contentArray;
+                case ContentType.MultipartFormData:
+                    var multiPartContent = new MultipartFormDataContent();
+                    foreach (var currentPart in multiParts)
+                    {
+                        if (currentPart is BytesMultiPartData currentBytesPart)
+                        {
+                            var bytesContent = new ByteArrayContent(currentBytesPart.Data);
+
+                            if (string.IsNullOrWhiteSpace(currentBytesPart.Name) && string.IsNullOrWhiteSpace(currentBytesPart.FileName))
+                            {
+                                multiPartContent.Add(bytesContent);
+                            }
+                            else if (!string.IsNullOrWhiteSpace(currentBytesPart.Name))
+                            {
+                                multiPartContent.Add(bytesContent, currentBytesPart.Name);
+                            }
+                            else if (!string.IsNullOrWhiteSpace(currentBytesPart.Name) && !string.IsNullOrWhiteSpace(currentBytesPart.FileName))
+                            {
+                                multiPartContent.Add(bytesContent, currentBytesPart.Name, currentBytesPart.FileName);
+                            }
+                        }
+                        else if (currentPart is StreamMultiPartData currentStreamPart)
+                        {
+                            var streamContent = new StreamContent(currentStreamPart.Data);
+
+                            if (string.IsNullOrWhiteSpace(currentStreamPart.Name) && string.IsNullOrWhiteSpace(currentStreamPart.FileName))
+                            {
+                                multiPartContent.Add(streamContent);
+                            }
+                            else if (!string.IsNullOrWhiteSpace(currentStreamPart.Name))
+                            {
+                                multiPartContent.Add(streamContent, currentStreamPart.Name);
+                            }
+                            else if (!string.IsNullOrWhiteSpace(currentStreamPart.Name) && !string.IsNullOrWhiteSpace(currentStreamPart.FileName))
+                            {
+                                multiPartContent.Add(streamContent, currentStreamPart.Name, currentStreamPart.FileName);
+                            }
+                        }
+                        else
+                        {
+                            throw new NotImplementedException();
+                        }
+                    }
+
+                    return multiPartContent;
                 default:
                     throw new NotImplementedException();
             }
@@ -335,7 +364,7 @@ namespace Tiny.Http
         {
             var stringBuilder = new StringBuilder(string.Concat(_serverAddress, route));
 
-            if (queryParameters.Any())
+            if (queryParameters != null && queryParameters.Any())
             {
                 var last = queryParameters.Last();
                 stringBuilder.Append("?");

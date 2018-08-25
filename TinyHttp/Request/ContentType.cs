@@ -5,6 +5,7 @@
         String,
         Forms,
         Stream,
-        ByteArray
+        ByteArray,
+        MultipartFormData,
     }
 }

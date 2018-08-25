@@ -30,5 +30,12 @@ namespace Tiny.Http
         /// <param name="stream">The stream.</param>
         /// <returns>The current request</returns>
         IContentRequest AddStreamContent(Stream stream);
+
+        /// <summary>
+        /// As a multipart data from request
+        /// </summary>
+        /// <param name="contentType">content type of the request (default value  = "multipart/form-data")</param>
+        /// <returns>The current request</returns>
+        IMultiPartFromDataRequest AsMultiPartFromDataRequest(string contentType = "multipart/form-data");
     }
 }

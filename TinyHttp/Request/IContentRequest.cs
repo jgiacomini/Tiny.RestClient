@@ -4,21 +4,10 @@
     /// Interface IContentRequest
     /// </summary>
     /// <seealso cref="Tiny.Http.ICommonResquest" />
+    /// <seealso cref="Tiny.Http.IWithNoStandardResponse" />
     /// <seealso cref="Tiny.Http.IExecutableRequest" />
-    public interface IContentRequest : ICommonResquest, IExecutableRequest
+    public interface IContentRequest : ICommonResquest, IWithNoStandardResponse, IExecutableRequest
     {
-        /// <summary>
-        /// Withes the byte array response.
-        /// </summary>
-        /// <returns>IOctectStreamRequest.</returns>
-        IOctectStreamRequest WithByteArrayResponse();
-
-        /// <summary>
-        /// Withes the stream response.
-        /// </summary>
-        /// <returns>The current request</returns>
-        IStreamRequest WithStreamResponse();
-
         /// <summary>
         /// Serializes the with.
         /// </summary>

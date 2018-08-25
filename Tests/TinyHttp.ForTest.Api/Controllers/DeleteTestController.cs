@@ -26,18 +26,11 @@ namespace Tiny.Http.ForTest.Api.Controllers
         }
 
         [HttpDelete("Stream")]
-        public Stream Stream([FromBody] Request postRequest)
+        public Stream Stream()
         {
-            byte[] byteArray = new byte[postRequest.Id];
+            var body = Request.Body;
 
-            for (int i = 0; i < byteArray.Length; i++)
-            {
-                byteArray[i] = i % 2 == 0 ? (byte)0 : (byte)1;
-            }
-
-            Stream stream = new MemoryStream(byteArray);
-
-            return stream;
+            return body;
         }
     }
 }
