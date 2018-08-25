@@ -19,26 +19,14 @@ namespace Tiny.Http
         private readonly string _route;
         private Dictionary<string, string> _headers;
         private Dictionary<string, string> _queryParameters;
+        private ITinyContent _content;
         private List<KeyValuePair<string, string>> _formParameters;
-        private List<MultiPartData> _multiPartFormData;
-        private ISerializer _serializer;
-        private IDeserializer _deserializer;
-        private object _content;
-        private byte[] _byteArray;
-        private Stream _contentStream;
-        private ContentType _contentType;
+        private MultiPartContent _multiPartFormData;
 
         internal HttpVerb HttpVerb { get => _httpVerb; }
-        internal ContentType ContentType { get => _contentType; }
-        internal Stream ContentStream { get => _contentStream; }
-        internal byte[] ByteArray { get => _byteArray; }
-        internal object Content { get => _content; }
-        internal IDeserializer Deserializer { get => _deserializer; }
-        internal ISerializer Serializer { get => _serializer; }
-        internal IEnumerable<MultiPartData> MultiPartFormData { get => _multiPartFormData; }
-        internal IEnumerable<KeyValuePair<string, string>> FormParameters { get => _formParameters; }
         internal Dictionary<string, string> QueryParameters { get => _queryParameters; }
         internal string Route { get => _route; }
+        internal ITinyContent Content { get => _content; }
 
         internal TinyRequest(HttpVerb httpVerb, string route, TinyHttpClient client)
         {
@@ -49,63 +37,27 @@ namespace Tiny.Http
         }
 
         #region Content
-
-        /// <summary>
-        /// Adds the content.
-        /// </summary>
-        /// <typeparam name="TContent">The type of the t content.</typeparam>
-        /// <param name="content">The content.</param>
-        /// <returns>IContentRequest.</returns>
-        public IContentRequest AddContent<TContent>(TContent content)
+        public IContentRequest AddContent<TContent>(TContent content, ISerializer serializer)
         {
-            _content = content;
-            _contentType = ContentType.String;
+            _content = new ToSerializeContent<TContent>(content, serializer);
             return this;
         }
 
-        /// <summary>
-        /// Adds the content of the byte array. (it will not use the serializer)
-        /// </summary>
-        /// <param name="byteArray">The byte array.</param>
-        /// <returns>IContentRequest.</returns>
-        public IContentRequest AddByteArrayContent(byte[] byteArray)
+        public IContentRequest AddByteArrayContent(byte[] byteArray, string contentType)
         {
-            _byteArray = byteArray;
-            _contentType = ContentType.ByteArray;
+            _content = new BytesContent(byteArray, contentType);
             return this;
         }
 
-        /// <summary>
-        /// Adds the content of the stream.
-        /// </summary>
-        /// <param name="stream">The stream.</param>
-        /// <returns>IContentRequest.</returns>
-        public IContentRequest AddStreamContent(Stream stream)
+        public IContentRequest AddStreamContent(Stream stream, string contentType)
         {
-            _contentStream = stream;
-            _contentType = ContentType.Stream;
+            _content = new TinyStreamContent(stream, contentType);
             return this;
         }
 
-        internal object GetContent()
-        {
-            switch (_contentType)
-            {
-                case ContentType.String:
-                    return _content;
-                case ContentType.Forms:
-                    return null;
-                case ContentType.Stream:
-                    return _contentStream;
-                case ContentType.ByteArray:
-                    return _byteArray;
-                default:
-                    throw new NotImplementedException();
-            }
-        }
         #endregion
 
-        #region Parameters
+        #region Forms Parameters
 
         /// <summary>
         /// Adds the form parameter.
@@ -118,10 +70,10 @@ namespace Tiny.Http
             if (_formParameters == null)
             {
                 _formParameters = new List<KeyValuePair<string, string>>();
+                _content = new FormParametersContent(_formParameters, null);
             }
 
             _formParameters.Add(new KeyValuePair<string, string>(key, value));
-            _contentType = ContentType.Forms;
             return this;
         }
 
@@ -135,12 +87,15 @@ namespace Tiny.Http
             if (_formParameters == null)
             {
                 _formParameters = new List<KeyValuePair<string, string>>();
+                _content = new FormParametersContent(_formParameters, null);
             }
 
             _formParameters.AddRange(items);
-            _contentType = ContentType.Forms;
             return this;
         }
+        #endregion
+
+        #region Headers
 
         /// <summary>
         /// Adds the header.
@@ -158,6 +113,9 @@ namespace Tiny.Http
             _headers.Add(key, value);
             return this;
         }
+        #endregion
+
+        #region Query Parameters
 
         /// <summary>
         /// Adds the query parameter.
@@ -230,31 +188,6 @@ namespace Tiny.Http
         }
         #endregion
 
-        #region Serializer
-
-        /// <summary>
-        /// Serializes the with.
-        /// </summary>
-        /// <param name="serializer">The serializer.</param>
-        /// <returns>The current request</returns>
-        public IRequest SerializeWith(ISerializer serializer)
-        {
-            _serializer = serializer;
-            return this;
-        }
-
-        /// <summary>
-        /// Deserializes the with.
-        /// </summary>
-        /// <param name="deserializer">The deserializer.</param>
-        /// <returns>The current request</returns>
-        public IRequest DeserializeWith(IDeserializer deserializer)
-        {
-            _deserializer = deserializer;
-            return this;
-        }
-        #endregion
-
         /// <summary>
         /// Withes the byte array response.
         /// </summary>
@@ -273,9 +206,9 @@ namespace Tiny.Http
             return this;
         }
 
-        public Task<TResult> ExecuteAsync<TResult>(CancellationToken cancellationToken)
+        public Task<TResult> ExecuteAsync<TResult>(IDeserializer deserializer, CancellationToken cancellationToken)
         {
-            return _client.ExecuteAsync<TResult>(this, cancellationToken);
+            return _client.ExecuteAsync<TResult>(this, deserializer, cancellationToken);
         }
 
         public Task ExecuteAsync(CancellationToken cancellationToken)
@@ -295,10 +228,10 @@ namespace Tiny.Http
 
         #region MultiPart
 
-        public IMultiPartFromDataRequest AsMultiPartFromDataRequest(string contentType = "multipart/form-data")
+        public IMultiPartFromDataRequest AsMultiPartFromDataRequest(string contentType)
         {
-            _multiPartFormData = new List<MultiPartData>();
-            _contentType = ContentType.MultipartFormData;
+            _multiPartFormData = new MultiPartContent(contentType);
+            _content = _multiPartFormData;
             return this;
         }
 

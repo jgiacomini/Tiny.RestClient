@@ -25,8 +25,7 @@ namespace Tiny.Http.Tests
             client = GetClientXML();
             await client.
                 NewRequest(HttpVerb.Put, "PutTest/noResponse").
-                AddContent(postRequest).
-                SerializeWith(new TinyXmlSerializer()).
+                AddContent(postRequest, new TinyXmlSerializer()).
                 ExecuteAsync();
         }
 

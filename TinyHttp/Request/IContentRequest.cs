@@ -8,18 +8,5 @@
     /// <seealso cref="Tiny.Http.IExecutableRequest" />
     public interface IContentRequest : ICommonResquest, IWithNoStandardResponse, IExecutableRequest
     {
-        /// <summary>
-        /// Serializes the with.
-        /// </summary>
-        /// <param name="serializer">The serializer.</param>
-        /// <returns>The current request</returns>
-        IRequest SerializeWith(ISerializer serializer);
-
-        /// <summary>
-        /// Deserializes the with.
-        /// </summary>
-        /// <param name="deserializer">The deserializer.</param>
-        /// <returns>The current request</returns>
-        IRequest DeserializeWith(IDeserializer deserializer);
     }
 }

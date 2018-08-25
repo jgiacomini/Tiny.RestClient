@@ -140,22 +140,15 @@ namespace Tiny.Http
 
         internal async Task<TResult> ExecuteAsync<TResult>(
             TinyRequest tinyRequest,
+            IDeserializer deserializer,
             CancellationToken cancellationToken)
         {
-            IDeserializer deserializer = tinyRequest.Deserializer;
-            ISerializer serializer = tinyRequest.Serializer;
-
             if (deserializer == null)
             {
                 deserializer = _defaultDeserializer;
             }
 
-            if (serializer == null)
-            {
-                serializer = _defaultSerializer;
-            }
-
-            using (var content = CreateContent(tinyRequest.ContentType, serializer, tinyRequest.GetContent(), tinyRequest.FormParameters, tinyRequest.MultiPartFormData))
+            using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
                 using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, content, deserializer, cancellationToken).ConfigureAwait(false))
@@ -177,23 +170,10 @@ namespace Tiny.Http
             TinyRequest tinyRequest,
             CancellationToken cancellationToken)
         {
-            IDeserializer deserializer = tinyRequest.Deserializer;
-            ISerializer serializer = tinyRequest.Serializer;
-
-            if (deserializer == null)
-            {
-                deserializer = _defaultDeserializer;
-            }
-
-            if (serializer == null)
-            {
-                serializer = _defaultSerializer;
-            }
-
-            using (var content = CreateContent(tinyRequest.ContentType, serializer, tinyRequest.GetContent(), tinyRequest.FormParameters, tinyRequest.MultiPartFormData))
+            using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, content, deserializer, cancellationToken).ConfigureAwait(false))
+                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, content, null, cancellationToken).ConfigureAwait(false))
                 {
                     using (var stream = await ReadResponseAsync(response, cancellationToken).ConfigureAwait(false))
                     {
@@ -206,23 +186,10 @@ namespace Tiny.Http
            TinyRequest tinyRequest,
            CancellationToken cancellationToken)
         {
-            IDeserializer deserializer = tinyRequest.Deserializer;
-            ISerializer serializer = tinyRequest.Serializer;
-
-            if (deserializer == null)
-            {
-                deserializer = _defaultDeserializer;
-            }
-
-            if (serializer == null)
-            {
-                serializer = _defaultSerializer;
-            }
-
-            using (var content = CreateContent(tinyRequest.ContentType, serializer, tinyRequest.GetContent(), tinyRequest.FormParameters, tinyRequest.MultiPartFormData))
+            using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, content, deserializer, cancellationToken).ConfigureAwait(false))
+                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, content, null, cancellationToken).ConfigureAwait(false))
                 {
                     using (var stream = await ReadResponseAsync(response, cancellationToken).ConfigureAwait(false))
                     {
@@ -245,23 +212,10 @@ namespace Tiny.Http
            TinyRequest tinyRequest,
            CancellationToken cancellationToken)
         {
-            IDeserializer deserializer = tinyRequest.Deserializer;
-            ISerializer serializer = tinyRequest.Serializer;
-
-            if (deserializer == null)
-            {
-                deserializer = _defaultDeserializer;
-            }
-
-            if (serializer == null)
-            {
-                serializer = _defaultSerializer;
-            }
-
-            using (var content = CreateContent(tinyRequest.ContentType, serializer, tinyRequest.GetContent(), tinyRequest.FormParameters, tinyRequest.MultiPartFormData))
+            using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, content, deserializer, cancellationToken).ConfigureAwait(false);
+                HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, content, null, cancellationToken).ConfigureAwait(false);
                 var stream = await ReadResponseAsync(response, cancellationToken).ConfigureAwait(false);
                 if (stream == null || !stream.CanRead)
                 {
@@ -272,92 +226,109 @@ namespace Tiny.Http
             }
         }
 
-        private HttpContent CreateContent(
-            ContentType contentType,
-            ISerializer serializer,
-            object data,
-            IEnumerable<KeyValuePair<string, string>> formsParameters,
-            IEnumerable<MultiPartData> multiParts)
+        private HttpContent CreateContent(ITinyContent content)
         {
-            switch (contentType)
+            if (content == null)
             {
-                case ContentType.Stream:
-                    var contentStream = new StreamContent(data as Stream);
-                    contentStream.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-                    return contentStream;
-                case ContentType.String:
-
-                    if (data == null)
-                    {
-                        return null;
-                    }
-
-                    var content = new StringContent(serializer.Serialize(data, _encoding), _encoding);
-                    if (_defaultSerializer.HasMediaType)
-                    {
-                        content.Headers.ContentType = new MediaTypeHeaderValue(_defaultSerializer.MediaType);
-                    }
-
-                    return content;
-                case ContentType.Forms:
-                    return new FormUrlEncodedContent(formsParameters);
-                case ContentType.ByteArray:
-                    if (data == null)
-                    {
-                        return null;
-                    }
-
-                    var contentArray = new ByteArrayContent(data as byte[]);
-                    contentArray.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-                    return contentArray;
-                case ContentType.MultipartFormData:
-                    var multiPartContent = new MultipartFormDataContent();
-                    foreach (var currentPart in multiParts)
-                    {
-                        if (currentPart is BytesMultiPartData currentBytesPart)
-                        {
-                            var bytesContent = new ByteArrayContent(currentBytesPart.Data);
-
-                            if (string.IsNullOrWhiteSpace(currentBytesPart.Name) && string.IsNullOrWhiteSpace(currentBytesPart.FileName))
-                            {
-                                multiPartContent.Add(bytesContent);
-                            }
-                            else if (!string.IsNullOrWhiteSpace(currentBytesPart.Name))
-                            {
-                                multiPartContent.Add(bytesContent, currentBytesPart.Name);
-                            }
-                            else if (!string.IsNullOrWhiteSpace(currentBytesPart.Name) && !string.IsNullOrWhiteSpace(currentBytesPart.FileName))
-                            {
-                                multiPartContent.Add(bytesContent, currentBytesPart.Name, currentBytesPart.FileName);
-                            }
-                        }
-                        else if (currentPart is StreamMultiPartData currentStreamPart)
-                        {
-                            var streamContent = new StreamContent(currentStreamPart.Data);
-
-                            if (string.IsNullOrWhiteSpace(currentStreamPart.Name) && string.IsNullOrWhiteSpace(currentStreamPart.FileName))
-                            {
-                                multiPartContent.Add(streamContent);
-                            }
-                            else if (!string.IsNullOrWhiteSpace(currentStreamPart.Name))
-                            {
-                                multiPartContent.Add(streamContent, currentStreamPart.Name);
-                            }
-                            else if (!string.IsNullOrWhiteSpace(currentStreamPart.Name) && !string.IsNullOrWhiteSpace(currentStreamPart.FileName))
-                            {
-                                multiPartContent.Add(streamContent, currentStreamPart.Name, currentStreamPart.FileName);
-                            }
-                        }
-                        else
-                        {
-                            throw new NotImplementedException();
-                        }
-                    }
-
-                    return multiPartContent;
-                default:
-                    throw new NotImplementedException();
+                return null;
             }
+
+            if (content is TinyStreamContent currentContent)
+            {
+                var contentStream = new StreamContent(currentContent.Data);
+                SetContentType(currentContent.ContentType, contentStream);
+                return contentStream;
+            }
+
+            if (content is FormParametersContent formContent)
+            {
+                return new FormUrlEncodedContent(formContent.Data);
+            }
+
+            if (content is BytesContent bytesContent)
+            {
+                var contentArray = new ByteArrayContent(bytesContent.Data);
+                SetContentType(bytesContent.ContentType, contentArray);
+                return contentArray;
+            }
+
+            if (content is IToSerializeContent toSerializeContent)
+            {
+                var serializedString = toSerializeContent.GetSerializedStream(_defaultSerializer, _encoding);
+                if (serializedString == null)
+                {
+                    return null;
+                }
+
+                var stringContent = new StringContent(serializedString, _encoding);
+                if (_defaultSerializer.HasMediaType)
+                {
+                    stringContent.Headers.ContentType = new MediaTypeHeaderValue(_defaultSerializer.MediaType);
+                }
+
+                return stringContent;
+            }
+
+            if (content is MultiPartContent multiParts)
+            {
+                var multiPartContent = new MultipartFormDataContent();
+                SetContentType(multiParts.ContentType, multiPartContent);
+                foreach (var currentPart in multiParts)
+                {
+                    if (currentPart is BytesMultiPartData currentBytesPart)
+                    {
+                        var bytesMultiContent = new ByteArrayContent(currentBytesPart.Data);
+                        SetContentType(currentBytesPart.ContentType, bytesMultiContent);
+
+                        if (string.IsNullOrWhiteSpace(currentBytesPart.Name) && string.IsNullOrWhiteSpace(currentBytesPart.FileName))
+                        {
+                            multiPartContent.Add(bytesMultiContent);
+                        }
+                        else if (!string.IsNullOrWhiteSpace(currentBytesPart.Name))
+                        {
+                            multiPartContent.Add(bytesMultiContent, currentBytesPart.Name);
+                        }
+                        else if (!string.IsNullOrWhiteSpace(currentBytesPart.Name) && !string.IsNullOrWhiteSpace(currentBytesPart.FileName))
+                        {
+                            multiPartContent.Add(bytesMultiContent, currentBytesPart.Name, currentBytesPart.FileName);
+                        }
+                    }
+                    else if (currentPart is StreamMultiPartData currentStreamPart)
+                    {
+                        var streamContent = new StreamContent(currentStreamPart.Data);
+                        SetContentType(currentStreamPart.ContentType, streamContent);
+
+                        if (string.IsNullOrWhiteSpace(currentStreamPart.Name) && string.IsNullOrWhiteSpace(currentStreamPart.FileName))
+                        {
+                            multiPartContent.Add(streamContent);
+                        }
+                        else if (!string.IsNullOrWhiteSpace(currentStreamPart.Name))
+                        {
+                            multiPartContent.Add(streamContent, currentStreamPart.Name);
+                        }
+                        else if (!string.IsNullOrWhiteSpace(currentStreamPart.Name) && !string.IsNullOrWhiteSpace(currentStreamPart.FileName))
+                        {
+                            multiPartContent.Add(streamContent, currentStreamPart.Name, currentStreamPart.FileName);
+                        }
+                    }
+                    else
+                    {
+                        throw new NotImplementedException();
+                    }
+                }
+            }
+
+            throw new NotImplementedException($"GetContent for '{content.GetType().Name}' not implemented");
+        }
+
+        private void SetContentType(string contentType, HttpContent content)
+        {
+            if (contentType == null)
+            {
+                return;
+            }
+
+            content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
         }
 
         private Uri BuildRequestUri(string route, Dictionary<string, string> queryParameters)
@@ -387,7 +358,7 @@ namespace Tiny.Http
             {
                 using (var request = new HttpRequestMessage(httpMethod, uri))
                 {
-                    if (deserializer.HasMediaType)
+                    if (deserializer != null && deserializer.HasMediaType)
                     {
                         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(deserializer.MediaType));
                     }

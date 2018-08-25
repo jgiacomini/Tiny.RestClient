@@ -2,7 +2,7 @@
 
 namespace Tiny.Http
 {
-    internal class StreamMultiPartData : MultiPartData
+    internal class StreamMultiPartData : MultiPartData, ITinyContent
     {
         public StreamMultiPartData(Stream data, string name, string fileName, string contentType)
         {

@@ -14,22 +14,25 @@ namespace Tiny.Http
         /// </summary>
         /// <typeparam name="TContent">The type of the t content.</typeparam>
         /// <param name="content">The content.</param>
+        /// <param name="serializer">Override the default serializer setted on the client.</param>
         /// <returns>The current request</returns>
-        IContentRequest AddContent<TContent>(TContent content);
+        IContentRequest AddContent<TContent>(TContent content, ISerializer serializer = null);
 
         /// <summary>
         /// Adds the content of the byte array.
         /// </summary>
         /// <param name="byteArray">The byte array.</param>
+        /// <param name="contentType">The Content type</param>
         /// <returns>The current request</returns>
-        IContentRequest AddByteArrayContent(byte[] byteArray);
+        IContentRequest AddByteArrayContent(byte[] byteArray, string contentType = "application/octet-stream");
 
         /// <summary>
         /// Adds the content of the stream.
         /// </summary>
         /// <param name="stream">The stream.</param>
+        /// <param name="contentType">The Content type</param>
         /// <returns>The current request</returns>
-        IContentRequest AddStreamContent(Stream stream);
+        IContentRequest AddStreamContent(Stream stream, string contentType = "application/octet-stream");
 
         /// <summary>
         /// As a multipart data from request
