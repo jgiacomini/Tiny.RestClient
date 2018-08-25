@@ -155,8 +155,7 @@ You create your own serializers/deserializer by implementing  ISerializer / IDes
 ISerializer xmlDeserializer = new TinyXmlDeserializer();
  var response = await client.
      NewRequest(HttpVerb.Post, "City").
-     AddContent(city).
-     SerializeWith(xmlDeserializer).
+     AddContent(city, xmlDeserializer).
      ExecuteAsync();
 ```
 
@@ -167,8 +166,7 @@ ISerializer xmlDeserializer = new TinyXmlDeserializer();
  var response = await client.
      NewRequest(HttpVerb.Get, "City").
      AddQueryParameter("Name", cityName).
-     DeserializeWith(xmlDeserializer).
-     ExecuteAsync<City>();
+     ExecuteAsync<City>(xmlDeserializer);
 ```
 
 ## Logging events
