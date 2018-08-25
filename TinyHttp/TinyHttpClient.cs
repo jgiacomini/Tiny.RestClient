@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using HttpStreamContent = System.Net.Http.StreamContent;
 
 namespace Tiny.Http
 {
@@ -233,16 +234,11 @@ namespace Tiny.Http
                 return null;
             }
 
-            if (content is TinyStreamContent currentContent)
+            if (content is StreamContent currentContent)
             {
-                var contentStream = new StreamContent(currentContent.Data);
+                var contentStream = new HttpStreamContent(currentContent.Data);
                 SetContentType(currentContent.ContentType, contentStream);
                 return contentStream;
-            }
-
-            if (content is FormParametersContent formContent)
-            {
-                return new FormUrlEncodedContent(formContent.Data);
             }
 
             if (content is BytesContent bytesContent)
@@ -252,21 +248,14 @@ namespace Tiny.Http
                 return contentArray;
             }
 
+            if (content is FormParametersContent formContent)
+            {
+                return new FormUrlEncodedContent(formContent.Data);
+            }
+
             if (content is IToSerializeContent toSerializeContent)
             {
-                var serializedString = toSerializeContent.GetSerializedStream(_defaultSerializer, _encoding);
-                if (serializedString == null)
-                {
-                    return null;
-                }
-
-                var stringContent = new StringContent(serializedString, _encoding);
-                if (_defaultSerializer.HasMediaType)
-                {
-                    stringContent.Headers.ContentType = new MediaTypeHeaderValue(_defaultSerializer.MediaType);
-                }
-
-                return stringContent;
+                return GetSerializedContent(toSerializeContent);
             }
 
             if (content is MultiPartContent multiParts)
@@ -279,46 +268,60 @@ namespace Tiny.Http
                     {
                         var bytesMultiContent = new ByteArrayContent(currentBytesPart.Data);
                         SetContentType(currentBytesPart.ContentType, bytesMultiContent);
-
-                        if (string.IsNullOrWhiteSpace(currentBytesPart.Name) && string.IsNullOrWhiteSpace(currentBytesPart.FileName))
-                        {
-                            multiPartContent.Add(bytesMultiContent);
-                        }
-                        else if (!string.IsNullOrWhiteSpace(currentBytesPart.Name))
-                        {
-                            multiPartContent.Add(bytesMultiContent, currentBytesPart.Name);
-                        }
-                        else if (!string.IsNullOrWhiteSpace(currentBytesPart.Name) && !string.IsNullOrWhiteSpace(currentBytesPart.FileName))
-                        {
-                            multiPartContent.Add(bytesMultiContent, currentBytesPart.Name, currentBytesPart.FileName);
-                        }
+                        AddMulitPartContent(currentPart, bytesMultiContent, multiPartContent);
                     }
                     else if (currentPart is StreamMultiPartData currentStreamPart)
                     {
-                        var streamContent = new StreamContent(currentStreamPart.Data);
+                        var streamContent = new HttpStreamContent(currentStreamPart.Data);
                         SetContentType(currentStreamPart.ContentType, streamContent);
-
-                        if (string.IsNullOrWhiteSpace(currentStreamPart.Name) && string.IsNullOrWhiteSpace(currentStreamPart.FileName))
-                        {
-                            multiPartContent.Add(streamContent);
-                        }
-                        else if (!string.IsNullOrWhiteSpace(currentStreamPart.Name))
-                        {
-                            multiPartContent.Add(streamContent, currentStreamPart.Name);
-                        }
-                        else if (!string.IsNullOrWhiteSpace(currentStreamPart.Name) && !string.IsNullOrWhiteSpace(currentStreamPart.FileName))
-                        {
-                            multiPartContent.Add(streamContent, currentStreamPart.Name, currentStreamPart.FileName);
-                        }
+                        AddMulitPartContent(currentPart, streamContent, multiPartContent);
+                    }
+                    else if (currentPart is IToSerializeContent toSerializeMultiContent)
+                    {
+                        var stringContent = GetSerializedContent(toSerializeMultiContent);
+                        AddMulitPartContent(currentPart, stringContent, multiPartContent);
                     }
                     else
                     {
-                        throw new NotImplementedException();
+                        throw new NotImplementedException($"GetContent multipart for '{currentPart.GetType().Name}' not implemented");
                     }
                 }
             }
 
             throw new NotImplementedException($"GetContent for '{content.GetType().Name}' not implemented");
+        }
+
+        private StringContent GetSerializedContent(IToSerializeContent content)
+        {
+            var serializedString = content.GetSerializedStream(_defaultSerializer, _encoding);
+            if (serializedString == null)
+            {
+                return null;
+            }
+
+            var stringContent = new StringContent(serializedString, _encoding);
+            if (_defaultSerializer.HasMediaType)
+            {
+                stringContent.Headers.ContentType = new MediaTypeHeaderValue(_defaultSerializer.MediaType);
+            }
+
+            return stringContent;
+        }
+
+        private void AddMulitPartContent(MultiPartData currentContent, HttpContent content, MultipartFormDataContent multipartFormDataContent)
+        {
+            if (string.IsNullOrWhiteSpace(currentContent.Name) && string.IsNullOrWhiteSpace(currentContent.FileName))
+            {
+                multipartFormDataContent.Add(content);
+            }
+            else if (!string.IsNullOrWhiteSpace(currentContent.Name))
+            {
+                multipartFormDataContent.Add(content, currentContent.Name);
+            }
+            else if (!string.IsNullOrWhiteSpace(currentContent.Name) && !string.IsNullOrWhiteSpace(currentContent.FileName))
+            {
+                multipartFormDataContent.Add(content, currentContent.Name, currentContent.FileName);
+            }
         }
 
         private void SetContentType(string contentType, HttpContent content)

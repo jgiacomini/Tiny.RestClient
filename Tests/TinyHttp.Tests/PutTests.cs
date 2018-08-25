@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 using System.Threading.Tasks;
 using Tiny.Http.Tests.Models;
 
@@ -53,6 +54,14 @@ namespace Tiny.Http.Tests
 
             Assert.AreEqual(postRequest.Id, response.Id);
             Assert.AreEqual(postRequest.Data, response.ResponseData);
+
+            await client.
+              NewRequest(HttpVerb.Put, "PutTest/complex").
+              AsMultiPartFromDataRequest().
+              AddByteArray(new byte[42]).
+              AddStream(new MemoryStream()).
+              AddContent<Request>(postRequest).
+              ExecuteAsync<bool>();
         }
     }
 }

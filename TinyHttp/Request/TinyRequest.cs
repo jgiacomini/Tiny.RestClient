@@ -51,7 +51,7 @@ namespace Tiny.Http
 
         public IContentRequest AddStreamContent(Stream stream, string contentType)
         {
-            _content = new TinyStreamContent(stream, contentType);
+            _content = new StreamContent(stream, contentType);
             return this;
         }
 
@@ -235,7 +235,7 @@ namespace Tiny.Http
             return this;
         }
 
-        IMultiPartFromDataRequest IMultiPartFromDataRequest.AddByteArray(byte[] data, string name, string fileName, string contentType)
+        IMultiPartFromDataExecutableRequest IMultiPartFromDataRequest.AddByteArray(byte[] data, string name, string fileName, string contentType)
         {
             if (data == null)
             {
@@ -247,7 +247,7 @@ namespace Tiny.Http
             return this;
         }
 
-        IMultiPartFromDataRequest IMultiPartFromDataRequest.AddStream(Stream data, string name, string fileName, string contentType)
+        IMultiPartFromDataExecutableRequest IMultiPartFromDataRequest.AddStream(Stream data, string name, string fileName, string contentType)
         {
             if (data == null)
             {
@@ -259,29 +259,18 @@ namespace Tiny.Http
             return this;
         }
 
-        IMultiPartFromDataExecutableRequest IMultiPartFromDataExecutableRequest.AddByteArray(byte[] data, string name, string fileName, string contentType)
+        IMultiPartFromDataExecutableRequest IMultiPartFromDataRequest.AddContent<TContent>(TContent content, string name, string fileName, ISerializer serializer)
         {
-            if (data == null)
+            if (content == default)
             {
-                throw new ArgumentNullException(nameof(data));
+                throw new ArgumentNullException(nameof(content));
             }
 
-            _multiPartFormData.Add(new BytesMultiPartData(data, name, fileName, contentType));
+            _multiPartFormData.Add(new ToSerializeMultiPartData<TContent>(content, name, fileName, serializer));
 
             return this;
         }
 
-        IMultiPartFromDataExecutableRequest IMultiPartFromDataExecutableRequest.AddStream(Stream data, string name, string fileName, string contentType)
-        {
-            if (data == null)
-            {
-                throw new ArgumentNullException(nameof(data));
-            }
-
-            _multiPartFormData.Add(new StreamMultiPartData(data, name, fileName, contentType));
-
-            return this;
-        }
         #endregion
     }
 }
