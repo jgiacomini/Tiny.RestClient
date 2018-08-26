@@ -43,26 +43,12 @@ namespace Tiny.Http
         /// <inheritdoc/>
         public T Deserialize<T>(Stream stream, Encoding encoding)
         {
-            try
+            using (var sr = new StreamReader(stream, encoding))
             {
-                using (var sr = new StreamReader(stream, encoding))
+                using (var jtr = new JsonTextReader(sr))
                 {
-                    using (var jtr = new JsonTextReader(sr))
-                    {
-                        return JsonSerializer.Deserialize<T>(jtr);
-                    }
+                    return JsonSerializer.Deserialize<T>(jtr);
                 }
-            }
-            catch (Exception ex)
-            {
-                string data = null;
-                stream.Position = 0;
-                using (StreamReader reader = new StreamReader(stream, encoding))
-                {
-                    data = reader.ReadToEnd();
-                }
-
-                throw new DeserializeException("Error during deserialization", ex, data);
             }
         }
 

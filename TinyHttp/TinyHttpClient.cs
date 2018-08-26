@@ -44,7 +44,7 @@ namespace Tiny.Http
         public event EventHandler<FailedToGetResponseEventArgs> FailedToGetResponse;
         #endregion
 
-        #region constructors
+        #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TinyHttpClient" /> class.
@@ -94,6 +94,20 @@ namespace Tiny.Http
                 _serverAddress += "/";
             }
 
+            var formatters = new List<IFormatter>();
+            formatters.Add(_defaultFormatter);
+
+            if (!(_defaultFormatter is JsonFormatter))
+            {
+                formatters.Add(new JsonFormatter());
+            }
+
+            if (!(_defaultFormatter is XmlFormatter))
+            {
+                formatters.Add(new XmlFormatter());
+            }
+
+            Formatters = formatters.ToArray();
             _encoding = Encoding.UTF8;
         }
         #endregion
@@ -123,6 +137,22 @@ namespace Tiny.Http
                 _encoding = value ?? throw new ArgumentNullException(nameof(Encoding));
             }
         }
+
+        /// <summary>
+        /// Gets the list of formatter used to serialize and deserialize data
+        /// </summary>
+        public IFormatter DefaultFormatter
+        {
+            get
+            {
+                return _defaultFormatter;
+            }
+        }
+
+        /// <summary>
+        /// Gets the list of formatter used to serialize and deserialize data
+        /// </summary>
+        public IEnumerable<IFormatter> Formatters { get; }
 
         /// <summary>
         /// Create a new request.
@@ -229,11 +259,6 @@ namespace Tiny.Http
             IFormatter formatter,
             CancellationToken cancellationToken)
         {
-            if (formatter == null)
-            {
-                formatter = _defaultFormatter;
-            }
-
             using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
@@ -246,7 +271,46 @@ namespace Tiny.Http
                             return default;
                         }
 
-                        return formatter.Deserialize<TResult>(stream, _encoding);
+                        if (formatter == null)
+                        {
+                            if (response.Content.Headers.ContentType.MediaType != null)
+                            {
+                                // TODO : optimize the seach of formatter ?
+                                // Try to find best formatter
+                                var formatterFinded = Formatters.FirstOrDefault(f => f.SupportedMediaTypes.Any(m => m == response.Content.Headers.ContentType.MediaType.ToLower()));
+                                formatter = formatterFinded;
+                            }
+
+                            if (formatter == null)
+                            {
+                                formatter = _defaultFormatter;
+                            }
+                        }
+
+                        try
+                        {
+                            return formatter.Deserialize<TResult>(stream, _encoding);
+                        }
+                        catch (Exception ex)
+                        {
+                            string data = null;
+                            try
+                            {
+                                if (stream.CanRead)
+                                {
+                                    stream.Position = 0;
+                                    using (var reader = new StreamReader(stream, _encoding))
+                                    {
+                                        data = reader.ReadToEnd();
+                                    }
+                                }
+                            }
+                            catch (Exception)
+                            {
+                            }
+
+                            throw new DeserializeException("Error during deserialization", ex, data);
+                        }
                     }
                 }
             }
@@ -462,10 +526,12 @@ namespace Tiny.Http
             {
                 using (var request = new HttpRequestMessage(httpMethod, uri))
                 {
-                    if (deserializer != null)
+                    if (deserializer == null)
                     {
-                        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(deserializer.DefaultMediaType));
+                        deserializer = _defaultFormatter;
                     }
+
+                    request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(deserializer.DefaultMediaType));
 
                     // TODO : add something to customize that stuff
                     request.Headers.AcceptLanguage.Add(new StringWithQualityHeaderValue(CultureInfo.CurrentCulture.TwoLetterISOLanguageName));

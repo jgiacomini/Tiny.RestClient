@@ -28,21 +28,10 @@ namespace Tiny.Http
         /// <inheritdoc/>
         public T Deserialize<T>(Stream stream, Encoding encoding)
         {
-            try
+            using (var reader = new StreamReader(stream, encoding))
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(T));
-                return (T)serializer.Deserialize(stream);
-            }
-            catch (Exception ex)
-            {
-                string data = null;
-                stream.Position = 0;
-                using (StreamReader reader = new StreamReader(stream, encoding))
-                {
-                    data = reader.ReadToEnd();
-                }
-
-                throw new DeserializeException("Error during deserialization", ex, data);
+                var serializer = new XmlSerializer(typeof(T));
+                return (T)serializer.Deserialize(reader);
             }
         }
 
