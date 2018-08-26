@@ -141,7 +141,7 @@ await client.PostRequest("File/Add").
 ```cs
 // Read byte array response         
 byte[] byteArray = await client.
-              GetRequest("Eile").
+              GetRequest("File").
               ExecuteAsync();
 
 // Read byte array as content
