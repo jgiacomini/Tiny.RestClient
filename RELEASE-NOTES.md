@@ -2,6 +2,7 @@
 
 ## 1.1.0
 * Now the formatter have multiple accept types
+* Auto detect of which formatter to use
 * Add support of multi-part form data
 
 ## 1.0.1
