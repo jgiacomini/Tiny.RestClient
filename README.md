@@ -194,7 +194,10 @@ catch (HttpException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Intern
 
 ## Serialization / Deserialization
 
-By default the Json is used as default serializer and default deserializer.
+By default the Json is used as default Formatter.
+A Formatter will be used to serialize or deserialize streams.
+
+The XmlFormatter by default in formatters list.
 
 ### Define xml as default serializer and deserializer.
 ```cs
