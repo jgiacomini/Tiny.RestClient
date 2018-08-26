@@ -166,7 +166,7 @@ string cityName = "Paris";
 try
 { 
    var response = await client.
-     NewRequest(HttpVerb.Get, "City").
+     GetRequest("City").
      AddQueryParameter("Name", cityName).
      ExecuteAsync<City>();
 }
