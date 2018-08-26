@@ -73,11 +73,57 @@ var response = await client.
 // POST http://MyAPI.com/api/City/Add with from url encoded content
 ```
 
-#### Streams and bytes array
+## multi-part form data
+
+```cs
+// With 2 json content
+var city1 = new City() { Name = "Paris" , Country = "France"};
+var city2 = new City() { Name = "Ajaccio" , Country = "France"};
+var response = await client.NewRequest(HttpVerb.Post, "City").
+await client.NewRequest(HttpVerb.Post, "MultiPart/Test").
+              AsMultiPartFromDataRequest().
+              AddContent<City>(city1, "city1", "city1.json").
+              AddContent<City>(city2, "city2", "city2.json").
+              ExecuteAsync();
+
+
+// With 2 byte array content
+byte[] byteArray1 = ...
+byte[] byteArray2 = ...           
+              
+await client.NewRequest(HttpVerb.Post, "MultiPart/Test").
+              AsMultiPartFromDataRequest().
+              AddByteArray(byteArray1, "request", "request2.bin").
+              AddByteArray(byteArray2, "request", "request2.bin")
+              ExecuteAsync();
+  
+
+// With 2 streams content        
+Stream1 stream1 = ...
+Stream stream2 = ...         
+await client.NewRequest(HttpVerb.Post, "MultiPart/Test").
+              AsMultiPartFromDataRequest().
+              AddStream(stream1, "request", "request2.bin").
+              AddStream(stream2, "request", "request2.bin")
+              ExecuteAsync();
+              
+
+// With mixed content                  
+await client.NewRequest(HttpVerb.Post, "MultiPart/Test").
+              AsMultiPartFromDataRequest().
+              AddContent<City>(city1, "city1", "city1.json").
+              AddByteArray(byteArray1, "request", "request2.bin").
+              AddStream(stream2, "request", "request2.bin")
+              ExecuteAsync();
+              
+```
+
+
+## Streams and bytes array
 You can use as content : streams or byte arrays.
 If you use these methods no serializer will be used.
 
-#### Streams
+### Streams
 ```cs
 
 // Read stream response
@@ -91,7 +137,7 @@ await client.
             ExecuteAsync();
 ```
 
-#### Bytes array
+### Bytes array
 ```cs
 // Read byte array response         
 byte[] byteArray = await client.
