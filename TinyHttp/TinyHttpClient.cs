@@ -196,6 +196,29 @@ namespace Tiny.Http
         }
 
         /// <summary>
+        /// Create a new PATCH request.
+        /// </summary>
+        /// <param name="content">The content of the request</param>
+        /// <param name="route">The route.</param>
+        /// <param name="serializer">The serializer use to serialize it</param>
+        /// <returns>The new request.</returns>
+        public IContentRequest PatchRequest<TContent>(TContent content, string route = null, ISerializer serializer = null)
+        {
+            return new TinyRequest(HttpVerb.Patch, route, this).
+                AddContent<TContent>(content, serializer);
+        }
+
+        /// <summary>
+        /// Create a new PATCH request.
+        /// </summary>
+        /// <param name="route">The route.</param>
+        /// <returns>The new request.</returns>
+        public IRequest PatchRequest(string route = null)
+        {
+            return new TinyRequest(HttpVerb.Patch, route, this);
+        }
+
+        /// <summary>
         /// Create a new DELETE request.
         /// </summary>
         /// <param name="route">The route.</param>
