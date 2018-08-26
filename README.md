@@ -233,7 +233,6 @@ public class XmlFormatter : IFormatter
 
    public string DefaultMediaType => "application/xml";
 
-   /// <inheritdoc/>
    public IEnumerable<string> SupportedMediaTypes
    {
       get
