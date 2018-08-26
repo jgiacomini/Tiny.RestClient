@@ -19,7 +19,7 @@ namespace Tiny.Http.Tests
             var client = GetClient();
 
             var data = await client.
-              NewRequest(HttpVerb.Post, "MultiPart/Test").
+              PostRequest("MultiPart/Test").
               AsMultiPartFromDataRequest().
               AddByteArray(new byte[42], "bytesArray", "bytesArray.bin").
               AddStream(new MemoryStream(new byte[42]), "stream", "stream.bin").

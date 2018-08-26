@@ -139,6 +139,95 @@ namespace Tiny.Http
             return new TinyRequest(verb, route, this);
         }
 
+        /// <summary>
+        /// Create a new GET request.
+        /// </summary>
+        /// <param name="route">The route.</param>
+        /// <returns>The new request.</returns>
+        public IRequest GetRequest(string route = null)
+        {
+            return new TinyRequest(HttpVerb.Get, route, this);
+        }
+
+        /// <summary>
+        /// Create a new POST request.
+        /// </summary>
+        /// <param name="route">The route.</param>
+        /// <returns>The new request.</returns>
+        public IRequest PostRequest(string route = null)
+        {
+            return new TinyRequest(HttpVerb.Post, route, this);
+        }
+
+        /// <summary>
+         /// Create a new POST request.
+         /// </summary>
+         /// <param name="content">The content of the request</param>
+         /// <param name="route">The route.</param>
+         /// <param name="serializer">The serializer use to serialize it</param>
+         /// <returns>The new request.</returns>
+        public IContentRequest PostRequest<TContent>(TContent content, string route = null, ISerializer serializer = null)
+        {
+            return new TinyRequest(HttpVerb.Post, route, this).
+                AddContent<TContent>(content, serializer);
+        }
+
+        /// <summary>
+        /// Create a new PUT request.
+        /// </summary>
+        /// <param name="content">The content of the request</param>
+        /// <param name="route">The route.</param>
+        /// <param name="serializer">The serializer use to serialize it</param>
+        /// <returns>The new request.</returns>
+        public IContentRequest PutRequest<TContent>(TContent content, string route = null, ISerializer serializer = null)
+        {
+            return new TinyRequest(HttpVerb.Put, route, this).
+                AddContent<TContent>(content, serializer);
+        }
+
+        /// <summary>
+        /// Create a new PUT request.
+        /// </summary>
+        /// <param name="route">The route.</param>
+        /// <returns>The new request.</returns>
+        public IRequest PutRequest(string route = null)
+        {
+            return new TinyRequest(HttpVerb.Put, route, this);
+        }
+
+        /// <summary>
+        /// Create a new PATCH request.
+        /// </summary>
+        /// <param name="content">The content of the request</param>
+        /// <param name="route">The route.</param>
+        /// <param name="serializer">The serializer use to serialize it</param>
+        /// <returns>The new request.</returns>
+        public IContentRequest PatchRequest<TContent>(TContent content, string route = null, ISerializer serializer = null)
+        {
+            return new TinyRequest(HttpVerb.Patch, route, this).
+                AddContent<TContent>(content, serializer);
+        }
+
+        /// <summary>
+        /// Create a new PATCH request.
+        /// </summary>
+        /// <param name="route">The route.</param>
+        /// <returns>The new request.</returns>
+        public IRequest PatchRequest(string route = null)
+        {
+            return new TinyRequest(HttpVerb.Patch, route, this);
+        }
+
+        /// <summary>
+        /// Create a new DELETE request.
+        /// </summary>
+        /// <param name="route">The route.</param>
+        /// <returns>The new request.</returns>
+        public IRequest DeleteRequest(string route = null)
+        {
+            return new TinyRequest(HttpVerb.Delete, route, this);
+        }
+
         internal async Task<TResult> ExecuteAsync<TResult>(
             TinyRequest tinyRequest,
             IDeserializer deserializer,
@@ -302,6 +391,13 @@ namespace Tiny.Http
 
         private StringContent GetSerializedContent(IToSerializeContent content)
         {
+            ISerializer serializer = _defaultSerializer;
+
+            if (content.Serializer != null)
+            {
+                serializer = content.Serializer;
+            }
+
             var serializedString = content.GetSerializedStream(_defaultSerializer, _encoding);
             if (serializedString == null)
             {
@@ -309,7 +405,7 @@ namespace Tiny.Http
             }
 
             var stringContent = new StringContent(serializedString, _encoding);
-            if (_defaultSerializer.HasMediaType)
+            if (serializer.HasMediaType)
             {
                 stringContent.Headers.ContentType = new MediaTypeHeaderValue(_defaultSerializer.MediaType);
             }

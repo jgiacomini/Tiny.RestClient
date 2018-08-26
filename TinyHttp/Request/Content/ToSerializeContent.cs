@@ -13,11 +13,6 @@ namespace Tiny.Http
 
         public string GetSerializedStream(ISerializer serializer, Encoding encoding)
         {
-            if (Serializer != null)
-            {
-                serializer = Serializer;
-            }
-
             return serializer.Serialize<T>(Data, encoding);
         }
 

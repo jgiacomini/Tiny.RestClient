@@ -11,7 +11,7 @@ namespace Tiny.Http.Tests
         [TestMethod]
         public async Task PutWithoutResponse()
         {
-            var postRequest = new Request
+            var request = new Request
             {
                 Id = 42,
                 Data = "DATA"
@@ -19,41 +19,36 @@ namespace Tiny.Http.Tests
 
             var client = GetClient();
             await client.
-                NewRequest(HttpVerb.Put, "PutTest/noResponse").
-                AddContent(postRequest).
+                PutRequest(request, "PutTest/noResponse").
                 ExecuteAsync();
 
-            client = GetClientXML();
             await client.
-                NewRequest(HttpVerb.Put, "PutTest/noResponse").
-                AddContent(postRequest, new TinyXmlSerializer()).
+                PutRequest(request, "PutTest/noResponse", new TinyXmlSerializer()).
                 ExecuteAsync();
         }
 
         [TestMethod]
         public async Task PutComplexData()
         {
-            var postRequest = new Request
+            var request = new Request
             {
                 Id = 42,
                 Data = "DATA"
             };
             var client = GetClient();
             var response = await client.
-                NewRequest(HttpVerb.Put, "PutTest/complex").
-                AddContent(postRequest).
+                PutRequest(request, "PutTest/complex").
                 ExecuteAsync<Response>();
 
-            Assert.AreEqual(postRequest.Id, response.Id);
-            Assert.AreEqual(postRequest.Data, response.ResponseData);
+            Assert.AreEqual(request.Id, response.Id);
+            Assert.AreEqual(request.Data, response.ResponseData);
             client = GetClientXML();
             response = await client.
-                NewRequest(HttpVerb.Put, "PutTest/complex").
-                AddContent(postRequest).
+                PutRequest(request, "PutTest/complex").
                 ExecuteAsync<Response>();
 
-            Assert.AreEqual(postRequest.Id, response.Id);
-            Assert.AreEqual(postRequest.Data, response.ResponseData);
+            Assert.AreEqual(request.Id, response.Id);
+            Assert.AreEqual(request.Data, response.ResponseData);
         }
     }
 }

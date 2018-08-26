@@ -13,11 +13,11 @@ namespace Tiny.Http.Tests
         {
             var clientFluent = GetClient();
             await clientFluent.
-                NewRequest(HttpVerb.Delete, "DeleteTest/noResponse").
+                DeleteRequest("DeleteTest/noResponse").
                 ExecuteAsync();
             clientFluent = GetClientXML();
             await clientFluent.
-                NewRequest(HttpVerb.Delete, "DeleteTest/noResponse").
+                 DeleteRequest("DeleteTest/noResponse").
                 ExecuteAsync();
         }
 
@@ -30,16 +30,16 @@ namespace Tiny.Http.Tests
             var client = GetClient();
 
             var response = await client.
-                NewRequest(HttpVerb.Delete, "DeleteTest/complex").
-                AddQueryParameter("id", id).
-                AddQueryParameter("data", data).
-                ExecuteAsync<Response>();
+                 DeleteRequest("DeleteTest/complex").
+                 AddQueryParameter("id", id).
+                 AddQueryParameter("data", data).
+                 ExecuteAsync<Response>();
 
             Assert.AreEqual(id, response.Id);
             Assert.AreEqual(data, response.ResponseData);
             client = GetClientXML();
             response = await client.
-                NewRequest(HttpVerb.Delete, "DeleteTest/complex").
+                DeleteRequest("DeleteTest/complex").
                 AddQueryParameter("id", id).
                 AddQueryParameter("data", data).
                 ExecuteAsync<Response>();
@@ -55,7 +55,7 @@ namespace Tiny.Http.Tests
 
             var streamToSend = new MemoryStream(byteArray);
             var stream = await client.
-                NewRequest(HttpVerb.Delete, "DeleteTest/Stream").
+                 DeleteRequest("DeleteTest/Stream").
                 AddStreamContent(streamToSend).
                 WithStreamResponse().
                 ExecuteAsync();
