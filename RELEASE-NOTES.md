@@ -2,7 +2,8 @@
 
 ## 1.1.0
 * Now the formatter have multiple accept types
-* Auto detect of which formatter to use
+* Add auto detect of which formatter to use
+* Add methods : GetRequest PostRequest, PutRequest, DeleteRequest on TinyHttpClient
 * Add support of multi-part form data
 
 ## 1.0.1
