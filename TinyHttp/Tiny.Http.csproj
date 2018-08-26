@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.1.0-alpha0002</Version>
+    <Version>1.1.0</Version>
     <Copyright>Copyright © Jérôme Giacomini 2018</Copyright>
     <NeutralLanguage>en</NeutralLanguage>
     <Authors>Jérôme Giacomini</Authors>
@@ -15,12 +15,7 @@
     <RepositoryUrl>https://github.com/jgiacomini/TinyHttp.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <MinClientVersion>3.0.3</MinClientVersion>
-    <PackageReleaseNotes>
-      - 1.1.0-alpha0002 : Now the formatter surpport multi accept type
-      - 1.1.0-alpha0001 : Otpimizations. Add support of multi-part form data
-      - 1.0.1 : query parameters are url encoded. Otpimizations. Add documentation
-      - 1.0.0 : first version
-    </PackageReleaseNotes>
+    <PackageReleaseNotes>See release notes at https://github.com/jgiacomini/TinyHttp/blob/1.1.0/RELEASE-NOTES.md</PackageReleaseNotes>
   </PropertyGroup>
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
