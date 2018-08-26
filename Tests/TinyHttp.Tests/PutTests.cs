@@ -19,8 +19,8 @@ namespace Tiny.Http.Tests
 
             var client = GetClient();
             await client.
-                PutRequest(request, "PutTest/noResponse").
-                ExecuteAsync();
+               PutRequest(request, "PutTest/noResponse").
+               ExecuteAsync();
 
             await client.
                 PutRequest(request, "PutTest/noResponse", new XmlFormatter()).

@@ -35,7 +35,8 @@ namespace Tiny.Http
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="stream">The stream.</param>
+        /// <param name="encoding">The encoding.</param>
         /// <returns>An instance of type <typeparamref name="T"/></returns>
-        T Deserialize<T>(Stream stream);
+        T Deserialize<T>(Stream stream, Encoding encoding);
     }
 }

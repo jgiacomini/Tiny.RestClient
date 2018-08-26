@@ -26,7 +26,7 @@ namespace Tiny.Http
         }
 
         /// <inheritdoc/>
-        public T Deserialize<T>(Stream stream)
+        public T Deserialize<T>(Stream stream, Encoding encoding)
         {
             try
             {
@@ -37,7 +37,7 @@ namespace Tiny.Http
             {
                 string data = null;
                 stream.Position = 0;
-                using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
+                using (StreamReader reader = new StreamReader(stream, encoding))
                 {
                     data = reader.ReadToEnd();
                 }

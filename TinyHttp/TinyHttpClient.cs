@@ -156,16 +156,16 @@ namespace Tiny.Http
         }
 
         /// <summary>
-         /// Create a new POST request.
-         /// </summary>
-         /// <param name="content">The content of the request</param>
-         /// <param name="route">The route.</param>
-         /// <param name="serializer">The serializer use to serialize it</param>
-         /// <returns>The new request.</returns>
-        public IContentRequest PostRequest<TContent>(TContent content, string route = null, IFormatter serializer = null)
+        /// Create a new POST request.
+        /// </summary>
+        /// <param name="content">The content of the request</param>
+        /// <param name="route">The route.</param>
+        /// <param name="formatter">The formatter use to serialize the content</param>
+        /// <returns>The new request.</returns>
+        public IContentRequest PostRequest<TContent>(TContent content, string route = null, IFormatter formatter = null)
         {
             return new TinyRequest(HttpVerb.Post, route, this).
-                AddContent<TContent>(content, serializer);
+                AddContent<TContent>(content, formatter);
         }
 
         /// <summary>
@@ -173,12 +173,12 @@ namespace Tiny.Http
         /// </summary>
         /// <param name="content">The content of the request</param>
         /// <param name="route">The route.</param>
-        /// <param name="serializer">The serializer use to serialize it</param>
+        /// <param name="formatter">The formatter use to serialize the content</param>
         /// <returns>The new request.</returns>
-        public IContentRequest PutRequest<TContent>(TContent content, string route = null, IFormatter serializer = null)
+        public IContentRequest PutRequest<TContent>(TContent content, string route = null, IFormatter formatter = null)
         {
             return new TinyRequest(HttpVerb.Put, route, this).
-                AddContent<TContent>(content, serializer);
+                AddContent<TContent>(content, formatter);
         }
 
         /// <summary>
@@ -246,7 +246,7 @@ namespace Tiny.Http
                             return default;
                         }
 
-                        return formatter.Deserialize<TResult>(stream);
+                        return formatter.Deserialize<TResult>(stream, _encoding);
                     }
                 }
             }
@@ -394,7 +394,7 @@ namespace Tiny.Http
                 serializer = content.Serializer;
             }
 
-            var serializedString = content.GetSerializedStream(_defaultFormatter, _encoding);
+            var serializedString = content.GetSerializedStream(serializer, _encoding);
             if (serializedString == null)
             {
                 return null;
