@@ -4,6 +4,7 @@ namespace Tiny.Http
 {
     internal interface IToSerializeContent
     {
-        string GetSerializedStream(ISerializer serializer, Encoding encoding);
+        IFormatter Serializer { get; }
+        string GetSerializedStream(IFormatter serializer, Encoding encoding);
     }
 }

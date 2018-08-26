@@ -13,8 +13,8 @@ It hide all the complexity of communication, deserialisation ...
 
 ## Features
 * Modern async http client for REST API.
-* Support of verbs : GET, POST , PUT, HEAD, DELETE, HEAD, PATCH 
-* Automatic XML and JSON deserialization
+* Support of verbs : GET, POST , PUT, DELETE, PATCH, HEAD
+* Automatic XML and JSON serialization / deserialization
 * Support of custom serialisation / deserialisation
 * Support of multi-part form data
 * Optimized http calls
@@ -30,21 +30,33 @@ using Tiny.Http;
 var client = new TinyHttpClient("http://MyAPI.com/api");
 ```
 
-### Define default headers
+### Headers
+
+#### Default header for all requests
+
 ```cs
 // Add default header for each calls
 client.DefaultHeaders.Add("Token", "MYTOKEN");
+```
+#### Add header for current request
+
+
+```cs
+// Add header for each calls
+client.GetRequest("City/All").
+      AddHeader("Token", "MYTOKEN").
+      ExecuteAsync();
 ```
 
 ### Basic GET http requests
 
 ```cs
-var cities = client.NewRequest(HttpVerb.Get, "City/All").ExecuteAsync<List<City>>();
+var cities = client.GetRequest("City/All").ExecuteAsync<List<City>>();
 // GET http://MyAPI.com/api/City/All an deserialize automaticaly the content
 
 // Add a query parameter
 var cities = client.
-    NewRequest(HttpVerb.Get, "City").
+    GetRequest("City").
     AddQueryParameter("id", 2).
     AddQueryParameter("country", "France").
     ExecuteAsync<City>> ();
@@ -59,14 +71,14 @@ var cities = client.
  var city = new City() { Name = "Paris" , Country = "France"};
 
 // With content
-var response = await client.NewRequest(HttpVerb.Post, "City").
+var response = await client.PostRequest(city, "City").
                 AddContent(city).
                 ExecuteAsync<bool>();
 // POST http://MyAPI.com/api/City with city as content
 
 // With form url encoded data
 var response = await client.
-                NewRequest(HttpVerb.Post, "City/Add").
+                PostRequest("City/Add").
                 AddFormParameter("country", "France").
                 AddFormParameter("name", "Paris").
                 ExecuteAsync<Response>();
@@ -80,7 +92,7 @@ var response = await client.
 var city1 = new City() { Name = "Paris" , Country = "France"};
 var city2 = new City() { Name = "Ajaccio" , Country = "France"};
 var response = await client.NewRequest(HttpVerb.Post, "City").
-await client.NewRequest(HttpVerb.Post, "MultiPart/Test").
+await client.PostRequest("MultiPart/Test").
               AsMultiPartFromDataRequest().
               AddContent<City>(city1, "city1", "city1.json").
               AddContent<City>(city2, "city2", "city2.json").
@@ -91,7 +103,7 @@ await client.NewRequest(HttpVerb.Post, "MultiPart/Test").
 byte[] byteArray1 = ...
 byte[] byteArray2 = ...           
               
-await client.NewRequest(HttpVerb.Post, "MultiPart/Test").
+await client.PostRequest("MultiPart/Test").
               AsMultiPartFromDataRequest().
               AddByteArray(byteArray1, "request", "request2.bin").
               AddByteArray(byteArray2, "request", "request2.bin")
@@ -101,7 +113,7 @@ await client.NewRequest(HttpVerb.Post, "MultiPart/Test").
 // With 2 streams content        
 Stream1 stream1 = ...
 Stream stream2 = ...         
-await client.NewRequest(HttpVerb.Post, "MultiPart/Test").
+await client.PostRequest("MultiPart/Test").
               AsMultiPartFromDataRequest().
               AddStream(stream1, "request", "request2.bin").
               AddStream(stream2, "request", "request2.bin")
@@ -109,7 +121,7 @@ await client.NewRequest(HttpVerb.Post, "MultiPart/Test").
               
 
 // With mixed content                  
-await client.NewRequest(HttpVerb.Post, "MultiPart/Test").
+await client.PostRequest("MultiPart/Test").
               AsMultiPartFromDataRequest().
               AddContent<City>(city1, "city1", "city1.json").
               AddByteArray(byteArray1, "request", "request2.bin").
@@ -128,12 +140,12 @@ If you use these methods no serializer will be used.
 
 // Read stream response
  var stream = await client.
-              NewRequest(HttpVerb.Get, "File").
+              GetRequest("File").
               WithStreamResponse().
               ExecuteAsync();
 // Post Stream as content
-await client.
-            NewRequest(HttpVerb.Post, "File/Add").
+await client.PostRequest("File/Add").
+            AddStreamContent(stream).
             ExecuteAsync();
 ```
 
@@ -141,14 +153,13 @@ await client.
 ```cs
 // Read byte array response         
 byte[] byteArray = await client.
-              NewRequest(HttpVerb.Get, "Eile").
-              WithByteArrayResponse().
+              GetRequest("File").
               ExecuteAsync();
 
-// Post  byte array as content
+// Read byte array as content
 await client.
-            NewRequest(HttpVerb.Post, "File/Add").
-            WithByteArrayResponse().
+            PostRequest(HttpVerb.Post, "File/Add").
+            AddByteArrayContent(byteArray).
             ExecuteAsync();
 ```
 
@@ -167,7 +178,7 @@ string cityName = "Paris";
 try
 { 
    var response = await client.
-     NewRequest(HttpVerb.Get, "City").
+     GetRequest("City").
      AddQueryParameter("Name", cityName).
      ExecuteAsync<City>();
 }
@@ -183,36 +194,79 @@ catch (HttpException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Intern
 
 ## Serialization / Deserialization
 
-By default the Json is used as default serializer and default deserializer.
+By default the Json is used as default Formatter.
+A Formatter will be used to serialize or deserialize streams.
+
+The XmlFormatter by default in formatters list.
 
 ### Define xml as default serializer and deserializer.
 ```cs
-ISerializer xmlSerializer = new TinyXmlSerializer();
-ISerializer xmlDeserializer = new TinyXmlDeserializer();
-
+IFormatter xmlSerializer = new XmlFormatter();
 var client = new TinyHttpClient("http://MYApi.com", xmlSerializer, xmlDeserializer);
 ```
-### Custom serializer/deserializer.
-
-You create your own serializers/deserializer by implementing  ISerializer / IDeserializer
-
 ### Define a specific serializer for one request
 ```cs
-ISerializer xmlDeserializer = new TinyXmlDeserializer();
+IFormatter serializer = new XmlFormatter();
  var response = await client.
-     NewRequest(HttpVerb.Post, "City").
-     AddContent(city, xmlDeserializer).
+     PostRequest(city, "City", serializer).
      ExecuteAsync();
 ```
 
 ### Define a specific deserializer for one request
 ```cs
-ISerializer xmlDeserializer = new TinyXmlDeserializer();
+IFormatter deserializer = new XmlFormatter();
 
  var response = await client.
-     NewRequest(HttpVerb.Get, "City").
+     GetRequest("City").
      AddQueryParameter("Name", cityName).
-     ExecuteAsync<City>(xmlDeserializer);
+     ExecuteAsync<City>(deserializer);
+```
+
+### Custom serializer/deserializer.
+
+You create your own serializers/deserializer by implementing IFormatter
+
+For example the implementation of XmlFormatter is really simple : 
+```cs
+public class XmlFormatter : IFormatter
+{
+
+   public string DefaultMediaType => "application/xml";
+
+   /// <inheritdoc/>
+   public IEnumerable<string> SupportedMediaTypes
+   {
+      get
+      {
+         yield return "application/xml";
+         yield return "text/xml";
+      }
+   }
+
+   public T Deserialize<T>(Stream stream, Encoding encoding)
+   {
+      using (var reader = new StreamReader(stream, encoding))
+      {
+         var serializer = new XmlSerializer(typeof(T));
+         return (T)serializer.Deserialize(reader);
+      }
+   }
+
+   public string Serialize<T>(T data, Encoding encoding)
+   {
+         if (data == default)
+         {
+             return null;
+         }
+
+         var serializer = new XmlSerializer(data.GetType());
+         using (var stringWriter = new DynamicEncodingStringWriter(encoding))
+         {
+            serializer.Serialize(stringWriter, data);
+            return stringWriter.ToString();
+         }
+      }
+   }
 ```
 
 ## Logging events
