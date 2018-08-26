@@ -261,7 +261,14 @@ namespace Tiny.Http
             if (content is MultiPartContent multiParts)
             {
                 var multiPartContent = new MultipartFormDataContent();
-                SetContentType(multiParts.ContentType, multiPartContent);
+                var boundary = multiPartContent.Headers.ContentType.Parameters.FirstOrDefault(n => n.Name == "boundary").Value;
+
+                if (multiParts.ContentType != null)
+                {
+                    SetContentType(multiParts.ContentType, multiPartContent);
+                    multiPartContent.Headers.ContentType.Parameters.Add(new NameValueHeaderValue("boundary", boundary));
+                }
+
                 foreach (var currentPart in multiParts)
                 {
                     if (currentPart is BytesMultiPartData currentBytesPart)
@@ -286,6 +293,8 @@ namespace Tiny.Http
                         throw new NotImplementedException($"GetContent multipart for '{currentPart.GetType().Name}' not implemented");
                     }
                 }
+
+                return multiPartContent;
             }
 
             throw new NotImplementedException($"GetContent for '{content.GetType().Name}' not implemented");
@@ -314,13 +323,17 @@ namespace Tiny.Http
             {
                 multipartFormDataContent.Add(content);
             }
+            else if (!string.IsNullOrWhiteSpace(currentContent.Name) && !string.IsNullOrWhiteSpace(currentContent.FileName))
+            {
+                multipartFormDataContent.Add(content, currentContent.Name, currentContent.FileName);
+            }
             else if (!string.IsNullOrWhiteSpace(currentContent.Name))
             {
                 multipartFormDataContent.Add(content, currentContent.Name);
             }
-            else if (!string.IsNullOrWhiteSpace(currentContent.Name) && !string.IsNullOrWhiteSpace(currentContent.FileName))
+            else
             {
-                multipartFormDataContent.Add(content, currentContent.Name, currentContent.FileName);
+                throw new NotImplementedException();
             }
         }
 
