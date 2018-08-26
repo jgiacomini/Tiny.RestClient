@@ -144,7 +144,7 @@ namespace Tiny.Http
         /// </summary>
         /// <param name="route">The route.</param>
         /// <returns>The new request.</returns>
-        public IRequest GetRequest<TContent>(string route = null)
+        public IRequest GetRequest(string route = null)
         {
             return new TinyRequest(HttpVerb.Get, route, this);
         }
@@ -152,10 +152,20 @@ namespace Tiny.Http
         /// <summary>
         /// Create a new POST request.
         /// </summary>
-        /// <param name="content">The content of the request</param>
         /// <param name="route">The route.</param>
-        /// <param name="serializer">The serializer use to serialize it</param>
         /// <returns>The new request.</returns>
+        public IRequest PostRequest(string route = null)
+        {
+            return new TinyRequest(HttpVerb.Post, route, this);
+        }
+
+        /// <summary>
+         /// Create a new POST request.
+         /// </summary>
+         /// <param name="content">The content of the request</param>
+         /// <param name="route">The route.</param>
+         /// <param name="serializer">The serializer use to serialize it</param>
+         /// <returns>The new request.</returns>
         public IContentRequest PostRequest<TContent>(TContent content, string route = null, ISerializer serializer = null)
         {
             return new TinyRequest(HttpVerb.Post, route, this).
@@ -176,11 +186,21 @@ namespace Tiny.Http
         }
 
         /// <summary>
+        /// Create a new PUT request.
+        /// </summary>
+        /// <param name="route">The route.</param>
+        /// <returns>The new request.</returns>
+        public IRequest PutRequest(string route = null)
+        {
+            return new TinyRequest(HttpVerb.Put, route, this);
+        }
+
+        /// <summary>
         /// Create a new DELETE request.
         /// </summary>
         /// <param name="route">The route.</param>
         /// <returns>The new request.</returns>
-        public IContentRequest DeleteRequest(string route = null)
+        public IRequest DeleteRequest(string route = null)
         {
             return new TinyRequest(HttpVerb.Delete, route, this);
         }
