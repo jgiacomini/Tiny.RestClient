@@ -17,6 +17,7 @@
     <PackageReleaseNotes>
       - 1.0.0 : first version
       - 1.0.1 : query parameters are url encoded. Otpimizations. Add documentation
+      - 1.1.0-alpha0003 : Otpimizations. Add support of multi-part form data
     </PackageReleaseNotes>
   </PropertyGroup>
   <PropertyGroup>

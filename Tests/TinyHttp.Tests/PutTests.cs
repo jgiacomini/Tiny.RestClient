@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 using System.Threading.Tasks;
 using Tiny.Http.Tests.Models;
 
@@ -25,8 +26,7 @@ namespace Tiny.Http.Tests
             client = GetClientXML();
             await client.
                 NewRequest(HttpVerb.Put, "PutTest/noResponse").
-                AddContent(postRequest).
-                SerializeWith(new TinyXmlSerializer()).
+                AddContent(postRequest, new TinyXmlSerializer()).
                 ExecuteAsync();
         }
 

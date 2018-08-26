@@ -12,20 +12,21 @@ namespace Tiny.Http
     /// <seealso cref="Tiny.Http.IRequest" />
     /// <seealso cref="Tiny.Http.IOctectStreamRequest" />
     /// <seealso cref="Tiny.Http.IStreamRequest" />
-    public class TinyRequest : IRequest, IOctectStreamRequest, IStreamRequest
+    internal class TinyRequest : IRequest, IOctectStreamRequest, IStreamRequest, IMultiPartFromDataRequest, IMultiPartFromDataExecutableRequest
     {
         private readonly HttpVerb _httpVerb;
         private readonly TinyHttpClient _client;
         private readonly string _route;
-        private readonly Dictionary<string, string> _headers;
-        private readonly Dictionary<string, string> _queryParameters;
-        private readonly List<KeyValuePair<string, string>> _formParameters;
-        private ISerializer _serializer;
-        private IDeserializer _deserializer;
-        private object _content;
-        private byte[] _byteArray;
-        private Stream _contentStream;
-        private ContentType _contentType;
+        private Dictionary<string, string> _headers;
+        private Dictionary<string, string> _queryParameters;
+        private ITinyContent _content;
+        private List<KeyValuePair<string, string>> _formParameters;
+        private MultiPartContent _multiPartFormData;
+
+        internal HttpVerb HttpVerb { get => _httpVerb; }
+        internal Dictionary<string, string> QueryParameters { get => _queryParameters; }
+        internal string Route { get => _route; }
+        internal ITinyContent Content { get => _content; }
 
         internal TinyRequest(HttpVerb httpVerb, string route, TinyHttpClient client)
         {
@@ -33,68 +34,30 @@ namespace Tiny.Http
             _route = route;
             _client = client;
             _headers = new Dictionary<string, string>();
-            _queryParameters = new Dictionary<string, string>();
-            _formParameters = new List<KeyValuePair<string, string>>();
         }
 
         #region Content
-
-        /// <summary>
-        /// Adds the content.
-        /// </summary>
-        /// <typeparam name="TContent">The type of the t content.</typeparam>
-        /// <param name="content">The content.</param>
-        /// <returns>IContentRequest.</returns>
-        public IContentRequest AddContent<TContent>(TContent content)
+        public IContentRequest AddContent<TContent>(TContent content, ISerializer serializer)
         {
-            _content = content;
-            _contentType = ContentType.String;
+            _content = new ToSerializeContent<TContent>(content, serializer);
             return this;
         }
 
-        /// <summary>
-        /// Adds the content of the byte array. (it will not use the serializer)
-        /// </summary>
-        /// <param name="byteArray">The byte array.</param>
-        /// <returns>IContentRequest.</returns>
-        public IContentRequest AddByteArrayContent(byte[] byteArray)
+        public IContentRequest AddByteArrayContent(byte[] byteArray, string contentType)
         {
-            _byteArray = byteArray;
-            _contentType = ContentType.ByteArray;
+            _content = new BytesContent(byteArray, contentType);
             return this;
         }
 
-        /// <summary>
-        /// Adds the content of the stream.
-        /// </summary>
-        /// <param name="stream">The stream.</param>
-        /// <returns>IContentRequest.</returns>
-        public IContentRequest AddStreamContent(Stream stream)
+        public IContentRequest AddStreamContent(Stream stream, string contentType)
         {
-            _contentStream = stream;
-            _contentType = ContentType.Stream;
+            _content = new StreamContent(stream, contentType);
             return this;
         }
 
-        private object GetContent()
-        {
-            switch (_contentType)
-            {
-                case ContentType.String:
-                    return _content;
-                case ContentType.Forms:
-                    return null;
-                case ContentType.Stream:
-                    return _contentStream;
-                case ContentType.ByteArray:
-                    return _byteArray;
-                default:
-                    throw new NotImplementedException();
-            }
-        }
         #endregion
 
-        #region Parameters
+        #region Forms Parameters
 
         /// <summary>
         /// Adds the form parameter.
@@ -104,8 +67,13 @@ namespace Tiny.Http
         /// <returns>IFormRequest.</returns>
         public IFormRequest AddFormParameter(string key, string value)
         {
+            if (_formParameters == null)
+            {
+                _formParameters = new List<KeyValuePair<string, string>>();
+                _content = new FormParametersContent(_formParameters, null);
+            }
+
             _formParameters.Add(new KeyValuePair<string, string>(key, value));
-            _contentType = ContentType.Forms;
             return this;
         }
 
@@ -116,10 +84,18 @@ namespace Tiny.Http
         /// <returns>IFormRequest.</returns>
         public IFormRequest AddFormParameters(IEnumerable<KeyValuePair<string, string>> items)
         {
+            if (_formParameters == null)
+            {
+                _formParameters = new List<KeyValuePair<string, string>>();
+                _content = new FormParametersContent(_formParameters, null);
+            }
+
             _formParameters.AddRange(items);
-            _contentType = ContentType.Forms;
             return this;
         }
+        #endregion
+
+        #region Headers
 
         /// <summary>
         /// Adds the header.
@@ -129,9 +105,17 @@ namespace Tiny.Http
         /// <returns>The current request</returns>
         public IRequest AddHeader(string key, string value)
         {
+            if (_headers == null)
+            {
+                _headers = new Dictionary<string, string>();
+            }
+
             _headers.Add(key, value);
             return this;
         }
+        #endregion
+
+        #region Query Parameters
 
         /// <summary>
         /// Adds the query parameter.
@@ -141,6 +125,11 @@ namespace Tiny.Http
         /// <returns>The current request</returns>
         public IRequest AddQueryParameter(string key, string value)
         {
+            if (_queryParameters == null)
+            {
+                _queryParameters = new Dictionary<string, string>();
+            }
+
             if (!_queryParameters.ContainsKey(key))
             {
                 _queryParameters.Add(key, value);
@@ -199,31 +188,6 @@ namespace Tiny.Http
         }
         #endregion
 
-        #region Serializer
-
-        /// <summary>
-        /// Serializes the with.
-        /// </summary>
-        /// <param name="serializer">The serializer.</param>
-        /// <returns>The current request</returns>
-        public IRequest SerializeWith(ISerializer serializer)
-        {
-            _serializer = serializer;
-            return this;
-        }
-
-        /// <summary>
-        /// Deserializes the with.
-        /// </summary>
-        /// <param name="deserializer">The deserializer.</param>
-        /// <returns>The current request</returns>
-        public IRequest DeserializeWith(IDeserializer deserializer)
-        {
-            _deserializer = deserializer;
-            return this;
-        }
-        #endregion
-
         /// <summary>
         /// Withes the byte array response.
         /// </summary>
@@ -242,45 +206,71 @@ namespace Tiny.Http
             return this;
         }
 
-        /// <summary>
-        /// Executes the asynchronous.
-        /// </summary>
-        /// <typeparam name="TResult">The type of the t result.</typeparam>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>A task of TResult</returns>
-        public Task<TResult> ExecuteAsync<TResult>(CancellationToken cancellationToken = default)
+        public Task<TResult> ExecuteAsync<TResult>(IDeserializer deserializer, CancellationToken cancellationToken)
         {
-            return _client.ExecuteAsync<TResult>(_httpVerb, _route, _headers, _queryParameters, _formParameters, _serializer, _deserializer, _contentType, GetContent(), cancellationToken);
+            return _client.ExecuteAsync<TResult>(this, deserializer, cancellationToken);
         }
 
-        /// <summary>
-        /// Executes the asynchronous.
-        /// </summary>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>A task</returns>
-        public Task ExecuteAsync(CancellationToken cancellationToken = default)
+        public Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            return _client.ExecuteAsync(_httpVerb, _route, _headers, _queryParameters, _formParameters, _serializer, _deserializer, _contentType, GetContent(), cancellationToken);
+            return _client.ExecuteAsync(this, cancellationToken);
         }
 
-        /// <summary>
-        /// Executes the request
-        /// </summary>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>A task of byte array.</returns>
         Task<byte[]> IOctectStreamRequest.ExecuteAsync(CancellationToken cancellationToken)
         {
-            return _client.ExecuteByteArrayResultAsync(_httpVerb, _route, _headers, _queryParameters, _formParameters, _serializer, _deserializer, _contentType, GetContent(), cancellationToken);
+            return _client.ExecuteByteArrayResultAsync(this, cancellationToken);
         }
 
-        /// <summary>
-        /// Executes the request.
-        /// </summary>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>A task of <seealso cref="Stream"/></returns>
         Task<Stream> IStreamRequest.ExecuteAsync(CancellationToken cancellationToken)
         {
-            return _client.ExecuteWithStreamResultAsync(_httpVerb, _route, _headers, _queryParameters, _formParameters, _serializer, _deserializer, _contentType, GetContent(), cancellationToken);
+            return _client.ExecuteWithStreamResultAsync(this, cancellationToken);
         }
+
+        #region MultiPart
+
+        public IMultiPartFromDataRequest AsMultiPartFromDataRequest(string contentType)
+        {
+            _multiPartFormData = new MultiPartContent(contentType);
+            _content = _multiPartFormData;
+            return this;
+        }
+
+        IMultiPartFromDataExecutableRequest IMultiPartFromDataRequest.AddByteArray(byte[] data, string name, string fileName, string contentType)
+        {
+            if (data == null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+
+            _multiPartFormData.Add(new BytesMultiPartData(data, name, fileName, contentType));
+
+            return this;
+        }
+
+        IMultiPartFromDataExecutableRequest IMultiPartFromDataRequest.AddStream(Stream data, string name, string fileName, string contentType)
+        {
+            if (data == null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+
+            _multiPartFormData.Add(new StreamMultiPartData(data, name, fileName, contentType));
+
+            return this;
+        }
+
+        IMultiPartFromDataExecutableRequest IMultiPartFromDataRequest.AddContent<TContent>(TContent content, string name, string fileName, ISerializer serializer)
+        {
+            if (content == default)
+            {
+                throw new ArgumentNullException(nameof(content));
+            }
+
+            _multiPartFormData.Add(new ToSerializeMultiPartData<TContent>(content, name, fileName, serializer));
+
+            return this;
+        }
+
+        #endregion
     }
 }

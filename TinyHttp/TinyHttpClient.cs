@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using HttpStreamContent = System.Net.Http.StreamContent;
 
 namespace Tiny.Http
 {
@@ -139,15 +140,8 @@ namespace Tiny.Http
         }
 
         internal async Task<TResult> ExecuteAsync<TResult>(
-            HttpVerb httpVerb,
-            string route,
-            Dictionary<string, string> headers,
-            Dictionary<string, string> queryParameters,
-            IEnumerable<KeyValuePair<string, string>> formsParameters,
-            ISerializer serializer,
+            TinyRequest tinyRequest,
             IDeserializer deserializer,
-            ContentType contentType,
-            object data,
             CancellationToken cancellationToken)
         {
             if (deserializer == null)
@@ -155,15 +149,10 @@ namespace Tiny.Http
                 deserializer = _defaultDeserializer;
             }
 
-            if (serializer == null)
+            using (var content = CreateContent(tinyRequest.Content))
             {
-                serializer = _defaultSerializer;
-            }
-
-            using (var content = CreateContent(contentType, serializer, data, formsParameters))
-            {
-                var requestUri = BuildRequestUri(route, queryParameters);
-                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(httpVerb), requestUri, content, deserializer, cancellationToken).ConfigureAwait(false))
+                var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
+                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, content, deserializer, cancellationToken).ConfigureAwait(false))
                 {
                     using (var stream = await ReadResponseAsync(response, cancellationToken).ConfigureAwait(false))
                     {
@@ -179,31 +168,13 @@ namespace Tiny.Http
         }
 
         internal async Task ExecuteAsync(
-            HttpVerb httpVerb,
-            string route,
-            Dictionary<string, string> headers,
-            Dictionary<string, string> queryParameters,
-            IEnumerable<KeyValuePair<string, string>> formsParameters,
-            ISerializer serializer,
-            IDeserializer deserializer,
-            ContentType contentType,
-            object data,
+            TinyRequest tinyRequest,
             CancellationToken cancellationToken)
         {
-            if (deserializer == null)
+            using (var content = CreateContent(tinyRequest.Content))
             {
-                deserializer = _defaultDeserializer;
-            }
-
-            if (serializer == null)
-            {
-                serializer = _defaultSerializer;
-            }
-
-            using (var content = CreateContent(contentType, serializer, data, formsParameters))
-            {
-                var requestUri = BuildRequestUri(route, queryParameters);
-                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(httpVerb), requestUri, content, deserializer, cancellationToken).ConfigureAwait(false))
+                var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
+                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, content, null, cancellationToken).ConfigureAwait(false))
                 {
                     using (var stream = await ReadResponseAsync(response, cancellationToken).ConfigureAwait(false))
                     {
@@ -213,31 +184,13 @@ namespace Tiny.Http
         }
 
         internal async Task<byte[]> ExecuteByteArrayResultAsync(
-           HttpVerb httpVerb,
-           string route,
-           Dictionary<string, string> headers,
-           Dictionary<string, string> queryParameters,
-           IEnumerable<KeyValuePair<string, string>> formsParameters,
-           ISerializer serializer,
-           IDeserializer deserializer,
-           ContentType contentType,
-           object data,
+           TinyRequest tinyRequest,
            CancellationToken cancellationToken)
         {
-            if (deserializer == null)
+            using (var content = CreateContent(tinyRequest.Content))
             {
-                deserializer = _defaultDeserializer;
-            }
-
-            if (serializer == null)
-            {
-                serializer = _defaultSerializer;
-            }
-
-            using (var content = CreateContent(contentType, serializer, data, formsParameters))
-            {
-                var requestUri = BuildRequestUri(route, queryParameters);
-                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(httpVerb), requestUri, content, deserializer, cancellationToken).ConfigureAwait(false))
+                var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
+                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, content, null, cancellationToken).ConfigureAwait(false))
                 {
                     using (var stream = await ReadResponseAsync(response, cancellationToken).ConfigureAwait(false))
                     {
@@ -246,7 +199,7 @@ namespace Tiny.Http
                             return null;
                         }
 
-                        using (MemoryStream ms = new MemoryStream())
+                        using (var ms = new MemoryStream())
                         {
                             stream.CopyTo(ms);
                             return ms.ToArray();
@@ -257,31 +210,13 @@ namespace Tiny.Http
         }
 
         internal async Task<Stream> ExecuteWithStreamResultAsync(
-           HttpVerb httpVerb,
-           string route,
-           Dictionary<string, string> headers,
-           Dictionary<string, string> queryParameters,
-           IEnumerable<KeyValuePair<string, string>> formsParameters,
-           ISerializer serializer,
-           IDeserializer deserializer,
-           ContentType contentType,
-           object data,
+           TinyRequest tinyRequest,
            CancellationToken cancellationToken)
         {
-            if (deserializer == null)
+            using (var content = CreateContent(tinyRequest.Content))
             {
-                deserializer = _defaultDeserializer;
-            }
-
-            if (serializer == null)
-            {
-                serializer = _defaultSerializer;
-            }
-
-            using (var content = CreateContent(contentType, serializer, null, formsParameters))
-            {
-                var requestUri = BuildRequestUri(route, queryParameters);
-                HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(httpVerb), requestUri, content, deserializer, cancellationToken).ConfigureAwait(false);
+                var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
+                HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, content, null, cancellationToken).ConfigureAwait(false);
                 var stream = await ReadResponseAsync(response, cancellationToken).ConfigureAwait(false);
                 if (stream == null || !stream.CanRead)
                 {
@@ -292,50 +227,131 @@ namespace Tiny.Http
             }
         }
 
-        private HttpContent CreateContent(
-            ContentType contentType,
-            ISerializer serializer,
-            object data,
-            IEnumerable<KeyValuePair<string, string>> formsParameters)
+        private HttpContent CreateContent(ITinyContent content)
         {
-            switch (contentType)
+            if (content == null)
             {
-                case ContentType.Stream:
-                case ContentType.String:
-
-                    if (data == null)
-                    {
-                        return null;
-                    }
-
-                    var content = new StringContent(serializer.Serialize(data, _encoding), _encoding);
-                    if (_defaultSerializer.HasMediaType)
-                    {
-                        content.Headers.ContentType = new MediaTypeHeaderValue(_defaultSerializer.MediaType);
-                    }
-
-                    return content;
-                case ContentType.Forms:
-                    return new FormUrlEncodedContent(formsParameters);
-                case ContentType.ByteArray:
-                    if (data == null)
-                    {
-                        return null;
-                    }
-
-                    var contentArray = new ByteArrayContent(data as byte[]);
-                    contentArray.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-                    return contentArray;
-                default:
-                    throw new NotImplementedException();
+                return null;
             }
+
+            if (content is StreamContent currentContent)
+            {
+                var contentStream = new HttpStreamContent(currentContent.Data);
+                SetContentType(currentContent.ContentType, contentStream);
+                return contentStream;
+            }
+
+            if (content is BytesContent bytesContent)
+            {
+                var contentArray = new ByteArrayContent(bytesContent.Data);
+                SetContentType(bytesContent.ContentType, contentArray);
+                return contentArray;
+            }
+
+            if (content is FormParametersContent formContent)
+            {
+                return new FormUrlEncodedContent(formContent.Data);
+            }
+
+            if (content is IToSerializeContent toSerializeContent)
+            {
+                return GetSerializedContent(toSerializeContent);
+            }
+
+            if (content is MultiPartContent multiParts)
+            {
+                var multiPartContent = new MultipartFormDataContent();
+                var boundary = multiPartContent.Headers.ContentType.Parameters.FirstOrDefault(n => n.Name == "boundary").Value;
+
+                if (multiParts.ContentType != null)
+                {
+                    SetContentType(multiParts.ContentType, multiPartContent);
+                    multiPartContent.Headers.ContentType.Parameters.Add(new NameValueHeaderValue("boundary", boundary));
+                }
+
+                foreach (var currentPart in multiParts)
+                {
+                    if (currentPart is BytesMultiPartData currentBytesPart)
+                    {
+                        var bytesMultiContent = new ByteArrayContent(currentBytesPart.Data);
+                        SetContentType(currentBytesPart.ContentType, bytesMultiContent);
+                        AddMulitPartContent(currentPart, bytesMultiContent, multiPartContent);
+                    }
+                    else if (currentPart is StreamMultiPartData currentStreamPart)
+                    {
+                        var streamContent = new HttpStreamContent(currentStreamPart.Data);
+                        SetContentType(currentStreamPart.ContentType, streamContent);
+                        AddMulitPartContent(currentPart, streamContent, multiPartContent);
+                    }
+                    else if (currentPart is IToSerializeContent toSerializeMultiContent)
+                    {
+                        var stringContent = GetSerializedContent(toSerializeMultiContent);
+                        AddMulitPartContent(currentPart, stringContent, multiPartContent);
+                    }
+                    else
+                    {
+                        throw new NotImplementedException($"GetContent multipart for '{currentPart.GetType().Name}' not implemented");
+                    }
+                }
+
+                return multiPartContent;
+            }
+
+            throw new NotImplementedException($"GetContent for '{content.GetType().Name}' not implemented");
+        }
+
+        private StringContent GetSerializedContent(IToSerializeContent content)
+        {
+            var serializedString = content.GetSerializedStream(_defaultSerializer, _encoding);
+            if (serializedString == null)
+            {
+                return null;
+            }
+
+            var stringContent = new StringContent(serializedString, _encoding);
+            if (_defaultSerializer.HasMediaType)
+            {
+                stringContent.Headers.ContentType = new MediaTypeHeaderValue(_defaultSerializer.MediaType);
+            }
+
+            return stringContent;
+        }
+
+        private void AddMulitPartContent(MultiPartData currentContent, HttpContent content, MultipartFormDataContent multipartFormDataContent)
+        {
+            if (string.IsNullOrWhiteSpace(currentContent.Name) && string.IsNullOrWhiteSpace(currentContent.FileName))
+            {
+                multipartFormDataContent.Add(content);
+            }
+            else if (!string.IsNullOrWhiteSpace(currentContent.Name) && !string.IsNullOrWhiteSpace(currentContent.FileName))
+            {
+                multipartFormDataContent.Add(content, currentContent.Name, currentContent.FileName);
+            }
+            else if (!string.IsNullOrWhiteSpace(currentContent.Name))
+            {
+                multipartFormDataContent.Add(content, currentContent.Name);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        private void SetContentType(string contentType, HttpContent content)
+        {
+            if (contentType == null)
+            {
+                return;
+            }
+
+            content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
         }
 
         private Uri BuildRequestUri(string route, Dictionary<string, string> queryParameters)
         {
             var stringBuilder = new StringBuilder(string.Concat(_serverAddress, route));
 
-            if (queryParameters.Any())
+            if (queryParameters != null && queryParameters.Any())
             {
                 var last = queryParameters.Last();
                 stringBuilder.Append("?");
@@ -358,7 +374,7 @@ namespace Tiny.Http
             {
                 using (var request = new HttpRequestMessage(httpMethod, uri))
                 {
-                    if (deserializer.HasMediaType)
+                    if (deserializer != null && deserializer.HasMediaType)
                     {
                         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(deserializer.MediaType));
                     }
