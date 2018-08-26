@@ -368,6 +368,13 @@ namespace Tiny.Http
 
         private StringContent GetSerializedContent(IToSerializeContent content)
         {
+            ISerializer serializer = _defaultSerializer;
+
+            if (content.Serializer != null)
+            {
+                serializer = content.Serializer;
+            }
+
             var serializedString = content.GetSerializedStream(_defaultSerializer, _encoding);
             if (serializedString == null)
             {
@@ -375,7 +382,7 @@ namespace Tiny.Http
             }
 
             var stringContent = new StringContent(serializedString, _encoding);
-            if (_defaultSerializer.HasMediaType)
+            if (serializer.HasMediaType)
             {
                 stringContent.Headers.ContentType = new MediaTypeHeaderValue(_defaultSerializer.MediaType);
             }
