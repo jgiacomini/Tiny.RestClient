@@ -44,8 +44,8 @@ client.DefaultHeaders.Add("Token", "MYTOKEN");
 ```cs
 // Add header for each calls
 client.GetRequest("City/All).
-AddHeader("Token", "MYTOKEN").
-ExecuteAsync();
+      AddHeader("Token", "MYTOKEN").
+      ExecuteAsync();
 ```
 
 ### Basic GET http requests
