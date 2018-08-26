@@ -229,44 +229,44 @@ You create your own serializers/deserializer by implementing IFormatter
 For example the implementation of XmlFormatter is really simple : 
 ```cs
 public class XmlFormatter : IFormatter
-   {
+{
 
    public string DefaultMediaType => "application/xml";
 
-        /// <inheritdoc/>
-        public IEnumerable<string> SupportedMediaTypes
-        {
-            get
-            {
-                yield return "application/xml";
-                yield return "text/xml";
-            }
-        }
+   /// <inheritdoc/>
+   public IEnumerable<string> SupportedMediaTypes
+   {
+      get
+      {
+         yield return "application/xml";
+         yield return "text/xml";
+      }
+   }
 
-        public T Deserialize<T>(Stream stream, Encoding encoding)
-        {
-            using (var reader = new StreamReader(stream, encoding))
-            {
-                var serializer = new XmlSerializer(typeof(T));
-                return (T)serializer.Deserialize(reader);
-            }
-        }
+   public T Deserialize<T>(Stream stream, Encoding encoding)
+   {
+      using (var reader = new StreamReader(stream, encoding))
+      {
+         var serializer = new XmlSerializer(typeof(T));
+         return (T)serializer.Deserialize(reader);
+      }
+   }
 
-        public string Serialize<T>(T data, Encoding encoding)
-        {
-            if (data == default)
-            {
-                return null;
-            }
+   public string Serialize<T>(T data, Encoding encoding)
+   {
+         if (data == default)
+         {
+             return null;
+         }
 
-            var serializer = new XmlSerializer(data.GetType());
-            using (var stringWriter = new DynamicEncodingStringWriter(encoding))
-            {
-                serializer.Serialize(stringWriter, data);
-                return stringWriter.ToString();
-            }
-        }
-    }
+         var serializer = new XmlSerializer(data.GetType());
+         using (var stringWriter = new DynamicEncodingStringWriter(encoding))
+         {
+            serializer.Serialize(stringWriter, data);
+            return stringWriter.ToString();
+         }
+      }
+   }
 ```
 
 ## Logging events
