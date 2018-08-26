@@ -12,10 +12,10 @@ namespace Tiny.Http
         /// Executes the request.
         /// </summary>
         /// <typeparam name="TResult">The type of the t result.</typeparam>
-        /// <param name="deserializer">Allow to override the default deserializer.</param>
+        /// <param name="formatter">Allow to override the formatter use for the deserialization.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task of TResukt</returns>
-        Task<TResult> ExecuteAsync<TResult>(IDeserializer deserializer = null, CancellationToken cancellationToken = default);
+        Task<TResult> ExecuteAsync<TResult>(IFormatter formatter = null, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Executes the request.

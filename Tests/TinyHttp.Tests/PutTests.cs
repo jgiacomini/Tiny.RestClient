@@ -23,7 +23,7 @@ namespace Tiny.Http.Tests
                 ExecuteAsync();
 
             await client.
-                PutRequest(request, "PutTest/noResponse", new TinyXmlSerializer()).
+                PutRequest(request, "PutTest/noResponse", new XmlFormatter()).
                 ExecuteAsync();
         }
 

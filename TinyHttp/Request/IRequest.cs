@@ -16,7 +16,7 @@ namespace Tiny.Http
         /// <param name="content">The content.</param>
         /// <param name="serializer">Override the default serializer setted on the client.</param>
         /// <returns>The current request</returns>
-        IContentRequest AddContent<TContent>(TContent content, ISerializer serializer = null);
+        IContentRequest AddContent<TContent>(TContent content, IFormatter serializer = null);
 
         /// <summary>
         /// Adds the content of the byte array.

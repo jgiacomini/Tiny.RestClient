@@ -22,8 +22,7 @@ namespace Tiny.Http
         #region Fields
         private readonly HttpClient _httpClient;
         private readonly string _serverAddress;
-        private readonly ISerializer _defaultSerializer;
-        private readonly IDeserializer _defaultDeserializer;
+        private readonly IFormatter _defaultFormatter;
         private Encoding _encoding;
         #endregion
 
@@ -52,7 +51,7 @@ namespace Tiny.Http
         /// </summary>
         /// <param name="serverAddress">The server address.</param>
         public TinyHttpClient(string serverAddress)
-            : this(new HttpClient(), serverAddress, new TinyJsonSerializer(), new TinyJsonDeserializer())
+            : this(new HttpClient(), serverAddress, new JsonFormatter())
         {
         }
 
@@ -60,10 +59,9 @@ namespace Tiny.Http
         /// Initializes a new instance of the <see cref="TinyHttpClient"/> class.
         /// </summary>
         /// <param name="serverAddress">The server address.</param>
-        /// <param name="defaultSerializer">The default serializer.</param>
-        /// <param name="defaultDeserializer">The default deserializer.</param>
-        public TinyHttpClient(string serverAddress, ISerializer defaultSerializer, IDeserializer defaultDeserializer)
-            : this(new HttpClient(), serverAddress, defaultSerializer, defaultDeserializer)
+        /// <param name="defaultFormatter">The default formatter.</param>
+        public TinyHttpClient(string serverAddress, IFormatter defaultFormatter)
+            : this(new HttpClient(), serverAddress, defaultFormatter)
         {
         }
 
@@ -73,7 +71,7 @@ namespace Tiny.Http
         /// <param name="httpClient">The httpclient used</param>
         /// <param name="serverAddress">The server address.</param>
         public TinyHttpClient(HttpClient httpClient, string serverAddress)
-            : this(httpClient, serverAddress, new TinyJsonSerializer(), new TinyJsonDeserializer())
+            : this(httpClient, serverAddress, new JsonFormatter())
         {
         }
 
@@ -82,14 +80,12 @@ namespace Tiny.Http
         /// </summary>
         /// <param name="httpClient">The httpclient used</param>
         /// <param name="serverAddress">The server address.</param>
-        /// /// <param name="defaultSerializer">The serializer used for serialize data</param>
-        /// <param name="defaultDeserializer">The deserializer used for deszerialiaze data.</param>
-        public TinyHttpClient(HttpClient httpClient, string serverAddress, ISerializer defaultSerializer, IDeserializer defaultDeserializer)
+        /// /// <param name="defaultFormatter">The serializer used for serialize data</param>
+        public TinyHttpClient(HttpClient httpClient, string serverAddress, IFormatter defaultFormatter)
         {
             _serverAddress = serverAddress ?? throw new ArgumentNullException(nameof(serverAddress));
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-            _defaultSerializer = defaultSerializer ?? throw new ArgumentNullException(nameof(defaultSerializer));
-            _defaultDeserializer = defaultDeserializer ?? throw new ArgumentNullException(nameof(defaultDeserializer));
+            _defaultFormatter = defaultFormatter ?? throw new ArgumentNullException(nameof(defaultFormatter));
 
             DefaultHeaders = new Dictionary<string, string>();
 
@@ -166,7 +162,7 @@ namespace Tiny.Http
          /// <param name="route">The route.</param>
          /// <param name="serializer">The serializer use to serialize it</param>
          /// <returns>The new request.</returns>
-        public IContentRequest PostRequest<TContent>(TContent content, string route = null, ISerializer serializer = null)
+        public IContentRequest PostRequest<TContent>(TContent content, string route = null, IFormatter serializer = null)
         {
             return new TinyRequest(HttpVerb.Post, route, this).
                 AddContent<TContent>(content, serializer);
@@ -179,7 +175,7 @@ namespace Tiny.Http
         /// <param name="route">The route.</param>
         /// <param name="serializer">The serializer use to serialize it</param>
         /// <returns>The new request.</returns>
-        public IContentRequest PutRequest<TContent>(TContent content, string route = null, ISerializer serializer = null)
+        public IContentRequest PutRequest<TContent>(TContent content, string route = null, IFormatter serializer = null)
         {
             return new TinyRequest(HttpVerb.Put, route, this).
                 AddContent<TContent>(content, serializer);
@@ -202,7 +198,7 @@ namespace Tiny.Http
         /// <param name="route">The route.</param>
         /// <param name="serializer">The serializer use to serialize it</param>
         /// <returns>The new request.</returns>
-        public IContentRequest PatchRequest<TContent>(TContent content, string route = null, ISerializer serializer = null)
+        public IContentRequest PatchRequest<TContent>(TContent content, string route = null, IFormatter serializer = null)
         {
             return new TinyRequest(HttpVerb.Patch, route, this).
                 AddContent<TContent>(content, serializer);
@@ -230,18 +226,18 @@ namespace Tiny.Http
 
         internal async Task<TResult> ExecuteAsync<TResult>(
             TinyRequest tinyRequest,
-            IDeserializer deserializer,
+            IFormatter formatter,
             CancellationToken cancellationToken)
         {
-            if (deserializer == null)
+            if (formatter == null)
             {
-                deserializer = _defaultDeserializer;
+                formatter = _defaultFormatter;
             }
 
             using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, content, deserializer, cancellationToken).ConfigureAwait(false))
+                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, content, formatter, cancellationToken).ConfigureAwait(false))
                 {
                     using (var stream = await ReadResponseAsync(response, cancellationToken).ConfigureAwait(false))
                     {
@@ -250,7 +246,7 @@ namespace Tiny.Http
                             return default;
                         }
 
-                        return deserializer.Deserialize<TResult>(stream);
+                        return formatter.Deserialize<TResult>(stream);
                     }
                 }
             }
@@ -391,25 +387,21 @@ namespace Tiny.Http
 
         private StringContent GetSerializedContent(IToSerializeContent content)
         {
-            ISerializer serializer = _defaultSerializer;
+            IFormatter serializer = _defaultFormatter;
 
             if (content.Serializer != null)
             {
                 serializer = content.Serializer;
             }
 
-            var serializedString = content.GetSerializedStream(_defaultSerializer, _encoding);
+            var serializedString = content.GetSerializedStream(_defaultFormatter, _encoding);
             if (serializedString == null)
             {
                 return null;
             }
 
             var stringContent = new StringContent(serializedString, _encoding);
-            if (serializer.HasMediaType)
-            {
-                stringContent.Headers.ContentType = new MediaTypeHeaderValue(_defaultSerializer.MediaType);
-            }
-
+            stringContent.Headers.ContentType = new MediaTypeHeaderValue(serializer.DefaultMediaType);
             return stringContent;
         }
 
@@ -462,7 +454,7 @@ namespace Tiny.Http
             return new Uri(stringBuilder.ToString());
         }
 
-        private async Task<HttpResponseMessage> SendRequestAsync(HttpMethod httpMethod, Uri uri, HttpContent content, IDeserializer deserializer, CancellationToken cancellationToken)
+        private async Task<HttpResponseMessage> SendRequestAsync(HttpMethod httpMethod, Uri uri, HttpContent content, IFormatter deserializer, CancellationToken cancellationToken)
         {
             var requestId = Guid.NewGuid().ToString();
             Stopwatch sw = new Stopwatch();
@@ -470,9 +462,9 @@ namespace Tiny.Http
             {
                 using (var request = new HttpRequestMessage(httpMethod, uri))
                 {
-                    if (deserializer != null && deserializer.HasMediaType)
+                    if (deserializer != null)
                     {
-                        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(deserializer.MediaType));
+                        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(deserializer.DefaultMediaType));
                     }
 
                     // TODO : add something to customize that stuff
