@@ -18,13 +18,15 @@ namespace Tiny.Http.Tests
             };
             var client = GetClient();
 
-            await client.
+            var data = await client.
               NewRequest(HttpVerb.Post, "MultiPart/Test").
               AsMultiPartFromDataRequest().
               AddByteArray(new byte[42], "bytesArray", "bytesArray.bin").
-              AddStream(new MemoryStream(), "stream", "stream.bin").
+              AddStream(new MemoryStream(new byte[42]), "stream", "stream.bin").
               AddContent<Request>(postRequest, "request", "request.json").
               ExecuteAsync<string>();
+
+            Assert.AreEqual<string>(data, "bytesArray-bytesArray.bin;stream-stream.bin;request-request.json;");
         }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
 using System;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Tiny.Http.ForTest.Api.Controllers
@@ -16,16 +17,18 @@ namespace Tiny.Http.ForTest.Api.Controllers
         }
 
         [HttpPost("Test")]
-        public async Task<bool> Test()
+        public async Task<string> Test()
         {
             var boundary = GetBoundary(Request.ContentType);
             var reader = new MultipartReader(boundary, Request.Body);
 
             MultipartSection section;
 
+            var sb = new StringBuilder(10000);
             while ((section = await reader.ReadNextSectionAsync()) != null)
             {
                 var contentDispo = section.GetContentDispositionHeader();
+                sb.AppendFormat("{0}-{1};", contentDispo.Name, contentDispo.FileName);
                 if (contentDispo.IsFileDisposition())
                 {
                     var fileSection = section.AsFileSection();
@@ -38,7 +41,7 @@ namespace Tiny.Http.ForTest.Api.Controllers
                 }
             }
 
-            return true;
+            return sb.ToString();
         }
 
         private static string GetBoundary(string contentType)
