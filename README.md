@@ -30,16 +30,28 @@ using Tiny.Http;
 var client = new TinyHttpClient("http://MyAPI.com/api");
 ```
 
-### Define default headers
+### Headers
+
+#### Default header for all requests
+
 ```cs
 // Add default header for each calls
 client.DefaultHeaders.Add("Token", "MYTOKEN");
+```
+#### Add header for current request
+
+
+```cs
+// Add header for each calls
+client.GetRequest("City/All).
+AddHeader("Token", "MYTOKEN").
+ExecuteAsync();
 ```
 
 ### Basic GET http requests
 
 ```cs
-var cities = client.NewRequest(HttpVerb.Get, "City/All").ExecuteAsync<List<City>>();
+var cities = client.GetRequest("City/All").ExecuteAsync<List<City>>();
 // GET http://MyAPI.com/api/City/All an deserialize automaticaly the content
 
 // Add a query parameter
