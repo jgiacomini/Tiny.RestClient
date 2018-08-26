@@ -37,7 +37,7 @@ namespace Tiny.Http
         }
 
         #region Content
-        public IContentRequest AddContent<TContent>(TContent content, ISerializer serializer)
+        public IContentRequest AddContent<TContent>(TContent content, IFormatter serializer)
         {
             _content = new ToSerializeContent<TContent>(content, serializer);
             return this;
@@ -206,9 +206,9 @@ namespace Tiny.Http
             return this;
         }
 
-        public Task<TResult> ExecuteAsync<TResult>(IDeserializer deserializer, CancellationToken cancellationToken)
+        public Task<TResult> ExecuteAsync<TResult>(IFormatter formatter, CancellationToken cancellationToken)
         {
-            return _client.ExecuteAsync<TResult>(this, deserializer, cancellationToken);
+            return _client.ExecuteAsync<TResult>(this, formatter, cancellationToken);
         }
 
         public Task ExecuteAsync(CancellationToken cancellationToken)
@@ -259,7 +259,7 @@ namespace Tiny.Http
             return this;
         }
 
-        IMultiPartFromDataExecutableRequest IMultiPartFromDataRequest.AddContent<TContent>(TContent content, string name, string fileName, ISerializer serializer)
+        IMultiPartFromDataExecutableRequest IMultiPartFromDataRequest.AddContent<TContent>(TContent content, string name, string fileName, IFormatter serializer)
         {
             if (content == default)
             {

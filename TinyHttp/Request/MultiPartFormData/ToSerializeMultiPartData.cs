@@ -4,7 +4,7 @@ namespace Tiny.Http
 {
     internal class ToSerializeMultiPartData<T> : MultiPartData, IToSerializeContent
     {
-        public ToSerializeMultiPartData(T data, string name, string fileName, ISerializer serializer)
+        public ToSerializeMultiPartData(T data, string name, string fileName, IFormatter serializer)
         {
             Data = data;
             Name = name;
@@ -14,11 +14,11 @@ namespace Tiny.Http
 
         public T Data { get; }
 
-        public string GetSerializedStream(ISerializer serializer, Encoding encoding)
+        public string GetSerializedStream(IFormatter serializer, Encoding encoding)
         {
             return serializer.Serialize<T>(Data, encoding);
         }
 
-        public ISerializer Serializer { get; private set; }
+        public IFormatter Serializer { get; private set; }
     }
 }

@@ -16,6 +16,7 @@
     <RepositoryType>git</RepositoryType>
     <MinClientVersion>3.0.3</MinClientVersion>
     <PackageReleaseNotes>
+      - 1.1.0-alpha0002 : Now the formatter surpport multi accept type
       - 1.1.0-alpha0001 : Otpimizations. Add support of multi-part form data
       - 1.0.1 : query parameters are url encoded. Otpimizations. Add documentation
       - 1.0.0 : first version
@@ -27,12 +28,6 @@
   <PropertyGroup>
     <DocumentationFile>$(TargetDir)\Tiny.Http.xml</DocumentationFile>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="publish\**" />
-    <EmbeddedResource Remove="publish\**" />
-    <None Remove="publish\**" />
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>

@@ -36,6 +36,6 @@ namespace Tiny.Http
         /// <param name="fileName">The name of the file</param>
         /// <param name="serializer">Override the default serializer setted on the client.</param>
         /// <returns>The current request</returns>
-        IMultiPartFromDataExecutableRequest AddContent<TContent>(TContent content, string name = null, string fileName = null, ISerializer serializer = null);
+        IMultiPartFromDataExecutableRequest AddContent<TContent>(TContent content, string name = null, string fileName = null, IFormatter serializer = null);
     }
 }

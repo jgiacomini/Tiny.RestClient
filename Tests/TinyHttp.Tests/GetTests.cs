@@ -49,7 +49,7 @@ namespace Tiny.Http.Tests
         [TestMethod]
         public async Task GetStreamData()
         {
-            var client = GetClientXML();
+            var client = GetClient();
             var stream = await client.GetRequest("GetTest/stream").WithStreamResponse().ExecuteAsync();
             Assert.AreEqual(stream.Length, 42);
         }
