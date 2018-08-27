@@ -1,4 +1,6 @@
 # Release notes
+## 1.1.1
+Remove hardcoded Headers and Add AddAcceptLanguageBasedOnCurrentCulture which add automaticaly current language
 
 ## 1.1.0
 * Now the formatter have multiple accept types
