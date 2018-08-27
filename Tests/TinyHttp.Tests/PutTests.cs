@@ -19,11 +19,11 @@ namespace Tiny.Http.Tests
 
             var client = GetClient();
             await client.
-               PutRequest(request, "PutTest/noResponse").
+               PutRequest("PutTest/noResponse", request).
                ExecuteAsync();
 
             await client.
-                PutRequest(request, "PutTest/noResponse", new XmlFormatter()).
+                PutRequest("PutTest/noResponse", request, new XmlFormatter()).
                 ExecuteAsync();
         }
 
@@ -37,14 +37,14 @@ namespace Tiny.Http.Tests
             };
             var client = GetClient();
             var response = await client.
-                PutRequest(request, "PutTest/complex").
+                PutRequest("PutTest/complex", request).
                 ExecuteAsync<Response>();
 
             Assert.AreEqual(request.Id, response.Id);
             Assert.AreEqual(request.Data, response.ResponseData);
             client = GetClientXML();
             response = await client.
-                PutRequest(request, "PutTest/complex").
+                PutRequest("PutTest/complex", request).
                 ExecuteAsync<Response>();
 
             Assert.AreEqual(request.Id, response.Id);
