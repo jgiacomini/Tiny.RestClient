@@ -168,6 +168,12 @@ namespace Tiny.Http
         }
 
         /// <inheritdoc/>
+        public Task<TResult> ExecuteAsync<TResult>(CancellationToken cancellationToken)
+        {
+            return _client.ExecuteAsync<TResult>(this, null, cancellationToken);
+        }
+
+        /// <inheritdoc/>
         public Task<TResult> ExecuteAsync<TResult>(IFormatter formatter, CancellationToken cancellationToken)
         {
             return _client.ExecuteAsync<TResult>(this, formatter, cancellationToken);
