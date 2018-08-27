@@ -71,8 +71,7 @@ var cities = client.
  var city = new City() { Name = "Paris" , Country = "France"};
 
 // With content
-var response = await client.PostRequest(city, "City").
-                AddContent(city).
+var response = await client.PostRequest("City", city).
                 ExecuteAsync<bool>();
 // POST http://MyAPI.com/api/City with city as content
 
@@ -158,7 +157,7 @@ byte[] byteArray = await client.
 
 // Read byte array as content
 await client.
-            PostRequest(HttpVerb.Post, "File/Add").
+            PostRequest("File/Add").
             AddByteArrayContent(byteArray).
             ExecuteAsync();
 ```
@@ -208,7 +207,7 @@ var client = new TinyHttpClient("http://MYApi.com", xmlSerializer, xmlDeserializ
 ```cs
 IFormatter serializer = new XmlFormatter();
  var response = await client.
-     PostRequest(city, "City", serializer).
+     PostRequest("City", city, serializer).
      ExecuteAsync();
 ```
 
