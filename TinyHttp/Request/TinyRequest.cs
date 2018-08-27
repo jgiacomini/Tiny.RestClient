@@ -59,12 +59,7 @@ namespace Tiny.Http
 
         #region Forms Parameters
 
-        /// <summary>
-        /// Adds the form parameter.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>IFormRequest.</returns>
+        /// <inheritdoc/>
         public IFormRequest AddFormParameter(string key, string value)
         {
             if (_formParameters == null)
@@ -77,11 +72,7 @@ namespace Tiny.Http
             return this;
         }
 
-        /// <summary>
-        /// Adds the form parameters.
-        /// </summary>
-        /// <param name="items">The items.</param>
-        /// <returns>IFormRequest.</returns>
+        /// <inheritdoc/>
         public IFormRequest AddFormParameters(IEnumerable<KeyValuePair<string, string>> items)
         {
             if (_formParameters == null)
@@ -97,12 +88,7 @@ namespace Tiny.Http
 
         #region Headers
 
-        /// <summary>
-        /// Adds the header.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
+        /// <inheritdoc/>
         public IRequest AddHeader(string key, string value)
         {
             if (_headers == null)
@@ -117,12 +103,7 @@ namespace Tiny.Http
 
         #region Query Parameters
 
-        /// <summary>
-        /// Adds the query parameter.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
+        /// <inheritdoc/>
         public IRequest AddQueryParameter(string key, string value)
         {
             if (_queryParameters == null)
@@ -143,74 +124,62 @@ namespace Tiny.Http
             return this;
         }
 
-        /// <summary>
-        /// Adds the query parameter.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
+        /// <inheritdoc/>
         public IRequest AddQueryParameter(string key, int value)
         {
             return AddQueryParameter(key, value.ToString());
         }
 
-        /// <summary>
-        /// Adds the query parameter.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
+        /// <inheritdoc/>
         public IRequest AddQueryParameter(string key, uint value)
         {
             return AddQueryParameter(key, value.ToString());
         }
 
-        /// <summary>
-        /// Adds the query parameter.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
+        /// <inheritdoc/>
         public IRequest AddQueryParameter(string key, double value)
         {
             return AddQueryParameter(key, value.ToString());
         }
 
-        /// <summary>
-        /// Adds the query parameter.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
+        /// <inheritdoc/>
         public IRequest AddQueryParameter(string key, decimal value)
+        {
+            return AddQueryParameter(key, value.ToString());
+        }
+
+        /// <inheritdoc/>
+        public IRequest AddQueryParameter(string key, bool value)
         {
             return AddQueryParameter(key, value.ToString());
         }
         #endregion
 
-        /// <summary>
-        /// Withes the byte array response.
-        /// </summary>
-        /// <returns>IOctectStreamRequest.</returns>
+        /// <inheritdoc/>
         public IOctectStreamRequest WithByteArrayResponse()
         {
             return this;
         }
 
-        /// <summary>
-        /// Withes the stream response.
-        /// </summary>
-        /// <returns>IStreamRequest.</returns>
+        /// <inheritdoc/>
         public IStreamRequest WithStreamResponse()
         {
             return this;
         }
 
+        /// <inheritdoc/>
+        public Task<TResult> ExecuteAsync<TResult>(CancellationToken cancellationToken)
+        {
+            return _client.ExecuteAsync<TResult>(this, null, cancellationToken);
+        }
+
+        /// <inheritdoc/>
         public Task<TResult> ExecuteAsync<TResult>(IFormatter formatter, CancellationToken cancellationToken)
         {
             return _client.ExecuteAsync<TResult>(this, formatter, cancellationToken);
         }
 
+        /// <inheritdoc/>
         public Task ExecuteAsync(CancellationToken cancellationToken)
         {
             return _client.ExecuteAsync(this, cancellationToken);
@@ -228,6 +197,7 @@ namespace Tiny.Http
 
         #region MultiPart
 
+        /// <inheritdoc/>
         public IMultiPartFromDataRequest AsMultiPartFromDataRequest(string contentType)
         {
             _multiPartFormData = new MultiPartContent(contentType);
@@ -235,6 +205,7 @@ namespace Tiny.Http
             return this;
         }
 
+        /// <inheritdoc/>
         IMultiPartFromDataExecutableRequest IMultiPartFromDataRequest.AddByteArray(byte[] data, string name, string fileName, string contentType)
         {
             if (data == null)
@@ -247,6 +218,7 @@ namespace Tiny.Http
             return this;
         }
 
+        /// <inheritdoc/>
         IMultiPartFromDataExecutableRequest IMultiPartFromDataRequest.AddStream(Stream data, string name, string fileName, string contentType)
         {
             if (data == null)
@@ -259,6 +231,7 @@ namespace Tiny.Http
             return this;
         }
 
+        /// <inheritdoc/>
         IMultiPartFromDataExecutableRequest IMultiPartFromDataRequest.AddContent<TContent>(TContent content, string name, string fileName, IFormatter serializer)
         {
             if (content == default)
