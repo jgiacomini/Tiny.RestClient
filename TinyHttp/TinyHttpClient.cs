@@ -113,6 +113,11 @@ namespace Tiny.Http
         #endregion
 
         /// <summary>
+        /// Add to all request the AcceptLanguage based on CurrentCulture of the Thread
+        /// </summary>
+        public bool AddAcceptLanguageBasedOnCurrentCulture { get; set; }
+
+        /// <summary>
         /// Gets the default headers.
         /// </summary>
         /// <value>
@@ -534,10 +539,11 @@ namespace Tiny.Http
                     request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(deserializer.DefaultMediaType));
 
                     // TODO : add something to customize that stuff
-                    request.Headers.AcceptLanguage.Add(new StringWithQualityHeaderValue(CultureInfo.CurrentCulture.TwoLetterISOLanguageName));
+                    if (AddAcceptLanguageBasedOnCurrentCulture)
+                    {
+                        request.Headers.AcceptLanguage.Add(new StringWithQualityHeaderValue(CultureInfo.CurrentCulture.TwoLetterISOLanguageName));
+                    }
 
-                    // TODO : remove that ?
-                    request.Headers.AcceptCharset.Add(new StringWithQualityHeaderValue("utf-8"));
                     foreach (var item in DefaultHeaders)
                     {
                         request.Headers.Add(item.Key, item.Value);
