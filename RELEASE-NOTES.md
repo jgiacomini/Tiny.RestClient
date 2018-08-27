@@ -1,4 +1,8 @@
 # Release notes
+
+## 1.1.3
+Add new overloads for PostRequest, PutRequest, PatchRequest
+
 ## 1.1.2
 Add overload on ExecuteAsync method (with less parameters)
 
