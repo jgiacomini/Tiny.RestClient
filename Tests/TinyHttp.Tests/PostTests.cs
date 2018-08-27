@@ -38,7 +38,7 @@ namespace Tiny.Http.Tests
 
             var client = GetClient();
             await client.
-                PostRequest(postRequest, "PostTest/noResponse").
+                PostRequest("PostTest/noResponse", postRequest).
                 ExecuteAsync();
         }
 
@@ -53,7 +53,7 @@ namespace Tiny.Http.Tests
 
             var client = GetClient();
             var response = await client.
-                PostRequest(postRequest, "PostTest/complex").
+                PostRequest("PostTest/complex", postRequest).
                 ExecuteAsync<Response>();
 
             Assert.AreEqual(postRequest.Id, response.Id);

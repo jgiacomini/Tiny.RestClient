@@ -159,6 +159,8 @@ namespace Tiny.Http
         /// </summary>
         public IEnumerable<IFormatter> Formatters { get; }
 
+        #region Requests
+
         /// <summary>
         /// Create a new request.
         /// </summary>
@@ -194,25 +196,24 @@ namespace Tiny.Http
         /// Create a new POST request.
         /// </summary>
         /// <param name="content">The content of the request</param>
-        /// <param name="route">The route.</param>
         /// <param name="formatter">The formatter use to serialize the content</param>
         /// <returns>The new request.</returns>
-        public IContentRequest PostRequest<TContent>(TContent content, string route = null, IFormatter formatter = null)
+        public IContentRequest PostRequest<TContent>(TContent content, IFormatter formatter = null)
         {
-            return new TinyRequest(HttpVerb.Post, route, this).
+            return new TinyRequest(HttpVerb.Post, null, this).
                 AddContent<TContent>(content, formatter);
         }
 
         /// <summary>
-        /// Create a new PUT request.
+        /// Create a new POST request.
         /// </summary>
-        /// <param name="content">The content of the request</param>
         /// <param name="route">The route.</param>
+        /// <param name="content">The content of the request</param>
         /// <param name="formatter">The formatter use to serialize the content</param>
         /// <returns>The new request.</returns>
-        public IContentRequest PutRequest<TContent>(TContent content, string route = null, IFormatter formatter = null)
+        public IContentRequest PostRequest<TContent>(string route, TContent content, IFormatter formatter = null)
         {
-            return new TinyRequest(HttpVerb.Put, route, this).
+            return new TinyRequest(HttpVerb.Post, route, this).
                 AddContent<TContent>(content, formatter);
         }
 
@@ -227,16 +228,28 @@ namespace Tiny.Http
         }
 
         /// <summary>
-        /// Create a new PATCH request.
+        /// Create a new PUT request.
         /// </summary>
         /// <param name="content">The content of the request</param>
-        /// <param name="route">The route.</param>
-        /// <param name="serializer">The serializer use to serialize it</param>
+        /// <param name="formatter">The formatter use to serialize the content</param>
         /// <returns>The new request.</returns>
-        public IContentRequest PatchRequest<TContent>(TContent content, string route = null, IFormatter serializer = null)
+        public IContentRequest PutRequest<TContent>(TContent content, IFormatter formatter = null)
         {
-            return new TinyRequest(HttpVerb.Patch, route, this).
-                AddContent<TContent>(content, serializer);
+            return new TinyRequest(HttpVerb.Put, null, this).
+                AddContent<TContent>(content, formatter);
+        }
+
+        /// <summary>
+        /// Create a new PUT request.
+        /// </summary>
+        /// <param name="route">The route.</param>
+        /// <param name="content">The content of the request</param>
+        /// <param name="formatter">The formatter use to serialize the content</param>
+        /// <returns>The new request.</returns>
+        public IContentRequest PutRequest<TContent>(string route, TContent content, IFormatter formatter = null)
+        {
+            return new TinyRequest(HttpVerb.Put, route, this).
+                AddContent<TContent>(content, formatter);
         }
 
         /// <summary>
@@ -250,6 +263,31 @@ namespace Tiny.Http
         }
 
         /// <summary>
+        /// Create a new PATCH request.
+        /// </summary>
+        /// <param name="content">The content of the request</param>
+        /// <param name="serializer">The serializer use to serialize it</param>
+        /// <returns>The new request.</returns>
+        public IContentRequest PatchRequest<TContent>(TContent content, IFormatter serializer = null)
+        {
+            return new TinyRequest(HttpVerb.Patch, null, this).
+                AddContent<TContent>(content, serializer);
+        }
+
+        /// <summary>
+        /// Create a new PATCH request.
+        /// </summary>
+        /// <param name="route">The route.</param>
+        /// <param name="content">The content of the request</param>
+        /// <param name="serializer">The serializer use to serialize it</param>
+        /// <returns>The new request.</returns>
+        public IContentRequest PatchRequest<TContent>(string route, TContent content, IFormatter serializer = null)
+        {
+            return new TinyRequest(HttpVerb.Patch, route, this).
+                AddContent<TContent>(content, serializer);
+        }
+
+        /// <summary>
         /// Create a new DELETE request.
         /// </summary>
         /// <param name="route">The route.</param>
@@ -258,6 +296,8 @@ namespace Tiny.Http
         {
             return new TinyRequest(HttpVerb.Delete, route, this);
         }
+
+        #endregion
 
         internal async Task<TResult> ExecuteAsync<TResult>(
             TinyRequest tinyRequest,
