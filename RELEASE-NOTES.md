@@ -1,4 +1,7 @@
 # Release notes
+## 1.1.2
+Add overload on ExecuteAsync method (with less parameters)
+
 ## 1.1.1
 Remove hardcoded Headers and Add AddAcceptLanguageBasedOnCurrentCulture which add automaticaly current language
 
