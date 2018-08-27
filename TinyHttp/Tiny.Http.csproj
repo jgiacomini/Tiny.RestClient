@@ -15,7 +15,7 @@
     <RepositoryUrl>https://github.com/jgiacomini/TinyHttp.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <MinClientVersion>3.0.3</MinClientVersion>
-    <PackageReleaseNotes>See release notes at https://github.com/jgiacomini/TinyHttp/blob/1.1.0/RELEASE-NOTES.md</PackageReleaseNotes>
+    <PackageReleaseNotes>See release notes at https://github.com/jgiacomini/TinyHttp/blob/1.1.2/RELEASE-NOTES.md</PackageReleaseNotes>
   </PropertyGroup>
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
