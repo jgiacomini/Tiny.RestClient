@@ -31,6 +31,63 @@ namespace Tiny.Http.Tests
         }
 
         [TestMethod]
+        public async Task GetQueryStringTest()
+        {
+            var client = GetClient();
+            string str = "str";
+            int number = 1;
+            int? numberNullable = null;
+            bool boolean = false;
+            bool? boolNullable = null;
+            double doubleNumber = 4042.2;
+            double? doubleNumberNullable = null;
+            decimal decimalNumber = 1;
+            decimal? decimalNumberNullable = null;
+            float floatNumber = 43.4f;
+            float? floatNumberNullable = null;
+            var toCompare = $"{str}_{number}_{numberNullable}_{boolean}_{boolNullable}_{doubleNumber}_{doubleNumberNullable}_{decimalNumber}_{decimalNumberNullable}_{floatNumber}_{floatNumberNullable}";
+            var data = await client.
+                GetRequest("GetTest/QueryString").
+                AddQueryParameter("str", str).
+                AddQueryParameter("number", number).
+                AddQueryParameter("numberNullable", numberNullable).
+                AddQueryParameter("bool", boolean).
+                AddQueryParameter("boolNullable", boolNullable).
+                AddQueryParameter("doubleNumber", doubleNumber).
+                AddQueryParameter("doubleNumberNullable", doubleNumberNullable).
+                AddQueryParameter("decimalNumber", decimalNumber).
+                AddQueryParameter("decimalNumberNullable", decimalNumberNullable).
+                AddQueryParameter("floatNumber", floatNumber).
+                AddQueryParameter("floatNumberNullable", floatNumberNullable).
+                ExecuteAsync<string>();
+
+            Assert.AreEqual(data, toCompare);
+            str = null;
+            numberNullable = 222;
+            boolNullable = false;
+            doubleNumberNullable = 44444444;
+            decimalNumberNullable = 4445855.2m;
+            floatNumberNullable = 64443.2f;
+            toCompare = $"{str}_{number}_{numberNullable}_{boolean}_{boolNullable}_{doubleNumber}_{doubleNumberNullable}_{decimalNumber}_{decimalNumberNullable}_{floatNumber}_{floatNumberNullable}";
+
+            data = await client.
+                GetRequest("GetTest/QueryString").
+                AddQueryParameter("str", str).
+                AddQueryParameter("number", number).
+                AddQueryParameter("numberNullable", numberNullable).
+                AddQueryParameter("bool", boolean).
+                AddQueryParameter("boolNullable", boolNullable).
+                AddQueryParameter("doubleNumber", doubleNumber).
+                AddQueryParameter("doubleNumberNullable", doubleNumberNullable).
+                AddQueryParameter("decimalNumber", decimalNumber).
+                AddQueryParameter("decimalNumberNullable", decimalNumberNullable).
+                AddQueryParameter("floatNumber", floatNumber).
+                AddQueryParameter("floatNumberNullable", floatNumberNullable).
+                ExecuteAsync<string>();
+            Assert.AreEqual(data, toCompare);
+        }
+
+        [TestMethod]
         public async Task GetComplexData()
         {
             var client = GetClient();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ namespace Tiny.Http
     /// <seealso cref="Tiny.Http.IStreamRequest" />
     internal class TinyRequest : IRequest, IOctectStreamRequest, IStreamRequest, IMultiPartFromDataRequest, IMultiPartFromDataExecutableRequest
     {
+        private static readonly NumberFormatInfo _nfi;
         private readonly HttpVerb _httpVerb;
         private readonly TinyHttpClient _client;
         private readonly string _route;
@@ -27,6 +29,12 @@ namespace Tiny.Http
         internal Dictionary<string, string> QueryParameters { get => _queryParameters; }
         internal string Route { get => _route; }
         internal ITinyContent Content { get => _content; }
+
+        static TinyRequest()
+        {
+            _nfi = new NumberFormatInfo();
+            _nfi.NumberDecimalSeparator = ".";
+        }
 
         internal TinyRequest(HttpVerb httpVerb, string route, TinyHttpClient client)
         {
@@ -133,12 +141,12 @@ namespace Tiny.Http
         /// <inheritdoc/>
         public IRequest AddQueryParameter(string key, int? value)
         {
-            if (!value.HasValue)
+            if (value.HasValue)
             {
-                return AddQueryParameter(key, "null");
+                return AddQueryParameter(key, value.Value.ToString());
             }
 
-            return AddQueryParameter(key, value.ToString());
+            return this;
         }
 
         /// <inheritdoc/>
@@ -150,46 +158,46 @@ namespace Tiny.Http
         /// <inheritdoc/>
         public IRequest AddQueryParameter(string key, uint? value)
         {
-            if (!value.HasValue)
+            if (value.HasValue)
             {
-                return AddQueryParameter(key, "null");
+                return AddQueryParameter(key, value.Value.ToString());
             }
 
-            return AddQueryParameter(key, value.ToString());
+            return this;
         }
 
         /// <inheritdoc/>
         public IRequest AddQueryParameter(string key, double value)
         {
-            return AddQueryParameter(key, value.ToString());
+            return AddQueryParameter(key, value.ToString(_nfi));
         }
 
         /// <inheritdoc/>
         public IRequest AddQueryParameter(string key, double? value)
         {
-            if (!value.HasValue)
+            if (value.HasValue)
             {
-                return AddQueryParameter(key, "null");
+                return AddQueryParameter(key, value.Value.ToString(_nfi));
             }
 
-            return AddQueryParameter(key, value.ToString());
+            return this;
         }
 
         /// <inheritdoc/>
         public IRequest AddQueryParameter(string key, decimal value)
         {
-            return AddQueryParameter(key, value.ToString());
+            return AddQueryParameter(key, value.ToString(_nfi));
         }
 
         /// <inheritdoc/>
         public IRequest AddQueryParameter(string key, decimal? value)
         {
-            if (!value.HasValue)
+            if (value.HasValue)
             {
-                return AddQueryParameter(key, "null");
+                return AddQueryParameter(key, value.Value.ToString(_nfi));
             }
 
-            return AddQueryParameter(key, value.ToString());
+            return this;
         }
 
         /// <inheritdoc/>
@@ -201,12 +209,29 @@ namespace Tiny.Http
         /// <inheritdoc/>
         public IRequest AddQueryParameter(string key, bool? value)
         {
-            if (!value.HasValue)
+            if (value.HasValue)
             {
-                return AddQueryParameter(key, "null");
+                return AddQueryParameter(key, value.Value.ToString());
             }
 
-            return AddQueryParameter(key, value.ToString());
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public IRequest AddQueryParameter(string key, float value)
+        {
+            return AddQueryParameter(key, value.ToString(_nfi));
+        }
+
+        /// <inheritdoc/>
+        public IRequest AddQueryParameter(string key, float? value)
+        {
+            if (value.HasValue)
+            {
+                return AddQueryParameter(key, value.Value.ToString(_nfi));
+            }
+
+            return this;
         }
         #endregion
 

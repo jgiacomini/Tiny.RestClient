@@ -31,6 +31,23 @@ namespace Tiny.Http.ForTest.Api.Controllers
             return new string[] { "value1", "value2" };
         }
 
+        [HttpGet("QueryString")]
+        public string QueryString(
+            string str,
+            int number,
+            int? numberNullable,
+            bool boolean,
+            bool? boolNullable,
+            double doubleNumber,
+            double? doubleNumberNullable,
+            decimal decimalNumber,
+            decimal? decimalNumberNullable,
+            float floatNumber,
+            float? floatNumberNullable)
+        {
+            return $"{str}_{number}_{numberNullable}_{boolean}_{boolNullable}_{doubleNumber}_{doubleNumberNullable}_{decimalNumber}_{decimalNumberNullable}_{floatNumber}_{floatNumberNullable}";
+        }
+
         [HttpGet("Stream")]
         public Stream Stream()
         {

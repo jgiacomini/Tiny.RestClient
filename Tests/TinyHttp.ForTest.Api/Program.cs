@@ -8,7 +8,7 @@ namespace Tiny.Http.ForTest.Api
         public static void Main(string[] args)
         {
             CreateWebHostBuilder(args).
-                UseUrls("http://localhost:53095").
+                UseUrls("http://localhost:4242").
                 Build().
                 Run();
         }

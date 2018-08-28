@@ -100,5 +100,21 @@
         /// <param name="value">The value.</param>
         /// <returns>The current request</returns>
         IRequest AddQueryParameter(string key, decimal? value);
+
+        /// <summary>
+        /// Adds the query parameter.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>The current request</returns>
+        IRequest AddQueryParameter(string key, float value);
+
+        /// <summary>
+        /// Adds the query parameter.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>The current request</returns>
+        IRequest AddQueryParameter(string key, float? value);
     }
 }
