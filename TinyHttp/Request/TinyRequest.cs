@@ -131,8 +131,30 @@ namespace Tiny.Http
         }
 
         /// <inheritdoc/>
+        public IRequest AddQueryParameter(string key, int? value)
+        {
+            if (!value.HasValue)
+            {
+                return AddQueryParameter(key, "null");
+            }
+
+            return AddQueryParameter(key, value.ToString());
+        }
+
+        /// <inheritdoc/>
         public IRequest AddQueryParameter(string key, uint value)
         {
+            return AddQueryParameter(key, value.ToString());
+        }
+
+        /// <inheritdoc/>
+        public IRequest AddQueryParameter(string key, uint? value)
+        {
+            if (!value.HasValue)
+            {
+                return AddQueryParameter(key, "null");
+            }
+
             return AddQueryParameter(key, value.ToString());
         }
 
@@ -143,14 +165,47 @@ namespace Tiny.Http
         }
 
         /// <inheritdoc/>
+        public IRequest AddQueryParameter(string key, double? value)
+        {
+            if (!value.HasValue)
+            {
+                return AddQueryParameter(key, "null");
+            }
+
+            return AddQueryParameter(key, value.ToString());
+        }
+
+        /// <inheritdoc/>
         public IRequest AddQueryParameter(string key, decimal value)
         {
             return AddQueryParameter(key, value.ToString());
         }
 
         /// <inheritdoc/>
+        public IRequest AddQueryParameter(string key, decimal? value)
+        {
+            if (!value.HasValue)
+            {
+                return AddQueryParameter(key, "null");
+            }
+
+            return AddQueryParameter(key, value.ToString());
+        }
+
+        /// <inheritdoc/>
         public IRequest AddQueryParameter(string key, bool value)
         {
+            return AddQueryParameter(key, value.ToString());
+        }
+
+        /// <inheritdoc/>
+        public IRequest AddQueryParameter(string key, bool? value)
+        {
+            if (!value.HasValue)
+            {
+                return AddQueryParameter(key, "null");
+            }
+
             return AddQueryParameter(key, value.ToString());
         }
         #endregion

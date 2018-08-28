@@ -35,7 +35,23 @@
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
         /// <returns>The current request</returns>
+        IRequest AddQueryParameter(string key, bool? value);
+
+        /// <summary>
+        /// Adds the query parameter.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>The current request</returns>
         IRequest AddQueryParameter(string key, int value);
+
+        /// <summary>
+        /// Adds the query parameter.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>The current request</returns>
+        IRequest AddQueryParameter(string key, int? value);
 
         /// <summary>
         /// Adds the query parameter.
@@ -51,6 +67,14 @@
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
         /// <returns>The current request</returns>
+        IRequest AddQueryParameter(string key, uint? value);
+
+        /// <summary>
+        /// Adds the query parameter.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>The current request</returns>
         IRequest AddQueryParameter(string key, double value);
 
         /// <summary>
@@ -59,6 +83,22 @@
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
         /// <returns>The current request</returns>
+        IRequest AddQueryParameter(string key, double? value);
+
+        /// <summary>
+        /// Adds the query parameter.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>The current request</returns>
         IRequest AddQueryParameter(string key, decimal value);
+
+        /// <summary>
+        /// Adds the query parameter.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>The current request</returns>
+        IRequest AddQueryParameter(string key, decimal? value);
     }
 }
