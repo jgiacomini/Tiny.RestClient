@@ -1,5 +1,5 @@
 # TinyHttp
-TinyHttp make easier the dialog between you API and your application.
+TinyHttp make easier the dialog between your API and your application.
 It hide all the complexity of communication, deserialisation ...
 
 ## Nuget
