@@ -153,6 +153,7 @@ await client.PostRequest("File/Add").
 // Read byte array response         
 byte[] byteArray = await client.
               GetRequest("File").
+              WithByteArrayResponse().
               ExecuteAsync();
 
 // Read byte array as content
