@@ -1,4 +1,5 @@
-﻿namespace Tiny.Http.Tests
+﻿using System.Linq;
+namespace Tiny.Http.Tests
 {
     public class BaseTest
     {
@@ -31,7 +32,10 @@
             {
                 if (_clientXML == null)
                 {
-                    _clientXML = new TinyHttpClient(Program.Client, _serverUrl, new XmlFormatter());
+                    _clientXML = new TinyHttpClient(Program.Client, _serverUrl);
+                    _client.Formatters.Where(f => f is XmlFormatter).First();
+                    _client.AddFormatter(new XmlFormatter(), true);
+                    _client.Formatters.Where(f => f is JsonFormatter).First();
                 }
             }
 

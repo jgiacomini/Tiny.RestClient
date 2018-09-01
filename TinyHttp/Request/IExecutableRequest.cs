@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System.IO;
+using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Tiny.Http
@@ -13,8 +15,32 @@ namespace Tiny.Http
         /// </summary>
         /// <typeparam name="TResult">The type of the t result.</typeparam>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Task of TResukt</returns>
+        /// <returns><see cref="Task{TResult}"/></returns>
         Task<TResult> ExecuteAsync<TResult>(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Executes the request.
+        /// </summary>
+        /// <returns><see cref="Task{Stream}"/></returns>
+        Task<Stream> ExecuteAsStreamAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Executes the request.
+        /// </summary>
+        /// <returns>Task of string</returns>
+        Task<string> ExecuteAsStringAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Executes the request.
+        /// </summary>
+        /// <returns>Task of byte array</returns>
+        Task<byte[]> ExecuteAsByteArrayAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Executes the request.
+        /// </summary>
+        /// <returns>Task of <see cref="HttpResponseMessage"/></returns>
+        Task<HttpResponseMessage> ExecuteAsHttpResponseMessageAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Executes the request.

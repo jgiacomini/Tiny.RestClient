@@ -7,8 +7,7 @@ namespace Tiny.Http
     /// </summary>
     /// <seealso cref="IMultiPartFromDataRequest"/>
     /// <seealso cref="IExecutableRequest"/>
-    /// <seealso cref="IWithNoStandardResponse"/>
-    public interface IMultiPartFromDataExecutableRequest : IMultiPartFromDataRequest, IExecutableRequest, IWithNoStandardResponse
+    public interface IMultiPartFromDataExecutableRequest : IMultiPartFromDataRequest, IExecutableRequest
     {
     }
 }

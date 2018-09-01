@@ -155,10 +155,40 @@ namespace Tiny.Http.Tests
         }
 
         [TestMethod]
+        public async Task GetStringResult()
+        {
+            var client = GetClient();
+            var data = await client.GetRequest("GetTest/complex").
+                ExecuteAsStringAsync();
+
+            var dataObject = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(data);
+            Assert.AreEqual(dataObject.Count, 2);
+            Assert.AreEqual(dataObject[0], "value1");
+            Assert.AreEqual(dataObject[1], "value2");
+        }
+
+        [TestMethod]
+        public async Task GetHttpResponseMessageResult()
+        {
+            var client = GetClient();
+            var data = await client.GetRequest("GetTest/complex").
+                ExecuteAsHttpResponseMessageAsync();
+
+            var dataStr = await data.Content.ReadAsStringAsync();
+
+            var dataObject = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(dataStr);
+            Assert.AreEqual(dataObject.Count, 2);
+            Assert.AreEqual(dataObject[0], "value1");
+            Assert.AreEqual(dataObject[1], "value2");
+        }
+
+        [TestMethod]
         public async Task GetStreamData()
         {
             var client = GetClient();
-            var stream = await client.GetRequest("GetTest/stream").WithStreamResponse().ExecuteAsync();
+            var stream = await client.
+                GetRequest("GetTest/stream").
+                ExecuteAsStreamAsync();
             Assert.AreEqual(stream.Length, 42);
         }
     }

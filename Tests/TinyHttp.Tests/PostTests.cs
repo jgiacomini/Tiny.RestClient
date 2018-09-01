@@ -40,9 +40,11 @@ namespace Tiny.Http.Tests
         [TestMethod]
         public async Task PostWithoutResponse()
         {
-            var postRequest = new Request();
-            postRequest.Id = 42;
-            postRequest.Data = "DATA";
+            var postRequest = new Request
+            {
+                Id = 42,
+                Data = "DATA"
+            };
 
             var client = GetClient();
             await client.
@@ -101,8 +103,7 @@ namespace Tiny.Http.Tests
             var response = await client.
                  PostRequest("PostTest/Stream").
                 AddByteArrayContent(GetByteArray(size)).
-                WithByteArrayResponse().
-                ExecuteAsync();
+                ExecuteAsByteArrayAsync();
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Length == size);
 
@@ -120,8 +121,7 @@ namespace Tiny.Http.Tests
             var response = await client.
                 PostRequest("PostTest/Stream").
                 AddStreamContent(new MemoryStream(GetByteArray(size))).
-                WithStreamResponse().
-                ExecuteAsync();
+                ExecuteAsStreamAsync();
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Length == size);
         }
