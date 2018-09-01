@@ -51,8 +51,7 @@ namespace Tiny.Http.Tests
             var stream = await client.
                  DeleteRequest("DeleteTest/Stream").
                 AddStreamContent(streamToSend).
-                WithStreamResponse().
-                ExecuteAsync();
+                ExecuteAsStreamAsync();
             Assert.IsNotNull(stream);
             Assert.IsTrue(stream.Length == id);
         }

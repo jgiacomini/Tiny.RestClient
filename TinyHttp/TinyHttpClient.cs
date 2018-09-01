@@ -171,7 +171,6 @@ namespace Tiny.Http
 
             if (_defaultFormatter == formatter)
             {
-                _defaultFormatter = formatter;
                 throw new ArgumentException("Add a new default formatter before remove the current one");
             }
 
@@ -221,7 +220,7 @@ namespace Tiny.Http
         /// <param name="content">The content of the request</param>
         /// <param name="formatter">The formatter use to serialize the content</param>
         /// <returns>The new request.</returns>
-        public IContentRequest PostRequest<TContent>(TContent content, IFormatter formatter = null)
+        public IParameterRequest PostRequest<TContent>(TContent content, IFormatter formatter = null)
         {
             return new TinyRequest(HttpVerb.Post, null, this).
                 AddContent<TContent>(content, formatter);
@@ -234,7 +233,7 @@ namespace Tiny.Http
         /// <param name="content">The content of the request</param>
         /// <param name="formatter">The formatter use to serialize the content</param>
         /// <returns>The new request.</returns>
-        public IContentRequest PostRequest<TContent>(string route, TContent content, IFormatter formatter = null)
+        public IParameterRequest PostRequest<TContent>(string route, TContent content, IFormatter formatter = null)
         {
             return new TinyRequest(HttpVerb.Post, route, this).
                 AddContent<TContent>(content, formatter);
@@ -256,7 +255,7 @@ namespace Tiny.Http
         /// <param name="content">The content of the request</param>
         /// <param name="formatter">The formatter use to serialize the content</param>
         /// <returns>The new request.</returns>
-        public IContentRequest PutRequest<TContent>(TContent content, IFormatter formatter = null)
+        public IParameterRequest PutRequest<TContent>(TContent content, IFormatter formatter = null)
         {
             return new TinyRequest(HttpVerb.Put, null, this).
                 AddContent<TContent>(content, formatter);
@@ -269,7 +268,7 @@ namespace Tiny.Http
         /// <param name="content">The content of the request</param>
         /// <param name="formatter">The formatter use to serialize the content</param>
         /// <returns>The new request.</returns>
-        public IContentRequest PutRequest<TContent>(string route, TContent content, IFormatter formatter = null)
+        public IParameterRequest PutRequest<TContent>(string route, TContent content, IFormatter formatter = null)
         {
             return new TinyRequest(HttpVerb.Put, route, this).
                 AddContent<TContent>(content, formatter);
@@ -291,7 +290,7 @@ namespace Tiny.Http
         /// <param name="content">The content of the request</param>
         /// <param name="serializer">The serializer use to serialize it</param>
         /// <returns>The new request.</returns>
-        public IContentRequest PatchRequest<TContent>(TContent content, IFormatter serializer = null)
+        public IParameterRequest PatchRequest<TContent>(TContent content, IFormatter serializer = null)
         {
             return new TinyRequest(HttpVerb.Patch, null, this).
                 AddContent<TContent>(content, serializer);
@@ -304,7 +303,7 @@ namespace Tiny.Http
         /// <param name="content">The content of the request</param>
         /// <param name="serializer">The serializer use to serialize it</param>
         /// <returns>The new request.</returns>
-        public IContentRequest PatchRequest<TContent>(string route, TContent content, IFormatter serializer = null)
+        public IParameterRequest PatchRequest<TContent>(string route, TContent content, IFormatter serializer = null)
         {
             return new TinyRequest(HttpVerb.Patch, route, this).
                 AddContent<TContent>(content, serializer);
@@ -369,7 +368,7 @@ namespace Tiny.Http
                                     stream.Position = 0;
                                     using (var reader = new StreamReader(stream, _encoding))
                                     {
-                                        data = reader.ReadToEnd();
+                                        data = await reader.ReadToEndAsync().ConfigureAwait(false);
                                     }
                                 }
                             }
@@ -400,7 +399,7 @@ namespace Tiny.Http
             }
         }
 
-        internal async Task<byte[]> ExecuteByteArrayResultAsync(
+        internal async Task<byte[]> ExecuteAsByteArrayResultAsync(
            TinyRequest tinyRequest,
            CancellationToken cancellationToken)
         {
@@ -418,7 +417,7 @@ namespace Tiny.Http
 
                         using (var ms = new MemoryStream())
                         {
-                            stream.CopyTo(ms);
+                            await stream.CopyToAsync(ms).ConfigureAwait(false);
                             return ms.ToArray();
                         }
                     }
@@ -426,7 +425,7 @@ namespace Tiny.Http
             }
         }
 
-        internal async Task<Stream> ExecuteWithStreamResultAsync(
+        internal async Task<Stream> ExecuteAsStreamResultAsync(
            TinyRequest tinyRequest,
            CancellationToken cancellationToken)
         {
@@ -441,6 +440,38 @@ namespace Tiny.Http
                 }
 
                 return stream;
+            }
+        }
+
+        internal async Task<string> ExecuteAsStringResultAsync(
+           TinyRequest tinyRequest,
+           CancellationToken cancellationToken)
+        {
+            using (var content = CreateContent(tinyRequest.Content))
+            {
+                var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
+                HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false);
+                var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false);
+                if (stream == null || !stream.CanRead)
+                {
+                    return null;
+                }
+
+                using (StreamReader reader = new StreamReader(stream, Encoding))
+                {
+                    return await reader.ReadToEndAsync().ConfigureAwait(false);
+                }
+            }
+        }
+
+        internal async Task<HttpResponseMessage> ExecuteAsHttpResponseMessageResultAsync(
+           TinyRequest tinyRequest,
+           CancellationToken cancellationToken)
+        {
+            using (var content = CreateContent(tinyRequest.Content))
+            {
+                var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
+                return await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false);
             }
         }
 

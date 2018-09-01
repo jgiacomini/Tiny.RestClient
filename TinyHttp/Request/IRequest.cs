@@ -5,129 +5,10 @@ namespace Tiny.Http
     /// <summary>
     /// Interface IRequest
     /// </summary>
-    /// <seealso cref="Tiny.Http.IContentRequest" />
     /// <seealso cref="Tiny.Http.IFormRequest" />
-    public interface IRequest : IContentRequest, IFormRequest
+    /// <seealso cref="Tiny.Http.IExecutableRequest" />
+    public interface IRequest : IExecutableRequest, IFormRequest
     {
-        /// <summary>
-        /// Fill header of response
-        /// </summary>
-        /// <param name="headers">Header filled after execute method</param>
-        /// <returns>The current request</returns>
-        IRequest FillResponseHeaders(out Headers headers);
-
-        /// <summary>
-        /// Adds the header.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
-        IRequest AddHeader(string key, string value);
-
-        /// <summary>
-        /// Adds the query parameter.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
-        IRequest AddQueryParameter(string key, string value);
-
-        /// <summary>
-        /// Adds the query parameter.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
-        IRequest AddQueryParameter(string key, bool value);
-
-        /// <summary>
-        /// Adds the query parameter.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
-        IRequest AddQueryParameter(string key, bool? value);
-
-        /// <summary>
-        /// Adds the query parameter.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
-        IRequest AddQueryParameter(string key, int value);
-
-        /// <summary>
-        /// Adds the query parameter.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
-        IRequest AddQueryParameter(string key, int? value);
-
-        /// <summary>
-        /// Adds the query parameter.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
-        IRequest AddQueryParameter(string key, uint value);
-
-        /// <summary>
-        /// Adds the query parameter.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
-        IRequest AddQueryParameter(string key, uint? value);
-
-        /// <summary>
-        /// Adds the query parameter.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
-        IRequest AddQueryParameter(string key, double value);
-
-        /// <summary>
-        /// Adds the query parameter.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
-        IRequest AddQueryParameter(string key, double? value);
-
-        /// <summary>
-        /// Adds the query parameter.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
-        IRequest AddQueryParameter(string key, decimal value);
-
-        /// <summary>
-        /// Adds the query parameter.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
-        IRequest AddQueryParameter(string key, decimal? value);
-
-        /// <summary>
-        /// Adds the query parameter.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
-        IRequest AddQueryParameter(string key, float value);
-
-        /// <summary>
-        /// Adds the query parameter.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
-        IRequest AddQueryParameter(string key, float? value);
-
         /// <summary>
         /// Adds the content.
         /// </summary>
@@ -135,7 +16,7 @@ namespace Tiny.Http
         /// <param name="content">The content.</param>
         /// <param name="serializer">Override the default serializer setted on the client.</param>
         /// <returns>The current request</returns>
-        IContentRequest AddContent<TContent>(TContent content, IFormatter serializer = null);
+        IParameterRequest AddContent<TContent>(TContent content, IFormatter serializer = null);
 
         /// <summary>
         /// Adds the content of the byte array.
@@ -143,7 +24,7 @@ namespace Tiny.Http
         /// <param name="byteArray">The byte array.</param>
         /// <param name="contentType">The Content type</param>
         /// <returns>The current request</returns>
-        IContentRequest AddByteArrayContent(byte[] byteArray, string contentType = "application/octet-stream");
+        IParameterRequest AddByteArrayContent(byte[] byteArray, string contentType = "application/octet-stream");
 
         /// <summary>
         /// Adds the content of the stream.
@@ -151,7 +32,7 @@ namespace Tiny.Http
         /// <param name="stream">The stream.</param>
         /// <param name="contentType">The Content type</param>
         /// <returns>The current request</returns>
-        IContentRequest AddStreamContent(Stream stream, string contentType = "application/octet-stream");
+        IParameterRequest AddStreamContent(Stream stream, string contentType = "application/octet-stream");
 
         /// <summary>
         /// As a multipart data from request

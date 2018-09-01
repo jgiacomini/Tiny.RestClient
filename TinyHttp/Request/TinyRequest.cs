@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,9 +12,10 @@ namespace Tiny.Http
     /// Class TinyRequest.
     /// </summary>
     /// <seealso cref="Tiny.Http.IRequest" />
-    /// <seealso cref="Tiny.Http.IOctectStreamRequest" />
-    /// <seealso cref="Tiny.Http.IStreamRequest" />
-    internal class TinyRequest : IRequest, IOctectStreamRequest, IStreamRequest, IMultiPartFromDataRequest, IMultiPartFromDataExecutableRequest
+    internal class TinyRequest :
+        IRequest,
+        IMultiPartFromDataRequest,
+        IMultiPartFromDataExecutableRequest
     {
         private static readonly NumberFormatInfo _nfi;
         private readonly HttpVerb _httpVerb;
@@ -35,8 +37,10 @@ namespace Tiny.Http
 
         static TinyRequest()
         {
-            _nfi = new NumberFormatInfo();
-            _nfi.NumberDecimalSeparator = ".";
+            _nfi = new NumberFormatInfo
+            {
+                NumberDecimalSeparator = "."
+            };
         }
 
         internal TinyRequest(HttpVerb httpVerb, string route, TinyHttpClient client)
@@ -47,19 +51,19 @@ namespace Tiny.Http
         }
 
         #region Content
-        public IContentRequest AddContent<TContent>(TContent content, IFormatter serializer)
+        public IParameterRequest AddContent<TContent>(TContent content, IFormatter serializer)
         {
             _content = new ToSerializeContent<TContent>(content, serializer);
             return this;
         }
 
-        public IContentRequest AddByteArrayContent(byte[] byteArray, string contentType)
+        public IParameterRequest AddByteArrayContent(byte[] byteArray, string contentType)
         {
             _content = new BytesContent(byteArray, contentType);
             return this;
         }
 
-        public IContentRequest AddStreamContent(Stream stream, string contentType)
+        public IParameterRequest AddStreamContent(Stream stream, string contentType)
         {
             _content = new StreamContent(stream, contentType);
             return this;
@@ -97,9 +101,15 @@ namespace Tiny.Http
         #endregion
 
         #region Headers
+        public IParameterRequest FillResponseHeaders(out Headers headers)
+        {
+            headers = new Headers();
+            _reponseHeaders = headers;
+            return this;
+        }
 
         /// <inheritdoc/>
-        public IRequest AddHeader(string key, string value)
+        public IParameterRequest AddHeader(string key, string value)
         {
             if (_headers == null)
             {
@@ -114,7 +124,7 @@ namespace Tiny.Http
         #region Query Parameters
 
         /// <inheritdoc/>
-        public IRequest AddQueryParameter(string key, string value)
+        public IParameterRequest AddQueryParameter(string key, string value)
         {
             if (_queryParameters == null)
             {
@@ -135,13 +145,13 @@ namespace Tiny.Http
         }
 
         /// <inheritdoc/>
-        public IRequest AddQueryParameter(string key, int value)
+        public IParameterRequest AddQueryParameter(string key, int value)
         {
             return AddQueryParameter(key, value.ToString());
         }
 
         /// <inheritdoc/>
-        public IRequest AddQueryParameter(string key, int? value)
+        public IParameterRequest AddQueryParameter(string key, int? value)
         {
             if (value.HasValue)
             {
@@ -152,13 +162,13 @@ namespace Tiny.Http
         }
 
         /// <inheritdoc/>
-        public IRequest AddQueryParameter(string key, uint value)
+        public IParameterRequest AddQueryParameter(string key, uint value)
         {
             return AddQueryParameter(key, value.ToString());
         }
 
         /// <inheritdoc/>
-        public IRequest AddQueryParameter(string key, uint? value)
+        public IParameterRequest AddQueryParameter(string key, uint? value)
         {
             if (value.HasValue)
             {
@@ -169,13 +179,13 @@ namespace Tiny.Http
         }
 
         /// <inheritdoc/>
-        public IRequest AddQueryParameter(string key, double value)
+        public IParameterRequest AddQueryParameter(string key, double value)
         {
             return AddQueryParameter(key, value.ToString(_nfi));
         }
 
         /// <inheritdoc/>
-        public IRequest AddQueryParameter(string key, double? value)
+        public IParameterRequest AddQueryParameter(string key, double? value)
         {
             if (value.HasValue)
             {
@@ -186,13 +196,13 @@ namespace Tiny.Http
         }
 
         /// <inheritdoc/>
-        public IRequest AddQueryParameter(string key, decimal value)
+        public IParameterRequest AddQueryParameter(string key, decimal value)
         {
             return AddQueryParameter(key, value.ToString(_nfi));
         }
 
         /// <inheritdoc/>
-        public IRequest AddQueryParameter(string key, decimal? value)
+        public IParameterRequest AddQueryParameter(string key, decimal? value)
         {
             if (value.HasValue)
             {
@@ -203,13 +213,13 @@ namespace Tiny.Http
         }
 
         /// <inheritdoc/>
-        public IRequest AddQueryParameter(string key, bool value)
+        public IParameterRequest AddQueryParameter(string key, bool value)
         {
             return AddQueryParameter(key, value.ToString());
         }
 
         /// <inheritdoc/>
-        public IRequest AddQueryParameter(string key, bool? value)
+        public IParameterRequest AddQueryParameter(string key, bool? value)
         {
             if (value.HasValue)
             {
@@ -220,13 +230,13 @@ namespace Tiny.Http
         }
 
         /// <inheritdoc/>
-        public IRequest AddQueryParameter(string key, float value)
+        public IParameterRequest AddQueryParameter(string key, float value)
         {
             return AddQueryParameter(key, value.ToString(_nfi));
         }
 
         /// <inheritdoc/>
-        public IRequest AddQueryParameter(string key, float? value)
+        public IParameterRequest AddQueryParameter(string key, float? value)
         {
             if (value.HasValue)
             {
@@ -236,25 +246,6 @@ namespace Tiny.Http
             return this;
         }
         #endregion
-
-        public IRequest FillResponseHeaders(out Headers headers)
-        {
-            headers = new Headers();
-            _reponseHeaders = headers;
-            return this;
-        }
-
-        /// <inheritdoc/>
-        public IOctectStreamRequest WithByteArrayResponse()
-        {
-            return this;
-        }
-
-        /// <inheritdoc/>
-        public IStreamRequest WithStreamResponse()
-        {
-            return this;
-        }
 
         /// <inheritdoc/>
         public Task<TResult> ExecuteAsync<TResult>(CancellationToken cancellationToken)
@@ -274,14 +265,28 @@ namespace Tiny.Http
             return _client.ExecuteAsync(this, cancellationToken);
         }
 
-        Task<byte[]> IOctectStreamRequest.ExecuteAsync(CancellationToken cancellationToken)
+        /// <inheritdoc/>
+        public Task<byte[]> ExecuteAsByteArrayAsync(CancellationToken cancellationToken)
         {
-            return _client.ExecuteByteArrayResultAsync(this, cancellationToken);
+            return _client.ExecuteAsByteArrayResultAsync(this, cancellationToken);
         }
 
-        Task<Stream> IStreamRequest.ExecuteAsync(CancellationToken cancellationToken)
+        /// <inheritdoc/>
+        public Task<Stream> ExecuteAsStreamAsync(CancellationToken cancellationToken)
         {
-            return _client.ExecuteWithStreamResultAsync(this, cancellationToken);
+            return _client.ExecuteAsStreamResultAsync(this, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<string> ExecuteAsStringAsync(CancellationToken cancellationToken)
+        {
+            return _client.ExecuteAsStringResultAsync(this, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<HttpResponseMessage> ExecuteAsHttpResponseMessageAsync(CancellationToken cancellationToken)
+        {
+            return _client.ExecuteAsHttpResponseMessageResultAsync(this, cancellationToken);
         }
 
         #region MultiPart
@@ -332,7 +337,6 @@ namespace Tiny.Http
 
             return this;
         }
-
         #endregion
     }
 }

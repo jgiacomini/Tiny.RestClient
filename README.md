@@ -14,6 +14,7 @@ It hide all the complexity of communication, deserialisation ...
 ## Features
 * Modern async http client for REST API.
 * Support of verbs : GET, POST , PUT, DELETE, PATCH, HEAD
+* Support of cancellation token on each requests
 * Automatic XML and JSON serialization / deserialization
 * Support of custom serialisation / deserialisation
 * Support of multi-part form data
@@ -47,7 +48,6 @@ client.GetRequest("City/All").
       AddHeader("Token", "MYTOKEN").
       ExecuteAsync();
 ```
-
 
 #### Read headers of response
 
@@ -100,6 +100,31 @@ var response = await client.
                 AddFormParameter("country", "France").
                 AddFormParameter("name", "Paris").
                 ExecuteAsync<Response>();
+// POST http://MyAPI.com/api/City/Add with from url encoded content
+```
+
+
+## Get raw HttpResponseMessage
+
+```cs
+
+var response = await client.
+                PostRequest("City/Add").
+                AddFormParameter("country", "France").
+                AddFormParameter("name", "Paris").
+                ExecuteAsHttpResponseMessageAsync();
+// POST http://MyAPI.com/api/City/Add with from url encoded content
+```
+
+## Get raw string result
+
+```cs
+
+var response = await client.
+                PostRequest("City/Add").
+                AddFormParameter("country", "France").
+                AddFormParameter("name", "Paris").
+                ExecuteAsStringAsync();
 // POST http://MyAPI.com/api/City/Add with from url encoded content
 ```
 
@@ -160,7 +185,7 @@ If you use these methods no serializer will be used.
  Stream stream = await client.
               GetRequest("File").
               WithStreamResponse().
-              ExecuteAsync();
+              ExecuteAsStreamAsync();
 // Post Stream as content
 await client.PostRequest("File/Add").
             AddStreamContent(stream).
@@ -172,7 +197,7 @@ await client.PostRequest("File/Add").
 // Read byte array response         
 byte[] byteArray = await client.
               GetRequest("File").
-              ExecuteAsync();
+              ExecuteAsByteArrayAsync();
 
 // Read byte array as content
 await client.
