@@ -15,6 +15,7 @@ namespace Tiny.Http
         /// <param name="fileName">The name of the file</param>
         /// <param name="contentType">The content type of the file.</param>
         /// <returns>The current request</returns>
+        /// <exception cref="System.ArgumentNullException">thrown when data is null</exception>
         IMultiPartFromDataExecutableRequest AddByteArray(byte[] data, string name = null, string fileName = null, string contentType = "application/octet-stream");
 
         /// <summary>
@@ -25,6 +26,7 @@ namespace Tiny.Http
         /// <param name="fileName">The name of the file</param>
         /// <param name="contentType">The content type of the file</param>
         /// <returns>The current request</returns>
+        /// <exception cref="System.ArgumentNullException">thrown when data is null</exception>
         IMultiPartFromDataExecutableRequest AddStream(Stream data, string name = null, string fileName = null, string contentType = "application/octet-stream");
 
         /// <summary>
@@ -36,6 +38,7 @@ namespace Tiny.Http
         /// <param name="fileName">The name of the file</param>
         /// <param name="serializer">Override the default serializer setted on the client.</param>
         /// <returns>The current request</returns>
+        /// <exception cref="System.ArgumentNullException">thrown when content is null</exception>
         IMultiPartFromDataExecutableRequest AddContent<TContent>(TContent content, string name = null, string fileName = null, IFormatter serializer = null);
     }
 }
