@@ -159,8 +159,7 @@ namespace Tiny.Http.Tests
         {
             var client = GetClient();
             var data = await client.GetRequest("GetTest/complex").
-                WithStringResponse().
-                ExecuteAsync();
+                ExecuteAsStringAsync();
 
             var dataObject = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(data);
             Assert.AreEqual(dataObject.Count, 2);
@@ -173,8 +172,7 @@ namespace Tiny.Http.Tests
         {
             var client = GetClient();
             var data = await client.GetRequest("GetTest/complex").
-                WithHttpResponse().
-                ExecuteAsync();
+                ExecuteAsHttpResponseMessageAsync();
 
             var dataStr = await data.Content.ReadAsStringAsync();
 
@@ -188,7 +186,9 @@ namespace Tiny.Http.Tests
         public async Task GetStreamData()
         {
             var client = GetClient();
-            var stream = await client.GetRequest("GetTest/stream").WithStreamResponse().ExecuteAsync();
+            var stream = await client.
+                GetRequest("GetTest/stream").
+                ExecuteAsStreamAsync();
             Assert.AreEqual(stream.Length, 42);
         }
     }
