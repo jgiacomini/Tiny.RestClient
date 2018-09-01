@@ -48,6 +48,24 @@ client.GetRequest("City/All").
       ExecuteAsync();
 ```
 
+
+#### Read headers of response
+
+```cs
+Headers headersOfResponse = null;
+await client.GetRequest("GetTest/HeadersOfResponse").
+             FillResponseHeaders(out headersOfResponse).
+             ExecuteAsync();
+foreach(var header in headersOfResponse)
+{
+    Debug.WriteLine($"{current.Key}");
+    foreach (var item in current.Value)
+    {
+        Debug.WriteLine(item);
+    }
+}
+```
+
 ### Basic GET http requests
 
 ```cs
