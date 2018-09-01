@@ -291,6 +291,3 @@ client.FailedToGetResponse  += (sender , e)=>
 }
 
 ```
-
-## License
-MIT © JGI
