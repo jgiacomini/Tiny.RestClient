@@ -157,7 +157,7 @@ If you use these methods no serializer will be used.
 ```cs
 
 // Read stream response
- var stream = await client.
+ Stream stream = await client.
               GetRequest("File").
               WithStreamResponse().
               ExecuteAsync();
