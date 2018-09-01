@@ -1,5 +1,11 @@
 # Release notes
 
+## 1.2.0
+Add methods AddFormatter / RemoveFormatter
+Add a way to read responses headers
+Add overloads on method AddQueryStringParameters
+Fix an issue on AddHeader
+
 ## 1.1.3
 Add new overloads for PostRequest, PutRequest, PatchRequest
 
