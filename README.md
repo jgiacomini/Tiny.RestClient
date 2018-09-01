@@ -210,7 +210,7 @@ catch (HttpException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Intern
 }
 ```
 
-## Foratters 
+## Formatters 
 
 By default : 
  * the Json is used as default Formatter.
