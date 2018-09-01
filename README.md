@@ -210,19 +210,31 @@ catch (HttpException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Intern
 }
 ```
 
-## Serialization / Deserialization
+## Formatters 
 
-By default the Json is used as default Formatter.
-A Formatter will be used to serialize or deserialize streams.
+By default : 
+ * the Json is used as default Formatter.
+ * Xml Formatter is added in Formatters
 
-The XmlFormatter by default in formatters list.
+Each formatter have a list of supported media types.
+It allow TinyHttpClient to detect which formatter will be used.
+If the no formatter is found it use the default formatter.
 
-### Define xml as default serializer and deserializer.
+### Add a new formatter
+Add a new custom formatter as default formatter.
 ```cs
-IFormatter xmlSerializer = new XmlFormatter();
-var client = new TinyHttpClient("http://MYApi.com", xmlSerializer, xmlDeserializer);
+bool isDefaultFormatter = true;
+var customFormatter = new CustomFormatter();
+client.Add(customFormatter, isDefaultFormatter);
 ```
-### Define a specific serializer for one request
+
+### Remove a formatter
+```cs
+var lastFormatter = client.Formatters.As<XmlSerializer>().First();
+client.Remove(lastFormatter);
+```
+
+### Define a specific formatter for one request
 ```cs
 IFormatter serializer = new XmlFormatter();
  var response = await client.
@@ -230,7 +242,7 @@ IFormatter serializer = new XmlFormatter();
      ExecuteAsync();
 ```
 
-### Define a specific deserializer for one request
+### Define a specific formatter for one request
 ```cs
 IFormatter deserializer = new XmlFormatter();
 
@@ -240,7 +252,7 @@ IFormatter deserializer = new XmlFormatter();
      ExecuteAsync<City>(deserializer);
 ```
 
-### Custom serializer/deserializer.
+### Custom formatter
 
 You create your own serializers/deserializer by implementing IFormatter
 
