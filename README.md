@@ -28,7 +28,7 @@ It hide all the complexity of communication, deserialisation ...
 ```cs
 using Tiny.Http;
 
-var client = new TinyHttpClient("http://MyAPI.com/api");
+var client = new TinyHttpClient("http://MyAPI.com/api", new HttpClient());
 ```
 
 ### Headers
