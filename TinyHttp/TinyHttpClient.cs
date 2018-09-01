@@ -52,17 +52,7 @@ namespace Tiny.Http
         /// </summary>
         /// <param name="serverAddress">The server address.</param>
         public TinyHttpClient(string serverAddress)
-            : this(new HttpClient(), serverAddress, new JsonFormatter())
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TinyHttpClient"/> class.
-        /// </summary>
-        /// <param name="serverAddress">The server address.</param>
-        /// <param name="defaultFormatter">The default formatter.</param>
-        public TinyHttpClient(string serverAddress, IFormatter defaultFormatter)
-            : this(new HttpClient(), serverAddress, defaultFormatter)
+            : this(new HttpClient(), serverAddress)
         {
         }
 
@@ -72,21 +62,9 @@ namespace Tiny.Http
         /// <param name="httpClient">The httpclient used</param>
         /// <param name="serverAddress">The server address.</param>
         public TinyHttpClient(HttpClient httpClient, string serverAddress)
-            : this(httpClient, serverAddress, new JsonFormatter())
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TinyHttpClient"/> class.
-        /// </summary>
-        /// <param name="httpClient">The httpclient used</param>
-        /// <param name="serverAddress">The server address.</param>
-        /// /// <param name="defaultFormatter">The serializer used for serialize data</param>
-        public TinyHttpClient(HttpClient httpClient, string serverAddress, IFormatter defaultFormatter)
         {
             _serverAddress = serverAddress ?? throw new ArgumentNullException(nameof(serverAddress));
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-            _defaultFormatter = defaultFormatter ?? throw new ArgumentNullException(nameof(defaultFormatter));
 
             DefaultHeaders = new Dictionary<string, string>();
 
@@ -95,18 +73,12 @@ namespace Tiny.Http
                 _serverAddress += "/";
             }
 
-            var formatters = new List<IFormatter>();
-            formatters.Add(_defaultFormatter);
-
-            if (!(_defaultFormatter is JsonFormatter))
+            _defaultFormatter = new JsonFormatter();
+            var formatters = new List<IFormatter>
             {
-                formatters.Add(new JsonFormatter());
-            }
-
-            if (!(_defaultFormatter is XmlFormatter))
-            {
-                formatters.Add(new XmlFormatter());
-            }
+                _defaultFormatter,
+                new XmlFormatter()
+            };
 
             Formatters = formatters.ToArray();
             _encoding = Encoding.UTF8;
