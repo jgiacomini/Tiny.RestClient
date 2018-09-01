@@ -20,6 +20,7 @@ namespace Tiny.Http
     public class TinyHttpClient
     {
         #region Fields
+        private static readonly HttpMethod _PatchMethod = new HttpMethod("Patch");
         private readonly HttpClient _httpClient;
         private readonly string _serverAddress;
         private readonly IFormatter _defaultFormatter;
@@ -640,7 +641,7 @@ namespace Tiny.Http
                 case HttpVerb.Head:
                     return HttpMethod.Head;
                 case HttpVerb.Patch:
-                    return new HttpMethod("PATCH");
+                    return _PatchMethod;
                 default:
                     throw new NotImplementedException();
             }
