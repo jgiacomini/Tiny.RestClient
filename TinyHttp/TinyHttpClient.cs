@@ -23,7 +23,7 @@ namespace Tiny.Http
         private static readonly HttpMethod _PatchMethod = new HttpMethod("Patch");
         private readonly HttpClient _httpClient;
         private readonly string _serverAddress;
-        private readonly IFormatter _defaultFormatter;
+        private IFormatter _defaultFormatter;
         private Encoding _encoding;
         #endregion
 
@@ -158,7 +158,57 @@ namespace Tiny.Http
         /// <summary>
         /// Gets the list of formatter used to serialize and deserialize data
         /// </summary>
-        public IEnumerable<IFormatter> Formatters { get; }
+        public IEnumerable<IFormatter> Formatters { get; private set; }
+
+        /// <summary>
+        /// Add a formatter in the list of supported formatters
+        /// </summary>
+        /// <param name="formatter">Add the formatter to the list of supported formatter. The value can't be null</param>
+        /// <param name="isDefault">Define this formatter as default formatter</param>
+        /// <exception cref="ArgumentNullException">throw <see cref="ArgumentNullException"/> if formatter is null</exception>
+        public void AddFormatter(IFormatter formatter, bool isDefault)
+        {
+            if (formatter == null)
+            {
+                throw new ArgumentNullException(nameof(formatter));
+            }
+
+            if (isDefault)
+            {
+                _defaultFormatter = formatter;
+            }
+
+            var newList = Formatters.ToList();
+            newList.Add(formatter);
+            Formatters = newList.ToArray();
+        }
+
+        /// <summary>
+        /// Removes a formatter in the list of supported formatters
+        /// </summary>
+        /// <param name="formatter">The formatter to remove on the supported formatter list</param>
+        /// <returns>true if item is successfully removed; otherwise, false. This method also returns false if item was not found.</returns>
+        /// <exception cref="ArgumentNullException">throw <see cref="ArgumentNullException"/> if formatter is null</exception>
+        /// <exception cref="ArgumentException">throw <see cref="ArgumentException"/> if the current formatter removed is the default one </exception>
+        public bool RemoveFormatter(IFormatter formatter)
+        {
+            if (formatter == null)
+            {
+                throw new ArgumentNullException(nameof(formatter));
+            }
+
+            if (_defaultFormatter == formatter)
+            {
+                _defaultFormatter = formatter;
+                throw new ArgumentException("Add a new default formatter before remove the current one");
+            }
+
+            var newList = Formatters.ToList();
+            bool result = newList.Remove(formatter);
+            Formatters = newList.ToArray();
+
+            return result;
+        }
 
         #region Requests
 
