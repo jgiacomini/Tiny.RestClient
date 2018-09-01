@@ -157,10 +157,10 @@ If you use these methods no serializer will be used.
 ```cs
 
 // Read stream response
- var stream = await client.
+ Stream stream = await client.
               GetRequest("File").
               WithStreamResponse().
-              ExecuteAsync();
+              ExecuteAsStreamAsync();
 // Post Stream as content
 await client.PostRequest("File/Add").
             AddStreamContent(stream).
@@ -172,7 +172,7 @@ await client.PostRequest("File/Add").
 // Read byte array response         
 byte[] byteArray = await client.
               GetRequest("File").
-              ExecuteAsync();
+              ExecuteAsByteArrayAsync();
 
 // Read byte array as content
 await client.
