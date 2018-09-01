@@ -3,6 +3,8 @@
 ## 1.2.0
 * Add methods AddFormatter / RemoveFormatter
 * Add a way to read responses headers
+* Add the possibility to have raw string response
+* Add the possibility to have raw HttpResponseMessage
 * Add overloads on method AddQueryStringParameters
 * Fix an issue on AddHeader
 
