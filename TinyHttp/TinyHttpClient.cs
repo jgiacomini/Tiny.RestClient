@@ -368,7 +368,7 @@ namespace Tiny.Http
                                     stream.Position = 0;
                                     using (var reader = new StreamReader(stream, _encoding))
                                     {
-                                        data = reader.ReadToEnd();
+                                        data = await reader.ReadToEndAsync().ConfigureAwait(false);
                                     }
                                 }
                             }
@@ -417,7 +417,7 @@ namespace Tiny.Http
 
                         using (var ms = new MemoryStream())
                         {
-                            stream.CopyTo(ms);
+                            await stream.CopyToAsync(ms).ConfigureAwait(false);
                             return ms.ToArray();
                         }
                     }
