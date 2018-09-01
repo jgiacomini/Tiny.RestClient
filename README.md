@@ -103,6 +103,31 @@ var response = await client.
 // POST http://MyAPI.com/api/City/Add with from url encoded content
 ```
 
+
+## Get raw HttpResponseMessage
+
+```cs
+
+var response = await client.
+                PostRequest("City/Add").
+                AddFormParameter("country", "France").
+                AddFormParameter("name", "Paris").
+                ExecuteAsHttpResponseMessageAsync();
+// POST http://MyAPI.com/api/City/Add with from url encoded content
+```
+
+## Get raw string result
+
+```cs
+
+var response = await client.
+                PostRequest("City/Add").
+                AddFormParameter("country", "France").
+                AddFormParameter("name", "Paris").
+                ExecuteAsStringAsync();
+// POST http://MyAPI.com/api/City/Add with from url encoded content
+```
+
 ## multi-part form data
 
 ```cs
