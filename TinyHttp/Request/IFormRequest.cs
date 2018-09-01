@@ -5,9 +5,8 @@ namespace Tiny.Http
     /// <summary>
     /// Interface IFormRequest
     /// </summary>
-    /// <seealso cref="Tiny.Http.ICommonResquest" />
     /// <seealso cref="Tiny.Http.IExecutableRequest" />
-    public interface IFormRequest : ICommonResquest, IExecutableRequest
+    public interface IFormRequest : IExecutableRequest
     {
         /// <summary>
         /// Adds the form parameter.

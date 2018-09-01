@@ -307,9 +307,9 @@ namespace Tiny.Http
             using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, content, formatter, cancellationToken).ConfigureAwait(false))
+                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, tinyRequest.Headers, content, formatter, cancellationToken).ConfigureAwait(false))
                 {
-                    using (var stream = await ReadResponseAsync(response, cancellationToken).ConfigureAwait(false))
+                    using (var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false))
                     {
                         if (stream == null || stream.CanRead == false)
                         {
@@ -368,9 +368,9 @@ namespace Tiny.Http
             using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, content, null, cancellationToken).ConfigureAwait(false))
+                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false))
                 {
-                    using (var stream = await ReadResponseAsync(response, cancellationToken).ConfigureAwait(false))
+                    using (var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false))
                     {
                     }
                 }
@@ -384,9 +384,9 @@ namespace Tiny.Http
             using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, content, null, cancellationToken).ConfigureAwait(false))
+                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false))
                 {
-                    using (var stream = await ReadResponseAsync(response, cancellationToken).ConfigureAwait(false))
+                    using (var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false))
                     {
                         if (stream == null || !stream.CanRead)
                         {
@@ -410,8 +410,8 @@ namespace Tiny.Http
             using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, content, null, cancellationToken).ConfigureAwait(false);
-                var stream = await ReadResponseAsync(response, cancellationToken).ConfigureAwait(false);
+                HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false);
+                var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false);
                 if (stream == null || !stream.CanRead)
                 {
                     return null;
@@ -563,7 +563,7 @@ namespace Tiny.Http
             return new Uri(stringBuilder.ToString());
         }
 
-        private async Task<HttpResponseMessage> SendRequestAsync(HttpMethod httpMethod, Uri uri, HttpContent content, IFormatter deserializer, CancellationToken cancellationToken)
+        private async Task<HttpResponseMessage> SendRequestAsync(HttpMethod httpMethod, Uri uri, Dictionary<string, string> requestHeader, HttpContent content, IFormatter deserializer, CancellationToken cancellationToken)
         {
             var requestId = Guid.NewGuid().ToString();
             Stopwatch sw = new Stopwatch();
@@ -589,6 +589,14 @@ namespace Tiny.Http
                         request.Headers.Add(item.Key, item.Value);
                     }
 
+                    if (requestHeader != null)
+                    {
+                        foreach (var item in requestHeader)
+                        {
+                            request.Headers.Add(item.Key, item.Value);
+                        }
+                    }
+
                     if (content != null)
                     {
                         request.Content = content;
@@ -597,6 +605,7 @@ namespace Tiny.Http
                     OnSendingRequest(requestId, uri, httpMethod);
                     sw.Start();
                     var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
+
                     sw.Stop();
                     OnReceivedResponse(requestId, uri, httpMethod, response, sw.Elapsed);
                     return response;
@@ -638,13 +647,18 @@ namespace Tiny.Http
         }
 
         #region Read response
-        private async Task<Stream> ReadResponseAsync(HttpResponseMessage response, CancellationToken cancellationToken)
+        private async Task<Stream> ReadResponseAsync(HttpResponseMessage response, Headers headersToFill, CancellationToken cancellationToken)
         {
             Stream stream = null;
             string content = null;
             try
             {
                 stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+
+                if (headersToFill != null)
+                {
+                    headersToFill.AddSource(response.Headers);
+                }
 
                 if (response.IsSuccessStatusCode)
                 {

@@ -24,11 +24,14 @@ namespace Tiny.Http
         private ITinyContent _content;
         private List<KeyValuePair<string, string>> _formParameters;
         private MultiPartContent _multiPartFormData;
+        private Headers _reponseHeaders;
 
         internal HttpVerb HttpVerb { get => _httpVerb; }
         internal Dictionary<string, string> QueryParameters { get => _queryParameters; }
         internal string Route { get => _route; }
         internal ITinyContent Content { get => _content; }
+        internal Headers ReponseHeaders { get => _reponseHeaders; }
+        internal Dictionary<string, string> Headers { get => _headers; }
 
         static TinyRequest()
         {
@@ -41,7 +44,6 @@ namespace Tiny.Http
             _httpVerb = httpVerb;
             _route = route;
             _client = client;
-            _headers = new Dictionary<string, string>();
         }
 
         #region Content
@@ -234,6 +236,13 @@ namespace Tiny.Http
             return this;
         }
         #endregion
+
+        public IRequest FillResponseHeaders(out Headers headers)
+        {
+            headers = new Headers();
+            _reponseHeaders = headers;
+            return this;
+        }
 
         /// <inheritdoc/>
         public IOctectStreamRequest WithByteArrayResponse()

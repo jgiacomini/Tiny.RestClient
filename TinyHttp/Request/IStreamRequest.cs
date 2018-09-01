@@ -7,8 +7,7 @@ namespace Tiny.Http
     /// <summary>
     /// Interface IStreamRequest
     /// </summary>
-    /// <seealso cref="Tiny.Http.ICommonResquest" />
-    public interface IStreamRequest : ICommonResquest
+    public interface IStreamRequest
     {
         /// <summary>
         /// Executes the request.

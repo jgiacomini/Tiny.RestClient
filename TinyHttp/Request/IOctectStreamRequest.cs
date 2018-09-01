@@ -6,8 +6,7 @@ namespace Tiny.Http
     /// <summary>
     /// Interface IOctectStreamRequest
     /// </summary>
-    /// <seealso cref="Tiny.Http.ICommonResquest" />
-    public interface IOctectStreamRequest : ICommonResquest
+    public interface IOctectStreamRequest
     {
         /// <summary>
         /// Executes the asynchronous.

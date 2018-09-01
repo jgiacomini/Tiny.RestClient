@@ -24,7 +24,7 @@ namespace Tiny.Http.Tests
         [TestMethod]
         public async Task DeleteComplexData()
         {
-            int id = 42;
+            uint id = 42;
             string data = "DATA=32";
 
             var client = GetClient();
@@ -35,7 +35,7 @@ namespace Tiny.Http.Tests
                  AddQueryParameter("data", data).
                  ExecuteAsync<Response>();
 
-            Assert.AreEqual(id, response.Id);
+            Assert.AreEqual(id, (uint)response.Id);
             Assert.AreEqual(data, response.ResponseData);
             client = GetClientXML();
             response = await client.
@@ -44,16 +44,10 @@ namespace Tiny.Http.Tests
                 AddQueryParameter("data", data).
                 ExecuteAsync<Response>();
 
-            Assert.AreEqual(id, response.Id);
+            Assert.AreEqual(id, (uint)response.Id);
             Assert.AreEqual(data, response.ResponseData);
 
-            var byteArray = new byte[id];
-            for (int i = 0; i < byteArray.Length; i++)
-            {
-                byteArray[i] = i % 2 == 0 ? (byte)0 : (byte)1;
-            }
-
-            var streamToSend = new MemoryStream(byteArray);
+            var streamToSend = new MemoryStream(GetByteArray(id));
             var stream = await client.
                  DeleteRequest("DeleteTest/Stream").
                 AddStreamContent(streamToSend).

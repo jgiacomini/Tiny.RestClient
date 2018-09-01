@@ -10,6 +10,125 @@ namespace Tiny.Http
     public interface IRequest : IContentRequest, IFormRequest
     {
         /// <summary>
+        /// Fill header of response
+        /// </summary>
+        /// <param name="headers">Header filled after execute method</param>
+        /// <returns>The current request</returns>
+        IRequest FillResponseHeaders(out Headers headers);
+
+        /// <summary>
+        /// Adds the header.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>The current request</returns>
+        IRequest AddHeader(string key, string value);
+
+        /// <summary>
+        /// Adds the query parameter.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>The current request</returns>
+        IRequest AddQueryParameter(string key, string value);
+
+        /// <summary>
+        /// Adds the query parameter.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>The current request</returns>
+        IRequest AddQueryParameter(string key, bool value);
+
+        /// <summary>
+        /// Adds the query parameter.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>The current request</returns>
+        IRequest AddQueryParameter(string key, bool? value);
+
+        /// <summary>
+        /// Adds the query parameter.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>The current request</returns>
+        IRequest AddQueryParameter(string key, int value);
+
+        /// <summary>
+        /// Adds the query parameter.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>The current request</returns>
+        IRequest AddQueryParameter(string key, int? value);
+
+        /// <summary>
+        /// Adds the query parameter.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>The current request</returns>
+        IRequest AddQueryParameter(string key, uint value);
+
+        /// <summary>
+        /// Adds the query parameter.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>The current request</returns>
+        IRequest AddQueryParameter(string key, uint? value);
+
+        /// <summary>
+        /// Adds the query parameter.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>The current request</returns>
+        IRequest AddQueryParameter(string key, double value);
+
+        /// <summary>
+        /// Adds the query parameter.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>The current request</returns>
+        IRequest AddQueryParameter(string key, double? value);
+
+        /// <summary>
+        /// Adds the query parameter.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>The current request</returns>
+        IRequest AddQueryParameter(string key, decimal value);
+
+        /// <summary>
+        /// Adds the query parameter.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>The current request</returns>
+        IRequest AddQueryParameter(string key, decimal? value);
+
+        /// <summary>
+        /// Adds the query parameter.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>The current request</returns>
+        IRequest AddQueryParameter(string key, float value);
+
+        /// <summary>
+        /// Adds the query parameter.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>The current request</returns>
+        IRequest AddQueryParameter(string key, float? value);
+
+        /// <summary>
         /// Adds the content.
         /// </summary>
         /// <typeparam name="TContent">The type of the t content.</typeparam>
