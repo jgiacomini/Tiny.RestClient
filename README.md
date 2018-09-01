@@ -230,7 +230,7 @@ client.Add(customFormatter, isDefaultFormatter);
 
 ### Remove a formatter
 ```cs
-var lastFormatter = client.Formatters.As<XmlSerializer>().First();
+var lastFormatter = client.Formatters.Where( f=> f is XmlSerializer>).First();
 client.Remove(lastFormatter);
 ```
 
