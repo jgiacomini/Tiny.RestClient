@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 namespace Tiny.Http
 {
     /// <summary>
-    /// Interface IStreamRequest
+    /// Interface IStreamResponseRequest
     /// </summary>
-    public interface IStreamRequest
+    public interface IStreamResponseRequest
     {
         /// <summary>
         /// Executes the request.

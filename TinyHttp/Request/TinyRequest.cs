@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,9 +12,14 @@ namespace Tiny.Http
     /// Class TinyRequest.
     /// </summary>
     /// <seealso cref="Tiny.Http.IRequest" />
-    /// <seealso cref="Tiny.Http.IOctectStreamRequest" />
-    /// <seealso cref="Tiny.Http.IStreamRequest" />
-    internal class TinyRequest : IRequest, IOctectStreamRequest, IStreamRequest, IMultiPartFromDataRequest, IMultiPartFromDataExecutableRequest
+    internal class TinyRequest :
+        IRequest,
+        IByteArrayResponseRequest,
+        IStreamResponseRequest,
+        IMultiPartFromDataRequest,
+        IMultiPartFromDataExecutableRequest,
+        IStringResponseRequest,
+        IHttpResponseRequest
     {
         private static readonly NumberFormatInfo _nfi;
         private readonly HttpVerb _httpVerb;
@@ -35,8 +41,10 @@ namespace Tiny.Http
 
         static TinyRequest()
         {
-            _nfi = new NumberFormatInfo();
-            _nfi.NumberDecimalSeparator = ".";
+            _nfi = new NumberFormatInfo
+            {
+                NumberDecimalSeparator = "."
+            };
         }
 
         internal TinyRequest(HttpVerb httpVerb, string route, TinyHttpClient client)
@@ -244,17 +252,33 @@ namespace Tiny.Http
             return this;
         }
 
+        #region WithResponse
+
         /// <inheritdoc/>
-        public IOctectStreamRequest WithByteArrayResponse()
+        public IByteArrayResponseRequest WithByteArrayResponse()
         {
             return this;
         }
 
         /// <inheritdoc/>
-        public IStreamRequest WithStreamResponse()
+        public IStreamResponseRequest WithStreamResponse()
         {
             return this;
         }
+
+        /// <inheritdoc/>
+        public IStringResponseRequest WithStringResponse()
+        {
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public IHttpResponseRequest WithHttpResponse()
+        {
+            return this;
+        }
+
+        #endregion
 
         /// <inheritdoc/>
         public Task<TResult> ExecuteAsync<TResult>(CancellationToken cancellationToken)
@@ -274,14 +298,28 @@ namespace Tiny.Http
             return _client.ExecuteAsync(this, cancellationToken);
         }
 
-        Task<byte[]> IOctectStreamRequest.ExecuteAsync(CancellationToken cancellationToken)
+        /// <inheritdoc/>
+        Task<byte[]> IByteArrayResponseRequest.ExecuteAsync(CancellationToken cancellationToken)
         {
-            return _client.ExecuteByteArrayResultAsync(this, cancellationToken);
+            return _client.ExecuteAsByteArrayResultAsync(this, cancellationToken);
         }
 
-        Task<Stream> IStreamRequest.ExecuteAsync(CancellationToken cancellationToken)
+        /// <inheritdoc/>
+        Task<Stream> IStreamResponseRequest.ExecuteAsync(CancellationToken cancellationToken)
         {
-            return _client.ExecuteWithStreamResultAsync(this, cancellationToken);
+            return _client.ExecuteAsStreamResultAsync(this, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        Task<string> IStringResponseRequest.ExecuteAsync(CancellationToken cancellationToken)
+        {
+            return _client.ExecuteAsStringResultAsync(this, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        Task<HttpResponseMessage> IHttpResponseRequest.ExecuteAsync(CancellationToken cancellationToken)
+        {
+            return _client.ExecuteAsHttpResponseMessageResultAsync(this, cancellationToken);
         }
 
         #region MultiPart
@@ -332,7 +370,6 @@ namespace Tiny.Http
 
             return this;
         }
-
         #endregion
     }
 }

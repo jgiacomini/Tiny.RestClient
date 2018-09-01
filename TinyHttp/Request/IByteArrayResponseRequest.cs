@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 namespace Tiny.Http
 {
     /// <summary>
-    /// Interface IOctectStreamRequest
+    /// Interface IByteArrayResponseRequest
     /// </summary>
-    public interface IOctectStreamRequest
+    public interface IByteArrayResponseRequest
     {
         /// <summary>
         /// Executes the asynchronous.

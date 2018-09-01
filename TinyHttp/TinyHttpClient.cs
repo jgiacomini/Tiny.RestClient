@@ -400,7 +400,7 @@ namespace Tiny.Http
             }
         }
 
-        internal async Task<byte[]> ExecuteByteArrayResultAsync(
+        internal async Task<byte[]> ExecuteAsByteArrayResultAsync(
            TinyRequest tinyRequest,
            CancellationToken cancellationToken)
         {
@@ -426,7 +426,7 @@ namespace Tiny.Http
             }
         }
 
-        internal async Task<Stream> ExecuteWithStreamResultAsync(
+        internal async Task<Stream> ExecuteAsStreamResultAsync(
            TinyRequest tinyRequest,
            CancellationToken cancellationToken)
         {
@@ -441,6 +441,38 @@ namespace Tiny.Http
                 }
 
                 return stream;
+            }
+        }
+
+        internal async Task<string> ExecuteAsStringResultAsync(
+           TinyRequest tinyRequest,
+           CancellationToken cancellationToken)
+        {
+            using (var content = CreateContent(tinyRequest.Content))
+            {
+                var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
+                HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false);
+                var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false);
+                if (stream == null || !stream.CanRead)
+                {
+                    return null;
+                }
+
+                using (StreamReader reader = new StreamReader(stream, Encoding))
+                {
+                    return await reader.ReadToEndAsync().ConfigureAwait(false);
+                }
+            }
+        }
+
+        internal async Task<HttpResponseMessage> ExecuteAsHttpResponseMessageResultAsync(
+           TinyRequest tinyRequest,
+           CancellationToken cancellationToken)
+        {
+            using (var content = CreateContent(tinyRequest.Content))
+            {
+                var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
+                return await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false);
             }
         }
 

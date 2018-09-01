@@ -1,4 +1,6 @@
-﻿namespace Tiny.Http
+﻿using System.Net.Http;
+
+namespace Tiny.Http
 {
     /// <summary>
     /// Interface IContentRequest
@@ -7,15 +9,27 @@
     public interface IWithNoStandardResponse
     {
         /// <summary>
+        /// Withes <see cref="HttpResponseMessage"/>.
+        /// </summary>
+        /// <returns><see cref="IHttpResponseRequest"/></returns>
+        IHttpResponseRequest WithHttpResponse();
+
+        /// <summary>
+        /// Withes string response.
+        /// </summary>
+        /// <returns>IStringResponseRequest.</returns>
+        IStringResponseRequest WithStringResponse();
+
+        /// <summary>
         /// Withes the byte array response.
         /// </summary>
         /// <returns>IOctectStreamRequest.</returns>
-        IOctectStreamRequest WithByteArrayResponse();
+        IByteArrayResponseRequest WithByteArrayResponse();
 
         /// <summary>
         /// Withes the stream response.
         /// </summary>
         /// <returns>The current request</returns>
-        IStreamRequest WithStreamResponse();
+        IStreamResponseRequest WithStreamResponse();
     }
 }
