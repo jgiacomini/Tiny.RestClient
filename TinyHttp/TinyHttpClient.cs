@@ -95,8 +95,10 @@ namespace Tiny.Http
                 _serverAddress += "/";
             }
 
-            var formatters = new List<IFormatter>();
-            formatters.Add(_defaultFormatter);
+            var formatters = new List<IFormatter>
+            {
+                _defaultFormatter
+            };
 
             if (!(_defaultFormatter is JsonFormatter))
             {
