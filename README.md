@@ -14,6 +14,7 @@ It hide all the complexity of communication, deserialisation ...
 ## Features
 * Modern async http client for REST API.
 * Support of verbs : GET, POST , PUT, DELETE, PATCH, HEAD
+* Support of cancellation token on each requests
 * Automatic XML and JSON serialization / deserialization
 * Support of custom serialisation / deserialisation
 * Support of multi-part form data
@@ -47,7 +48,6 @@ client.GetRequest("City/All").
       AddHeader("Token", "MYTOKEN").
       ExecuteAsync();
 ```
-
 
 #### Read headers of response
 
