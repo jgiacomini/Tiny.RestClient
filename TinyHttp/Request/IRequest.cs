@@ -19,7 +19,7 @@ namespace Tiny.Http
         IParameterRequest AddContent<TContent>(TContent content, IFormatter serializer = null);
 
         /// <summary>
-        /// Adds the content of the byte array.
+        /// Add byte array as content of request
         /// </summary>
         /// <param name="byteArray">The byte array.</param>
         /// <param name="contentType">The Content type</param>
@@ -27,18 +27,26 @@ namespace Tiny.Http
         IParameterRequest AddByteArrayContent(byte[] byteArray, string contentType = "application/octet-stream");
 
         /// <summary>
-        /// Adds the content of the stream.
+        /// Adds stream as content
         /// </summary>
         /// <param name="stream">The stream.</param>
-        /// <param name="contentType">The Content type</param>
+        /// <param name="contentType">The content type</param>
         /// <returns>The current request</returns>
         IParameterRequest AddStreamContent(Stream stream, string contentType = "application/octet-stream");
+
+        /// <summary>
+        /// Adds file as content.
+        /// </summary>
+        /// <param name="file">The file to add as content of request.</param>
+        /// <param name="contentType">The content type</param>
+        /// <returns>The current request</returns>
+        IParameterRequest AddFileContent(FileInfo file, string contentType);
 
         /// <summary>
         /// As a multipart data from request
         /// </summary>
         /// <param name="contentType">content type of the request (default value  = "multipart/form-data")</param>
         /// <returns>The current request</returns>
-        IMultiPartFromDataRequest AsMultiPartFromDataRequest(string contentType = "multipart/form-data");
+        IMultipartFromDataRequest AsMultiPartFromDataRequest(string contentType = "multipart/form-data");
     }
 }

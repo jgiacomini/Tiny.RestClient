@@ -14,7 +14,7 @@ namespace Tiny.Http
     /// <seealso cref="Tiny.Http.IRequest" />
     internal class TinyRequest :
         IRequest,
-        IMultiPartFromDataRequest,
+        IMultipartFromDataRequest,
         IMultiPartFromDataExecutableRequest
     {
         private static readonly NumberFormatInfo _nfi;
@@ -25,7 +25,7 @@ namespace Tiny.Http
         private Dictionary<string, string> _queryParameters;
         private ITinyContent _content;
         private List<KeyValuePair<string, string>> _formParameters;
-        private MultiPartContent _multiPartFormData;
+        private MultipartContent _multiPartFormData;
         private Headers _reponseHeaders;
 
         internal HttpVerb HttpVerb { get => _httpVerb; }
@@ -66,6 +66,17 @@ namespace Tiny.Http
         public IParameterRequest AddStreamContent(Stream stream, string contentType)
         {
             _content = new StreamContent(stream, contentType);
+            return this;
+        }
+
+        public IParameterRequest AddFileContent(FileInfo fileContent, string contentType)
+        {
+            if (!fileContent.Exists)
+            {
+                throw new FileNotFoundException("File not found", fileContent.FullName);
+            }
+
+            _content = new FileContent(fileContent, contentType);
             return this;
         }
 
@@ -292,48 +303,75 @@ namespace Tiny.Http
         #region MultiPart
 
         /// <inheritdoc/>
-        public IMultiPartFromDataRequest AsMultiPartFromDataRequest(string contentType)
+        public IMultipartFromDataRequest AsMultiPartFromDataRequest(string contentType)
         {
-            _multiPartFormData = new MultiPartContent(contentType);
+            _multiPartFormData = new MultipartContent(contentType);
             _content = _multiPartFormData;
             return this;
         }
 
         /// <inheritdoc/>
-        IMultiPartFromDataExecutableRequest IMultiPartFromDataRequest.AddByteArray(byte[] data, string name, string fileName, string contentType)
+        IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddByteArray(byte[] data, string name, string fileName, string contentType)
         {
             if (data == null)
             {
                 throw new ArgumentNullException(nameof(data));
             }
 
-            _multiPartFormData.Add(new BytesMultiPartData(data, name, fileName, contentType));
+            _multiPartFormData.Add(new BytesMultipartData(data, name, fileName, contentType));
 
             return this;
         }
 
         /// <inheritdoc/>
-        IMultiPartFromDataExecutableRequest IMultiPartFromDataRequest.AddStream(Stream data, string name, string fileName, string contentType)
+        IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddStream(Stream data, string name, string fileName, string contentType)
         {
             if (data == null)
             {
                 throw new ArgumentNullException(nameof(data));
             }
 
-            _multiPartFormData.Add(new StreamMultiPartData(data, name, fileName, contentType));
+            _multiPartFormData.Add(new StreamMultipartData(data, name, fileName, contentType));
 
             return this;
         }
 
         /// <inheritdoc/>
-        IMultiPartFromDataExecutableRequest IMultiPartFromDataRequest.AddContent<TContent>(TContent content, string name, string fileName, IFormatter serializer)
+        IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddContent<TContent>(TContent content, string name, string fileName, IFormatter serializer)
         {
             if (content == default)
             {
                 throw new ArgumentNullException(nameof(content));
             }
 
-            _multiPartFormData.Add(new ToSerializeMultiPartData<TContent>(content, name, fileName, serializer));
+            _multiPartFormData.Add(new ToSerializeMultipartData<TContent>(content, name, fileName, serializer));
+
+            return this;
+        }
+
+        IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddFileContent(FileInfo content, string name, string fileName, string contentType)
+        {
+            if (content == default)
+            {
+                throw new ArgumentNullException(nameof(content));
+            }
+
+            if (!content.Exists)
+            {
+                throw new FileNotFoundException("File not found", content.FullName);
+            }
+
+            if (name == null)
+            {
+                name = content.Name;
+            }
+
+            if (fileName == null)
+            {
+                fileName = $"{content.Name}.{content.Extension}";
+            }
+
+            _multiPartFormData.Add(new FileMultipartData(content, name, fileName, contentType));
 
             return this;
         }
