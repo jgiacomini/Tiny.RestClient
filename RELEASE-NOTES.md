@@ -5,6 +5,7 @@
 * Add a way to read responses headers
 * Add the possibility to have raw string response
 * Add the possibility to have raw HttpResponseMessage
+* Add support of file content (multipart and normal request)
 * Add overloads on method AddQueryStringParameters
 * Fix an issue on AddHeader
 
