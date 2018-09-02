@@ -150,9 +150,9 @@ namespace Tiny.Http
                 _defaultFormatter = formatter;
             }
 
-            var newList = Formatters.ToList();
-            newList.Add(formatter);
-            Formatters = newList.ToArray();
+            var newFormatters = Formatters.ToList();
+            newFormatters.Add(formatter);
+            Formatters = newFormatters.ToArray();
         }
 
         /// <summary>
@@ -506,9 +506,18 @@ namespace Tiny.Http
                 return GetSerializedContent(toSerializeContent);
             }
 
-            if (content is MultiPartContent multiParts)
+            if (content is FileContent fileContent)
+            {
+                var currentFileContent = new HttpStreamContent(fileContent.Data.OpenRead());
+                SetContentType(fileContent.ContentType, currentFileContent);
+                return currentFileContent;
+            }
+
+            if (content is MultipartContent multiParts)
             {
                 var multiPartContent = new MultipartFormDataContent();
+
+                // get boundary automaticaly generated
                 var boundary = multiPartContent.Headers.ContentType.Parameters.FirstOrDefault(n => n.Name == "boundary").Value;
 
                 if (multiParts.ContentType != null)
@@ -519,13 +528,13 @@ namespace Tiny.Http
 
                 foreach (var currentPart in multiParts)
                 {
-                    if (currentPart is BytesMultiPartData currentBytesPart)
+                    if (currentPart is BytesMultipartData currentBytesPart)
                     {
                         var bytesMultiContent = new ByteArrayContent(currentBytesPart.Data);
                         SetContentType(currentBytesPart.ContentType, bytesMultiContent);
                         AddMulitPartContent(currentPart, bytesMultiContent, multiPartContent);
                     }
-                    else if (currentPart is StreamMultiPartData currentStreamPart)
+                    else if (currentPart is StreamMultipartData currentStreamPart)
                     {
                         var streamContent = new HttpStreamContent(currentStreamPart.Data);
                         SetContentType(currentStreamPart.ContentType, streamContent);
@@ -535,6 +544,12 @@ namespace Tiny.Http
                     {
                         var stringContent = GetSerializedContent(toSerializeMultiContent);
                         AddMulitPartContent(currentPart, stringContent, multiPartContent);
+                    }
+                    else if (currentPart is FileMultipartData currentFileMultipartData)
+                    {
+                        var currentStreamContent = new HttpStreamContent(currentFileMultipartData.Data.OpenRead());
+                        SetContentType(currentFileMultipartData.ContentType, currentStreamContent);
+                        AddMulitPartContent(currentPart, currentStreamContent, multiPartContent);
                     }
                     else
                     {
@@ -568,7 +583,7 @@ namespace Tiny.Http
             return stringContent;
         }
 
-        private void AddMulitPartContent(MultiPartData currentContent, HttpContent content, MultipartFormDataContent multipartFormDataContent)
+        private void AddMulitPartContent(MultipartData currentContent, HttpContent content, MultipartFormDataContent multipartFormDataContent)
         {
             if (string.IsNullOrWhiteSpace(currentContent.Name) && string.IsNullOrWhiteSpace(currentContent.FileName))
             {
@@ -632,7 +647,6 @@ namespace Tiny.Http
 
                     request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(deserializer.DefaultMediaType));
 
-                    // TODO : add something to customize that stuff
                     if (AddAcceptLanguageBasedOnCurrentCulture)
                     {
                         request.Headers.AcceptLanguage.Add(new StringWithQualityHeaderValue(CultureInfo.CurrentCulture.TwoLetterISOLanguageName));

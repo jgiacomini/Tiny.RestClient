@@ -33,9 +33,12 @@ namespace Tiny.Http.Tests
                 if (_clientXML == null)
                 {
                     _clientXML = new TinyHttpClient(Program.Client, _serverUrl);
-                    _client.Formatters.Where(f => f is XmlFormatter).First();
-                    _client.AddFormatter(new XmlFormatter(), true);
-                    _client.Formatters.Where(f => f is JsonFormatter).First();
+
+                    var xmlFormatter = _clientXML.Formatters.Where(f => f is XmlFormatter).First();
+                    var jsonFormatter = _clientXML.Formatters.Where(f => f is JsonFormatter).First();
+                    _clientXML.AddFormatter(new XmlFormatter(), true);
+                    _clientXML.RemoveFormatter(jsonFormatter);
+                    _clientXML.RemoveFormatter(xmlFormatter);
                 }
             }
 
