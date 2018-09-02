@@ -101,6 +101,14 @@ var response = await client.
                 AddFormParameter("name", "Paris").
                 ExecuteAsync<Response>();
 // POST http://MyAPI.com/api/City/Add with from url encoded content
+
+
+var fileInfo = new FileInfo("myTextFile.txt");
+var response = await client.
+                PostRequest("City/Image/Add").
+                AddFileContent(fileInfo, "text/plain").
+                ExecuteAsync<Response>();
+// POST text file at http://MyAPI.com/api/City/Add 
 ```
 
 
@@ -162,6 +170,18 @@ await client.PostRequest("MultiPart/Test").
               AddStream(stream2, "request", "request2.bin")
               ExecuteAsync();
               
+              
+// With 2 files content           
+
+var fileInfo1 = new FileInfo("myTextFile1.txt");
+var fileInfo2 = new FileInfo("myTextFile2.txt");
+
+var response = await client.
+                PostRequest("City/Image/Add").
+                AsMultiPartFromDataRequest().
+                AddFileContent(fileInfo1, "text/plain").
+                AddFileContent(fileInfo2, "text/plain").
+                ExecuteAsync<Response>();
 
 // With mixed content                  
 await client.PostRequest("MultiPart/Test").
@@ -170,7 +190,6 @@ await client.PostRequest("MultiPart/Test").
               AddByteArray(byteArray1, "request", "request2.bin").
               AddStream(stream2, "request", "request2.bin")
               ExecuteAsync();
-              
 ```
 
 
