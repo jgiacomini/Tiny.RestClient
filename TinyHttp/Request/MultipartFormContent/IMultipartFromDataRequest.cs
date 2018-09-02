@@ -51,5 +51,14 @@ namespace Tiny.Http
         /// <returns>The current request</returns>
         /// <exception cref="System.ArgumentNullException">thrown when content is null</exception>
         IMultiPartFromDataExecutableRequest AddFileContent(FileInfo content, string name, string fileName, string contentType);
+
+        /// <summary>
+        /// Adds the content.
+        /// </summary>
+        /// <param name="content">The content.</param>
+        /// <param name="contentType">The content type of the file</param>
+        /// <returns>The current request</returns>
+        /// <exception cref="System.ArgumentNullException">thrown when content is null</exception>
+        IMultiPartFromDataExecutableRequest AddFileContent(FileInfo content, string contentType);
     }
 }

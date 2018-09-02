@@ -7,10 +7,10 @@ using Tiny.Http.Tests.Models;
 namespace Tiny.Http.Tests
 {
     [TestClass]
-    public class MultiPartTests : BaseTest
+    public class MultipartTests : BaseTest
     {
         [TestMethod]
-        public async Task SendMultipleFile()
+        public async Task SendMultipleData()
         {
             var postRequest = new Request
             {

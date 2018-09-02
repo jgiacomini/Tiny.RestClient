@@ -69,14 +69,19 @@ namespace Tiny.Http
             return this;
         }
 
-        public IParameterRequest AddFileContent(FileInfo fileContent, string contentType)
+        public IParameterRequest AddFileContent(FileInfo content, string contentType)
         {
-            if (!fileContent.Exists)
+            if (content == null)
             {
-                throw new FileNotFoundException("File not found", fileContent.FullName);
+                throw new ArgumentNullException(nameof(content));
             }
 
-            _content = new FileContent(fileContent, contentType);
+            if (!content.Exists)
+            {
+                throw new FileNotFoundException("File not found", content.FullName);
+            }
+
+            _content = new FileContent(content, contentType);
             return this;
         }
 
@@ -347,6 +352,12 @@ namespace Tiny.Http
             _multiPartFormData.Add(new ToSerializeMultipartData<TContent>(content, name, fileName, serializer));
 
             return this;
+        }
+
+        IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddFileContent(FileInfo content, string contentType)
+        {
+            IMultipartFromDataRequest me = this;
+            return me.AddFileContent(content, null, null, contentType);
         }
 
         IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddFileContent(FileInfo content, string name, string fileName, string contentType)

@@ -7,6 +7,7 @@ namespace Tiny.Http
         public FileMultipartData(FileInfo data, string name, string fileName, string contentType)
             : base(name, fileName, contentType)
         {
+            Data = data;
         }
 
         public FileInfo Data { get; set; }
