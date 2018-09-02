@@ -20,9 +20,10 @@ namespace Tiny.Http
     public class TinyHttpClient
     {
         #region Fields
+        private static readonly HttpMethod _PatchMethod = new HttpMethod("Patch");
         private readonly HttpClient _httpClient;
         private readonly string _serverAddress;
-        private readonly IFormatter _defaultFormatter;
+        private IFormatter _defaultFormatter;
         private Encoding _encoding;
         #endregion
 
@@ -51,17 +52,7 @@ namespace Tiny.Http
         /// </summary>
         /// <param name="serverAddress">The server address.</param>
         public TinyHttpClient(string serverAddress)
-            : this(new HttpClient(), serverAddress, new JsonFormatter())
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TinyHttpClient"/> class.
-        /// </summary>
-        /// <param name="serverAddress">The server address.</param>
-        /// <param name="defaultFormatter">The default formatter.</param>
-        public TinyHttpClient(string serverAddress, IFormatter defaultFormatter)
-            : this(new HttpClient(), serverAddress, defaultFormatter)
+            : this(new HttpClient(), serverAddress)
         {
         }
 
@@ -71,21 +62,9 @@ namespace Tiny.Http
         /// <param name="httpClient">The httpclient used</param>
         /// <param name="serverAddress">The server address.</param>
         public TinyHttpClient(HttpClient httpClient, string serverAddress)
-            : this(httpClient, serverAddress, new JsonFormatter())
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TinyHttpClient"/> class.
-        /// </summary>
-        /// <param name="httpClient">The httpclient used</param>
-        /// <param name="serverAddress">The server address.</param>
-        /// /// <param name="defaultFormatter">The serializer used for serialize data</param>
-        public TinyHttpClient(HttpClient httpClient, string serverAddress, IFormatter defaultFormatter)
         {
             _serverAddress = serverAddress ?? throw new ArgumentNullException(nameof(serverAddress));
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-            _defaultFormatter = defaultFormatter ?? throw new ArgumentNullException(nameof(defaultFormatter));
 
             DefaultHeaders = new Dictionary<string, string>();
 
@@ -94,18 +73,12 @@ namespace Tiny.Http
                 _serverAddress += "/";
             }
 
-            var formatters = new List<IFormatter>();
-            formatters.Add(_defaultFormatter);
-
-            if (!(_defaultFormatter is JsonFormatter))
+            _defaultFormatter = new JsonFormatter();
+            var formatters = new List<IFormatter>
             {
-                formatters.Add(new JsonFormatter());
-            }
-
-            if (!(_defaultFormatter is XmlFormatter))
-            {
-                formatters.Add(new XmlFormatter());
-            }
+                _defaultFormatter,
+                new XmlFormatter()
+            };
 
             Formatters = formatters.ToArray();
             _encoding = Encoding.UTF8;
@@ -157,7 +130,56 @@ namespace Tiny.Http
         /// <summary>
         /// Gets the list of formatter used to serialize and deserialize data
         /// </summary>
-        public IEnumerable<IFormatter> Formatters { get; }
+        public IEnumerable<IFormatter> Formatters { get; private set; }
+
+        /// <summary>
+        /// Add a formatter in the list of supported formatters
+        /// </summary>
+        /// <param name="formatter">Add the formatter to the list of supported formatter. The value can't be null</param>
+        /// <param name="isDefault">Define this formatter as default formatter</param>
+        /// <exception cref="ArgumentNullException">throw <see cref="ArgumentNullException"/> if formatter is null</exception>
+        public void AddFormatter(IFormatter formatter, bool isDefault)
+        {
+            if (formatter == null)
+            {
+                throw new ArgumentNullException(nameof(formatter));
+            }
+
+            if (isDefault)
+            {
+                _defaultFormatter = formatter;
+            }
+
+            var newFormatters = Formatters.ToList();
+            newFormatters.Add(formatter);
+            Formatters = newFormatters.ToArray();
+        }
+
+        /// <summary>
+        /// Removes a formatter in the list of supported formatters
+        /// </summary>
+        /// <param name="formatter">The formatter to remove on the supported formatter list</param>
+        /// <returns>true if item is successfully removed; otherwise, false. This method also returns false if item was not found.</returns>
+        /// <exception cref="ArgumentNullException">throw <see cref="ArgumentNullException"/> if formatter is null</exception>
+        /// <exception cref="ArgumentException">throw <see cref="ArgumentException"/> if the current formatter removed is the default one </exception>
+        public bool RemoveFormatter(IFormatter formatter)
+        {
+            if (formatter == null)
+            {
+                throw new ArgumentNullException(nameof(formatter));
+            }
+
+            if (_defaultFormatter == formatter)
+            {
+                throw new ArgumentException("Add a new default formatter before remove the current one");
+            }
+
+            var newList = Formatters.ToList();
+            bool result = newList.Remove(formatter);
+            Formatters = newList.ToArray();
+
+            return result;
+        }
 
         #region Requests
 
@@ -198,7 +220,7 @@ namespace Tiny.Http
         /// <param name="content">The content of the request</param>
         /// <param name="formatter">The formatter use to serialize the content</param>
         /// <returns>The new request.</returns>
-        public IContentRequest PostRequest<TContent>(TContent content, IFormatter formatter = null)
+        public IParameterRequest PostRequest<TContent>(TContent content, IFormatter formatter = null)
         {
             return new TinyRequest(HttpVerb.Post, null, this).
                 AddContent<TContent>(content, formatter);
@@ -211,7 +233,7 @@ namespace Tiny.Http
         /// <param name="content">The content of the request</param>
         /// <param name="formatter">The formatter use to serialize the content</param>
         /// <returns>The new request.</returns>
-        public IContentRequest PostRequest<TContent>(string route, TContent content, IFormatter formatter = null)
+        public IParameterRequest PostRequest<TContent>(string route, TContent content, IFormatter formatter = null)
         {
             return new TinyRequest(HttpVerb.Post, route, this).
                 AddContent<TContent>(content, formatter);
@@ -233,7 +255,7 @@ namespace Tiny.Http
         /// <param name="content">The content of the request</param>
         /// <param name="formatter">The formatter use to serialize the content</param>
         /// <returns>The new request.</returns>
-        public IContentRequest PutRequest<TContent>(TContent content, IFormatter formatter = null)
+        public IParameterRequest PutRequest<TContent>(TContent content, IFormatter formatter = null)
         {
             return new TinyRequest(HttpVerb.Put, null, this).
                 AddContent<TContent>(content, formatter);
@@ -246,7 +268,7 @@ namespace Tiny.Http
         /// <param name="content">The content of the request</param>
         /// <param name="formatter">The formatter use to serialize the content</param>
         /// <returns>The new request.</returns>
-        public IContentRequest PutRequest<TContent>(string route, TContent content, IFormatter formatter = null)
+        public IParameterRequest PutRequest<TContent>(string route, TContent content, IFormatter formatter = null)
         {
             return new TinyRequest(HttpVerb.Put, route, this).
                 AddContent<TContent>(content, formatter);
@@ -268,7 +290,7 @@ namespace Tiny.Http
         /// <param name="content">The content of the request</param>
         /// <param name="serializer">The serializer use to serialize it</param>
         /// <returns>The new request.</returns>
-        public IContentRequest PatchRequest<TContent>(TContent content, IFormatter serializer = null)
+        public IParameterRequest PatchRequest<TContent>(TContent content, IFormatter serializer = null)
         {
             return new TinyRequest(HttpVerb.Patch, null, this).
                 AddContent<TContent>(content, serializer);
@@ -281,7 +303,7 @@ namespace Tiny.Http
         /// <param name="content">The content of the request</param>
         /// <param name="serializer">The serializer use to serialize it</param>
         /// <returns>The new request.</returns>
-        public IContentRequest PatchRequest<TContent>(string route, TContent content, IFormatter serializer = null)
+        public IParameterRequest PatchRequest<TContent>(string route, TContent content, IFormatter serializer = null)
         {
             return new TinyRequest(HttpVerb.Patch, route, this).
                 AddContent<TContent>(content, serializer);
@@ -307,9 +329,9 @@ namespace Tiny.Http
             using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, content, formatter, cancellationToken).ConfigureAwait(false))
+                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, tinyRequest.Headers, content, formatter, cancellationToken).ConfigureAwait(false))
                 {
-                    using (var stream = await ReadResponseAsync(response, cancellationToken).ConfigureAwait(false))
+                    using (var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false))
                     {
                         if (stream == null || stream.CanRead == false)
                         {
@@ -346,7 +368,7 @@ namespace Tiny.Http
                                     stream.Position = 0;
                                     using (var reader = new StreamReader(stream, _encoding))
                                     {
-                                        data = reader.ReadToEnd();
+                                        data = await reader.ReadToEndAsync().ConfigureAwait(false);
                                     }
                                 }
                             }
@@ -368,25 +390,25 @@ namespace Tiny.Http
             using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, content, null, cancellationToken).ConfigureAwait(false))
+                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false))
                 {
-                    using (var stream = await ReadResponseAsync(response, cancellationToken).ConfigureAwait(false))
+                    using (var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false))
                     {
                     }
                 }
             }
         }
 
-        internal async Task<byte[]> ExecuteByteArrayResultAsync(
+        internal async Task<byte[]> ExecuteAsByteArrayResultAsync(
            TinyRequest tinyRequest,
            CancellationToken cancellationToken)
         {
             using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, content, null, cancellationToken).ConfigureAwait(false))
+                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false))
                 {
-                    using (var stream = await ReadResponseAsync(response, cancellationToken).ConfigureAwait(false))
+                    using (var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false))
                     {
                         if (stream == null || !stream.CanRead)
                         {
@@ -395,7 +417,7 @@ namespace Tiny.Http
 
                         using (var ms = new MemoryStream())
                         {
-                            stream.CopyTo(ms);
+                            await stream.CopyToAsync(ms).ConfigureAwait(false);
                             return ms.ToArray();
                         }
                     }
@@ -403,21 +425,53 @@ namespace Tiny.Http
             }
         }
 
-        internal async Task<Stream> ExecuteWithStreamResultAsync(
+        internal async Task<Stream> ExecuteAsStreamResultAsync(
            TinyRequest tinyRequest,
            CancellationToken cancellationToken)
         {
             using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, content, null, cancellationToken).ConfigureAwait(false);
-                var stream = await ReadResponseAsync(response, cancellationToken).ConfigureAwait(false);
+                HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false);
+                var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false);
                 if (stream == null || !stream.CanRead)
                 {
                     return null;
                 }
 
                 return stream;
+            }
+        }
+
+        internal async Task<string> ExecuteAsStringResultAsync(
+           TinyRequest tinyRequest,
+           CancellationToken cancellationToken)
+        {
+            using (var content = CreateContent(tinyRequest.Content))
+            {
+                var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
+                HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false);
+                var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false);
+                if (stream == null || !stream.CanRead)
+                {
+                    return null;
+                }
+
+                using (StreamReader reader = new StreamReader(stream, Encoding))
+                {
+                    return await reader.ReadToEndAsync().ConfigureAwait(false);
+                }
+            }
+        }
+
+        internal async Task<HttpResponseMessage> ExecuteAsHttpResponseMessageResultAsync(
+           TinyRequest tinyRequest,
+           CancellationToken cancellationToken)
+        {
+            using (var content = CreateContent(tinyRequest.Content))
+            {
+                var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
+                return await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -452,9 +506,18 @@ namespace Tiny.Http
                 return GetSerializedContent(toSerializeContent);
             }
 
-            if (content is MultiPartContent multiParts)
+            if (content is FileContent fileContent)
+            {
+                var currentFileContent = new HttpStreamContent(fileContent.Data.OpenRead());
+                SetContentType(fileContent.ContentType, currentFileContent);
+                return currentFileContent;
+            }
+
+            if (content is MultipartContent multiParts)
             {
                 var multiPartContent = new MultipartFormDataContent();
+
+                // get boundary automaticaly generated
                 var boundary = multiPartContent.Headers.ContentType.Parameters.FirstOrDefault(n => n.Name == "boundary").Value;
 
                 if (multiParts.ContentType != null)
@@ -465,13 +528,13 @@ namespace Tiny.Http
 
                 foreach (var currentPart in multiParts)
                 {
-                    if (currentPart is BytesMultiPartData currentBytesPart)
+                    if (currentPart is BytesMultipartData currentBytesPart)
                     {
                         var bytesMultiContent = new ByteArrayContent(currentBytesPart.Data);
                         SetContentType(currentBytesPart.ContentType, bytesMultiContent);
                         AddMulitPartContent(currentPart, bytesMultiContent, multiPartContent);
                     }
-                    else if (currentPart is StreamMultiPartData currentStreamPart)
+                    else if (currentPart is StreamMultipartData currentStreamPart)
                     {
                         var streamContent = new HttpStreamContent(currentStreamPart.Data);
                         SetContentType(currentStreamPart.ContentType, streamContent);
@@ -481,6 +544,12 @@ namespace Tiny.Http
                     {
                         var stringContent = GetSerializedContent(toSerializeMultiContent);
                         AddMulitPartContent(currentPart, stringContent, multiPartContent);
+                    }
+                    else if (currentPart is FileMultipartData currentFileMultipartData)
+                    {
+                        var currentStreamContent = new HttpStreamContent(currentFileMultipartData.Data.OpenRead());
+                        SetContentType(currentFileMultipartData.ContentType, currentStreamContent);
+                        AddMulitPartContent(currentPart, currentStreamContent, multiPartContent);
                     }
                     else
                     {
@@ -514,7 +583,7 @@ namespace Tiny.Http
             return stringContent;
         }
 
-        private void AddMulitPartContent(MultiPartData currentContent, HttpContent content, MultipartFormDataContent multipartFormDataContent)
+        private void AddMulitPartContent(MultipartData currentContent, HttpContent content, MultipartFormDataContent multipartFormDataContent)
         {
             if (string.IsNullOrWhiteSpace(currentContent.Name) && string.IsNullOrWhiteSpace(currentContent.FileName))
             {
@@ -563,7 +632,7 @@ namespace Tiny.Http
             return new Uri(stringBuilder.ToString());
         }
 
-        private async Task<HttpResponseMessage> SendRequestAsync(HttpMethod httpMethod, Uri uri, HttpContent content, IFormatter deserializer, CancellationToken cancellationToken)
+        private async Task<HttpResponseMessage> SendRequestAsync(HttpMethod httpMethod, Uri uri, Dictionary<string, string> requestHeader, HttpContent content, IFormatter deserializer, CancellationToken cancellationToken)
         {
             var requestId = Guid.NewGuid().ToString();
             Stopwatch sw = new Stopwatch();
@@ -578,7 +647,6 @@ namespace Tiny.Http
 
                     request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(deserializer.DefaultMediaType));
 
-                    // TODO : add something to customize that stuff
                     if (AddAcceptLanguageBasedOnCurrentCulture)
                     {
                         request.Headers.AcceptLanguage.Add(new StringWithQualityHeaderValue(CultureInfo.CurrentCulture.TwoLetterISOLanguageName));
@@ -589,6 +657,14 @@ namespace Tiny.Http
                         request.Headers.Add(item.Key, item.Value);
                     }
 
+                    if (requestHeader != null)
+                    {
+                        foreach (var item in requestHeader)
+                        {
+                            request.Headers.Add(item.Key, item.Value);
+                        }
+                    }
+
                     if (content != null)
                     {
                         request.Content = content;
@@ -597,6 +673,7 @@ namespace Tiny.Http
                     OnSendingRequest(requestId, uri, httpMethod);
                     sw.Start();
                     var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
+
                     sw.Stop();
                     OnReceivedResponse(requestId, uri, httpMethod, response, sw.Elapsed);
                     return response;
@@ -631,20 +708,25 @@ namespace Tiny.Http
                 case HttpVerb.Head:
                     return HttpMethod.Head;
                 case HttpVerb.Patch:
-                    return new HttpMethod("PATCH");
+                    return _PatchMethod;
                 default:
                     throw new NotImplementedException();
             }
         }
 
         #region Read response
-        private async Task<Stream> ReadResponseAsync(HttpResponseMessage response, CancellationToken cancellationToken)
+        private async Task<Stream> ReadResponseAsync(HttpResponseMessage response, Headers headersToFill, CancellationToken cancellationToken)
         {
             Stream stream = null;
             string content = null;
             try
             {
                 stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+
+                if (headersToFill != null)
+                {
+                    headersToFill.AddSource(response.Headers);
+                }
 
                 if (response.IsSuccessStatusCode)
                 {

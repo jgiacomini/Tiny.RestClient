@@ -2,14 +2,12 @@
 
 namespace Tiny.Http
 {
-    internal class ToSerializeMultiPartData<T> : MultiPartData, IToSerializeContent
+    internal class ToSerializeMultipartData<T> : MultipartData, IToSerializeContent
     {
-        public ToSerializeMultiPartData(T data, string name, string fileName, IFormatter serializer)
+        public ToSerializeMultipartData(T data, string name, string fileName, IFormatter serializer)
+            : base(name, fileName, null)
         {
             Data = data;
-            Name = name;
-            FileName = fileName;
-            Serializer = serializer;
         }
 
         public T Data { get; }

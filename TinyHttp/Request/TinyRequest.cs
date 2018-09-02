@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,10 +12,12 @@ namespace Tiny.Http
     /// Class TinyRequest.
     /// </summary>
     /// <seealso cref="Tiny.Http.IRequest" />
-    /// <seealso cref="Tiny.Http.IOctectStreamRequest" />
-    /// <seealso cref="Tiny.Http.IStreamRequest" />
-    internal class TinyRequest : IRequest, IOctectStreamRequest, IStreamRequest, IMultiPartFromDataRequest, IMultiPartFromDataExecutableRequest
+    internal class TinyRequest :
+        IRequest,
+        IMultipartFromDataRequest,
+        IMultiPartFromDataExecutableRequest
     {
+        private static readonly NumberFormatInfo _nfi;
         private readonly HttpVerb _httpVerb;
         private readonly TinyHttpClient _client;
         private readonly string _route;
@@ -21,37 +25,63 @@ namespace Tiny.Http
         private Dictionary<string, string> _queryParameters;
         private ITinyContent _content;
         private List<KeyValuePair<string, string>> _formParameters;
-        private MultiPartContent _multiPartFormData;
+        private MultipartContent _multiPartFormData;
+        private Headers _reponseHeaders;
 
         internal HttpVerb HttpVerb { get => _httpVerb; }
         internal Dictionary<string, string> QueryParameters { get => _queryParameters; }
         internal string Route { get => _route; }
         internal ITinyContent Content { get => _content; }
+        internal Headers ReponseHeaders { get => _reponseHeaders; }
+        internal Dictionary<string, string> Headers { get => _headers; }
+
+        static TinyRequest()
+        {
+            _nfi = new NumberFormatInfo
+            {
+                NumberDecimalSeparator = "."
+            };
+        }
 
         internal TinyRequest(HttpVerb httpVerb, string route, TinyHttpClient client)
         {
             _httpVerb = httpVerb;
             _route = route;
             _client = client;
-            _headers = new Dictionary<string, string>();
         }
 
         #region Content
-        public IContentRequest AddContent<TContent>(TContent content, IFormatter serializer)
+        public IParameterRequest AddContent<TContent>(TContent content, IFormatter serializer)
         {
             _content = new ToSerializeContent<TContent>(content, serializer);
             return this;
         }
 
-        public IContentRequest AddByteArrayContent(byte[] byteArray, string contentType)
+        public IParameterRequest AddByteArrayContent(byte[] byteArray, string contentType)
         {
             _content = new BytesContent(byteArray, contentType);
             return this;
         }
 
-        public IContentRequest AddStreamContent(Stream stream, string contentType)
+        public IParameterRequest AddStreamContent(Stream stream, string contentType)
         {
             _content = new StreamContent(stream, contentType);
+            return this;
+        }
+
+        public IParameterRequest AddFileContent(FileInfo content, string contentType)
+        {
+            if (content == null)
+            {
+                throw new ArgumentNullException(nameof(content));
+            }
+
+            if (!content.Exists)
+            {
+                throw new FileNotFoundException("File not found", content.FullName);
+            }
+
+            _content = new FileContent(content, contentType);
             return this;
         }
 
@@ -87,9 +117,15 @@ namespace Tiny.Http
         #endregion
 
         #region Headers
+        public IParameterRequest FillResponseHeaders(out Headers headers)
+        {
+            headers = new Headers();
+            _reponseHeaders = headers;
+            return this;
+        }
 
         /// <inheritdoc/>
-        public IRequest AddHeader(string key, string value)
+        public IParameterRequest AddHeader(string key, string value)
         {
             if (_headers == null)
             {
@@ -104,7 +140,7 @@ namespace Tiny.Http
         #region Query Parameters
 
         /// <inheritdoc/>
-        public IRequest AddQueryParameter(string key, string value)
+        public IParameterRequest AddQueryParameter(string key, string value)
         {
             if (_queryParameters == null)
             {
@@ -125,47 +161,107 @@ namespace Tiny.Http
         }
 
         /// <inheritdoc/>
-        public IRequest AddQueryParameter(string key, int value)
+        public IParameterRequest AddQueryParameter(string key, int value)
         {
             return AddQueryParameter(key, value.ToString());
         }
 
         /// <inheritdoc/>
-        public IRequest AddQueryParameter(string key, uint value)
+        public IParameterRequest AddQueryParameter(string key, int? value)
+        {
+            if (value.HasValue)
+            {
+                return AddQueryParameter(key, value.Value.ToString());
+            }
+
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public IParameterRequest AddQueryParameter(string key, uint value)
         {
             return AddQueryParameter(key, value.ToString());
         }
 
         /// <inheritdoc/>
-        public IRequest AddQueryParameter(string key, double value)
+        public IParameterRequest AddQueryParameter(string key, uint? value)
+        {
+            if (value.HasValue)
+            {
+                return AddQueryParameter(key, value.Value.ToString());
+            }
+
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public IParameterRequest AddQueryParameter(string key, double value)
+        {
+            return AddQueryParameter(key, value.ToString(_nfi));
+        }
+
+        /// <inheritdoc/>
+        public IParameterRequest AddQueryParameter(string key, double? value)
+        {
+            if (value.HasValue)
+            {
+                return AddQueryParameter(key, value.Value.ToString(_nfi));
+            }
+
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public IParameterRequest AddQueryParameter(string key, decimal value)
+        {
+            return AddQueryParameter(key, value.ToString(_nfi));
+        }
+
+        /// <inheritdoc/>
+        public IParameterRequest AddQueryParameter(string key, decimal? value)
+        {
+            if (value.HasValue)
+            {
+                return AddQueryParameter(key, value.Value.ToString(_nfi));
+            }
+
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public IParameterRequest AddQueryParameter(string key, bool value)
         {
             return AddQueryParameter(key, value.ToString());
         }
 
         /// <inheritdoc/>
-        public IRequest AddQueryParameter(string key, decimal value)
+        public IParameterRequest AddQueryParameter(string key, bool? value)
         {
-            return AddQueryParameter(key, value.ToString());
+            if (value.HasValue)
+            {
+                return AddQueryParameter(key, value.Value.ToString());
+            }
+
+            return this;
         }
 
         /// <inheritdoc/>
-        public IRequest AddQueryParameter(string key, bool value)
+        public IParameterRequest AddQueryParameter(string key, float value)
         {
-            return AddQueryParameter(key, value.ToString());
+            return AddQueryParameter(key, value.ToString(_nfi));
+        }
+
+        /// <inheritdoc/>
+        public IParameterRequest AddQueryParameter(string key, float? value)
+        {
+            if (value.HasValue)
+            {
+                return AddQueryParameter(key, value.Value.ToString(_nfi));
+            }
+
+            return this;
         }
         #endregion
-
-        /// <inheritdoc/>
-        public IOctectStreamRequest WithByteArrayResponse()
-        {
-            return this;
-        }
-
-        /// <inheritdoc/>
-        public IStreamRequest WithStreamResponse()
-        {
-            return this;
-        }
 
         /// <inheritdoc/>
         public Task<TResult> ExecuteAsync<TResult>(CancellationToken cancellationToken)
@@ -185,65 +281,111 @@ namespace Tiny.Http
             return _client.ExecuteAsync(this, cancellationToken);
         }
 
-        Task<byte[]> IOctectStreamRequest.ExecuteAsync(CancellationToken cancellationToken)
+        /// <inheritdoc/>
+        public Task<byte[]> ExecuteAsByteArrayAsync(CancellationToken cancellationToken)
         {
-            return _client.ExecuteByteArrayResultAsync(this, cancellationToken);
+            return _client.ExecuteAsByteArrayResultAsync(this, cancellationToken);
         }
 
-        Task<Stream> IStreamRequest.ExecuteAsync(CancellationToken cancellationToken)
+        /// <inheritdoc/>
+        public Task<Stream> ExecuteAsStreamAsync(CancellationToken cancellationToken)
         {
-            return _client.ExecuteWithStreamResultAsync(this, cancellationToken);
+            return _client.ExecuteAsStreamResultAsync(this, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<string> ExecuteAsStringAsync(CancellationToken cancellationToken)
+        {
+            return _client.ExecuteAsStringResultAsync(this, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<HttpResponseMessage> ExecuteAsHttpResponseMessageAsync(CancellationToken cancellationToken)
+        {
+            return _client.ExecuteAsHttpResponseMessageResultAsync(this, cancellationToken);
         }
 
         #region MultiPart
 
         /// <inheritdoc/>
-        public IMultiPartFromDataRequest AsMultiPartFromDataRequest(string contentType)
+        public IMultipartFromDataRequest AsMultiPartFromDataRequest(string contentType)
         {
-            _multiPartFormData = new MultiPartContent(contentType);
+            _multiPartFormData = new MultipartContent(contentType);
             _content = _multiPartFormData;
             return this;
         }
 
         /// <inheritdoc/>
-        IMultiPartFromDataExecutableRequest IMultiPartFromDataRequest.AddByteArray(byte[] data, string name, string fileName, string contentType)
+        IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddByteArray(byte[] data, string name, string fileName, string contentType)
         {
             if (data == null)
             {
                 throw new ArgumentNullException(nameof(data));
             }
 
-            _multiPartFormData.Add(new BytesMultiPartData(data, name, fileName, contentType));
+            _multiPartFormData.Add(new BytesMultipartData(data, name, fileName, contentType));
 
             return this;
         }
 
         /// <inheritdoc/>
-        IMultiPartFromDataExecutableRequest IMultiPartFromDataRequest.AddStream(Stream data, string name, string fileName, string contentType)
+        IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddStream(Stream data, string name, string fileName, string contentType)
         {
             if (data == null)
             {
                 throw new ArgumentNullException(nameof(data));
             }
 
-            _multiPartFormData.Add(new StreamMultiPartData(data, name, fileName, contentType));
+            _multiPartFormData.Add(new StreamMultipartData(data, name, fileName, contentType));
 
             return this;
         }
 
         /// <inheritdoc/>
-        IMultiPartFromDataExecutableRequest IMultiPartFromDataRequest.AddContent<TContent>(TContent content, string name, string fileName, IFormatter serializer)
+        IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddContent<TContent>(TContent content, string name, string fileName, IFormatter serializer)
         {
             if (content == default)
             {
                 throw new ArgumentNullException(nameof(content));
             }
 
-            _multiPartFormData.Add(new ToSerializeMultiPartData<TContent>(content, name, fileName, serializer));
+            _multiPartFormData.Add(new ToSerializeMultipartData<TContent>(content, name, fileName, serializer));
 
             return this;
         }
 
+        IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddFileContent(FileInfo content, string contentType)
+        {
+            IMultipartFromDataRequest me = this;
+            return me.AddFileContent(content, null, null, contentType);
+        }
+
+        IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddFileContent(FileInfo content, string name, string fileName, string contentType)
+        {
+            if (content == default)
+            {
+                throw new ArgumentNullException(nameof(content));
+            }
+
+            if (!content.Exists)
+            {
+                throw new FileNotFoundException("File not found", content.FullName);
+            }
+
+            if (name == null)
+            {
+                name = content.Name;
+            }
+
+            if (fileName == null)
+            {
+                fileName = $"{content.Name}.{content.Extension}";
+            }
+
+            _multiPartFormData.Add(new FileMultipartData(content, name, fileName, contentType));
+
+            return this;
+        }
         #endregion
     }
 }

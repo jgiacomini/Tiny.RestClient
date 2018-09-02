@@ -14,6 +14,7 @@ It hide all the complexity of communication, deserialisation ...
 ## Features
 * Modern async http client for REST API.
 * Support of verbs : GET, POST , PUT, DELETE, PATCH, HEAD
+* Support of cancellation token on each requests
 * Automatic XML and JSON serialization / deserialization
 * Support of custom serialisation / deserialisation
 * Support of multi-part form data
@@ -27,7 +28,7 @@ It hide all the complexity of communication, deserialisation ...
 ```cs
 using Tiny.Http;
 
-var client = new TinyHttpClient("http://MyAPI.com/api");
+var client = new TinyHttpClient("http://MyAPI.com/api", new HttpClient());
 ```
 
 ### Headers
@@ -46,6 +47,23 @@ client.DefaultHeaders.Add("Token", "MYTOKEN");
 client.GetRequest("City/All").
       AddHeader("Token", "MYTOKEN").
       ExecuteAsync();
+```
+
+#### Read headers of response
+
+```cs
+Headers headersOfResponse = null;
+await client.GetRequest("GetTest/HeadersOfResponse").
+             FillResponseHeaders(out headersOfResponse).
+             ExecuteAsync();
+foreach(var header in headersOfResponse)
+{
+    Debug.WriteLine($"{current.Key}");
+    foreach (var item in current.Value)
+    {
+        Debug.WriteLine(item);
+    }
+}
 ```
 
 ### Basic GET http requests
@@ -81,6 +99,39 @@ var response = await client.
                 AddFormParameter("country", "France").
                 AddFormParameter("name", "Paris").
                 ExecuteAsync<Response>();
+// POST http://MyAPI.com/api/City/Add with from url encoded content
+
+
+var fileInfo = new FileInfo("myTextFile.txt");
+var response = await client.
+                PostRequest("City/Image/Add").
+                AddFileContent(fileInfo, "text/plain").
+                ExecuteAsync<Response>();
+// POST text file at http://MyAPI.com/api/City/Add 
+```
+
+
+## Get raw HttpResponseMessage
+
+```cs
+
+var response = await client.
+                PostRequest("City/Add").
+                AddFormParameter("country", "France").
+                AddFormParameter("name", "Paris").
+                ExecuteAsHttpResponseMessageAsync();
+// POST http://MyAPI.com/api/City/Add with from url encoded content
+```
+
+## Get raw string result
+
+```cs
+
+var response = await client.
+                PostRequest("City/Add").
+                AddFormParameter("country", "France").
+                AddFormParameter("name", "Paris").
+                ExecuteAsStringAsync();
 // POST http://MyAPI.com/api/City/Add with from url encoded content
 ```
 
@@ -118,6 +169,18 @@ await client.PostRequest("MultiPart/Test").
               AddStream(stream2, "request", "request2.bin")
               ExecuteAsync();
               
+              
+// With 2 files content           
+
+var fileInfo1 = new FileInfo("myTextFile1.txt");
+var fileInfo2 = new FileInfo("myTextFile2.txt");
+
+var response = await client.
+                PostRequest("City/Image/Add").
+                AsMultiPartFromDataRequest().
+                AddFileContent(fileInfo1, "text/plain").
+                AddFileContent(fileInfo2, "text/plain").
+                ExecuteAsync<Response>();
 
 // With mixed content                  
 await client.PostRequest("MultiPart/Test").
@@ -126,7 +189,6 @@ await client.PostRequest("MultiPart/Test").
               AddByteArray(byteArray1, "request", "request2.bin").
               AddStream(stream2, "request", "request2.bin")
               ExecuteAsync();
-              
 ```
 
 
@@ -138,10 +200,10 @@ If you use these methods no serializer will be used.
 ```cs
 
 // Read stream response
- var stream = await client.
+ Stream stream = await client.
               GetRequest("File").
               WithStreamResponse().
-              ExecuteAsync();
+              ExecuteAsStreamAsync();
 // Post Stream as content
 await client.PostRequest("File/Add").
             AddStreamContent(stream).
@@ -153,8 +215,7 @@ await client.PostRequest("File/Add").
 // Read byte array response         
 byte[] byteArray = await client.
               GetRequest("File").
-              WithByteArrayResponse().
-              ExecuteAsync();
+              ExecuteAsByteArrayAsync();
 
 // Read byte array as content
 await client.
@@ -192,19 +253,31 @@ catch (HttpException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Intern
 }
 ```
 
-## Serialization / Deserialization
+## Formatters 
 
-By default the Json is used as default Formatter.
-A Formatter will be used to serialize or deserialize streams.
+By default : 
+ * the Json is used as default Formatter.
+ * Xml Formatter is added in Formatters
 
-The XmlFormatter by default in formatters list.
+Each formatter have a list of supported media types.
+It allow TinyHttpClient to detect which formatter will be used.
+If the no formatter is found it use the default formatter.
 
-### Define xml as default serializer and deserializer.
+### Add a new formatter
+Add a new custom formatter as default formatter.
 ```cs
-IFormatter xmlSerializer = new XmlFormatter();
-var client = new TinyHttpClient("http://MYApi.com", xmlSerializer, xmlDeserializer);
+bool isDefaultFormatter = true;
+var customFormatter = new CustomFormatter();
+client.Add(customFormatter, isDefaultFormatter);
 ```
-### Define a specific serializer for one request
+
+### Remove a formatter
+```cs
+var lastFormatter = client.Formatters.Where( f=> f is XmlSerializer>).First();
+client.Remove(lastFormatter);
+```
+
+### Define a specific formatter for one request
 ```cs
 IFormatter serializer = new XmlFormatter();
  var response = await client.
@@ -212,7 +285,7 @@ IFormatter serializer = new XmlFormatter();
      ExecuteAsync();
 ```
 
-### Define a specific deserializer for one request
+### Define a specific formatter for one request
 ```cs
 IFormatter deserializer = new XmlFormatter();
 
@@ -222,7 +295,7 @@ IFormatter deserializer = new XmlFormatter();
      ExecuteAsync<City>(deserializer);
 ```
 
-### Custom serializer/deserializer.
+### Custom formatter
 
 You create your own serializers/deserializer by implementing IFormatter
 
@@ -291,6 +364,3 @@ client.FailedToGetResponse  += (sender , e)=>
 }
 
 ```
-
-## License
-MIT © JGI

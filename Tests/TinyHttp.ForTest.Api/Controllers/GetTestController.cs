@@ -31,6 +31,48 @@ namespace Tiny.Http.ForTest.Api.Controllers
             return new string[] { "value1", "value2" };
         }
 
+        [HttpGet("HeadersOfResponse")]
+        public void HeadersOfResponse()
+        {
+            Response.Headers.Add("custom1", "custom1");
+            Response.Headers.Add("custom2", "custom2");
+            Response.Headers.Add("custom3", "custom3");
+        }
+
+        [HttpGet("WithHeaders")]
+        public List<string> WithHeaders()
+        {
+            var result = new List<string>();
+            foreach (var header in Request.Headers)
+            {
+                if (header.Key.StartsWith("header"))
+                {
+                    result.Add($"{header.Key}_{header.Value}");
+                }
+            }
+
+            return result;
+        }
+
+        [HttpGet("QueryString")]
+        public string QueryString(
+            string str,
+            int number,
+            int? numberNullable,
+            uint numberUnsigned,
+            uint? numberUnsignedNullable,
+            bool boolean,
+            bool? boolNullable,
+            double doubleNumber,
+            double? doubleNumberNullable,
+            decimal decimalNumber,
+            decimal? decimalNumberNullable,
+            float floatNumber,
+            float? floatNumberNullable)
+        {
+            return $"{str}_{number}_{numberNullable}_{numberUnsigned}_{numberUnsignedNullable}_{boolean}_{boolNullable}_{doubleNumber}_{doubleNumberNullable}_{decimalNumber}_{decimalNumberNullable}_{floatNumber}_{floatNumberNullable}";
+        }
+
         [HttpGet("Stream")]
         public Stream Stream()
         {
