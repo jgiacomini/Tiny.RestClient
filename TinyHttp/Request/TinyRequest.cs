@@ -173,6 +173,10 @@ namespace Tiny.Http
             {
                 return AddQueryParameter(key, value.Value.ToString());
             }
+            else
+            {
+                AddQueryParameter(key, string.Empty);
+            }
 
             return this;
         }
@@ -189,6 +193,10 @@ namespace Tiny.Http
             if (value.HasValue)
             {
                 return AddQueryParameter(key, value.Value.ToString());
+            }
+            else
+            {
+                AddQueryParameter(key, string.Empty);
             }
 
             return this;
@@ -207,6 +215,10 @@ namespace Tiny.Http
             {
                 return AddQueryParameter(key, value.Value.ToString(_nfi));
             }
+            else
+            {
+                AddQueryParameter(key, string.Empty);
+            }
 
             return this;
         }
@@ -223,6 +235,10 @@ namespace Tiny.Http
             if (value.HasValue)
             {
                 return AddQueryParameter(key, value.Value.ToString(_nfi));
+            }
+            else
+            {
+                AddQueryParameter(key, string.Empty);
             }
 
             return this;
@@ -241,6 +257,10 @@ namespace Tiny.Http
             {
                 return AddQueryParameter(key, value.Value.ToString());
             }
+            else
+            {
+                AddQueryParameter(key, string.Empty);
+            }
 
             return this;
         }
@@ -257,6 +277,10 @@ namespace Tiny.Http
             if (value.HasValue)
             {
                 return AddQueryParameter(key, value.Value.ToString(_nfi));
+            }
+            else
+            {
+                AddQueryParameter(key, string.Empty);
             }
 
             return this;

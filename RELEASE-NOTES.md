@@ -1,5 +1,8 @@
 # Release notes
 
+## 1.2.1
+* Fix AddQueryParameter when value is null (for server which are not in ASP.net Core)
+
 ## 1.2.0
 * Add methods AddFormatter / RemoveFormatter
 * Add a way to read responses headers
