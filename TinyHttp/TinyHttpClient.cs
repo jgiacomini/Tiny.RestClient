@@ -340,7 +340,7 @@ namespace Tiny.Http
 
                         if (formatter == null)
                         {
-                            if (response.Content.Headers.ContentType.MediaType != null)
+                            if (response.Content.Headers?.ContentType.MediaType != null)
                             {
                                 // TODO : optimize the seach of formatter ?
                                 // Try to find best formatter
