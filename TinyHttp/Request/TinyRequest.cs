@@ -18,7 +18,7 @@ namespace Tiny.Http
         IMultiPartFromDataExecutableRequest
     {
         private static readonly NumberFormatInfo _nfi;
-        private readonly HttpVerb _httpVerb;
+        private readonly HttpMethod _httpMethod;
         private readonly TinyHttpClient _client;
         private readonly string _route;
         private Dictionary<string, string> _headers;
@@ -28,7 +28,7 @@ namespace Tiny.Http
         private MultipartContent _multiPartFormData;
         private Headers _reponseHeaders;
 
-        internal HttpVerb HttpVerb { get => _httpVerb; }
+        internal HttpMethod HttpMethod { get => _httpMethod; }
         internal Dictionary<string, string> QueryParameters { get => _queryParameters; }
         internal string Route { get => _route; }
         internal ITinyContent Content { get => _content; }
@@ -43,9 +43,9 @@ namespace Tiny.Http
             };
         }
 
-        internal TinyRequest(HttpVerb httpVerb, string route, TinyHttpClient client)
+        internal TinyRequest(HttpMethod httpMethod, string route, TinyHttpClient client)
         {
-            _httpVerb = httpVerb;
+            _httpMethod = httpMethod;
             _route = route;
             _client = client;
         }

@@ -186,12 +186,12 @@ namespace Tiny.Http
         /// <summary>
         /// Create a new request.
         /// </summary>
-        /// <param name="verb">The verb.</param>
+        /// <param name="httpMethod">The httpMethod.</param>
         /// <param name="route">The route.</param>
         /// <returns>The new request.</returns>
-        public IRequest NewRequest(HttpVerb verb, string route = null)
+        public IRequest NewRequest(HttpMethod httpMethod, string route = null)
         {
-            return new TinyRequest(verb, route, this);
+            return new TinyRequest(httpMethod, route, this);
         }
 
         /// <summary>
@@ -201,7 +201,7 @@ namespace Tiny.Http
         /// <returns>The new request.</returns>
         public IRequest GetRequest(string route = null)
         {
-            return new TinyRequest(HttpVerb.Get, route, this);
+            return new TinyRequest(HttpMethod.Get, route, this);
         }
 
         /// <summary>
@@ -211,7 +211,7 @@ namespace Tiny.Http
         /// <returns>The new request.</returns>
         public IRequest PostRequest(string route = null)
         {
-            return new TinyRequest(HttpVerb.Post, route, this);
+            return new TinyRequest(HttpMethod.Post, route, this);
         }
 
         /// <summary>
@@ -222,7 +222,7 @@ namespace Tiny.Http
         /// <returns>The new request.</returns>
         public IParameterRequest PostRequest<TContent>(TContent content, IFormatter formatter = null)
         {
-            return new TinyRequest(HttpVerb.Post, null, this).
+            return new TinyRequest(HttpMethod.Post, null, this).
                 AddContent<TContent>(content, formatter);
         }
 
@@ -235,7 +235,7 @@ namespace Tiny.Http
         /// <returns>The new request.</returns>
         public IParameterRequest PostRequest<TContent>(string route, TContent content, IFormatter formatter = null)
         {
-            return new TinyRequest(HttpVerb.Post, route, this).
+            return new TinyRequest(HttpMethod.Post, route, this).
                 AddContent<TContent>(content, formatter);
         }
 
@@ -246,7 +246,7 @@ namespace Tiny.Http
         /// <returns>The new request.</returns>
         public IRequest PutRequest(string route = null)
         {
-            return new TinyRequest(HttpVerb.Put, route, this);
+            return new TinyRequest(HttpMethod.Put, route, this);
         }
 
         /// <summary>
@@ -257,7 +257,7 @@ namespace Tiny.Http
         /// <returns>The new request.</returns>
         public IParameterRequest PutRequest<TContent>(TContent content, IFormatter formatter = null)
         {
-            return new TinyRequest(HttpVerb.Put, null, this).
+            return new TinyRequest(HttpMethod.Put, null, this).
                 AddContent<TContent>(content, formatter);
         }
 
@@ -270,7 +270,7 @@ namespace Tiny.Http
         /// <returns>The new request.</returns>
         public IParameterRequest PutRequest<TContent>(string route, TContent content, IFormatter formatter = null)
         {
-            return new TinyRequest(HttpVerb.Put, route, this).
+            return new TinyRequest(HttpMethod.Put, route, this).
                 AddContent<TContent>(content, formatter);
         }
 
@@ -281,7 +281,7 @@ namespace Tiny.Http
         /// <returns>The new request.</returns>
         public IRequest PatchRequest(string route = null)
         {
-            return new TinyRequest(HttpVerb.Patch, route, this);
+            return new TinyRequest(_PatchMethod, route, this);
         }
 
         /// <summary>
@@ -292,7 +292,7 @@ namespace Tiny.Http
         /// <returns>The new request.</returns>
         public IParameterRequest PatchRequest<TContent>(TContent content, IFormatter serializer = null)
         {
-            return new TinyRequest(HttpVerb.Patch, null, this).
+            return new TinyRequest(_PatchMethod, null, this).
                 AddContent<TContent>(content, serializer);
         }
 
@@ -305,7 +305,7 @@ namespace Tiny.Http
         /// <returns>The new request.</returns>
         public IParameterRequest PatchRequest<TContent>(string route, TContent content, IFormatter serializer = null)
         {
-            return new TinyRequest(HttpVerb.Patch, route, this).
+            return new TinyRequest(_PatchMethod, route, this).
                 AddContent<TContent>(content, serializer);
         }
 
@@ -316,7 +316,7 @@ namespace Tiny.Http
         /// <returns>The new request.</returns>
         public IRequest DeleteRequest(string route = null)
         {
-            return new TinyRequest(HttpVerb.Delete, route, this);
+            return new TinyRequest(HttpMethod.Delete, route, this);
         }
 
         #endregion
@@ -329,7 +329,7 @@ namespace Tiny.Http
             using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, tinyRequest.Headers, content, formatter, cancellationToken).ConfigureAwait(false))
+                using (HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, formatter, cancellationToken).ConfigureAwait(false))
                 {
                     using (var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false))
                     {
@@ -390,7 +390,7 @@ namespace Tiny.Http
             using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false))
+                using (HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false))
                 {
                     using (var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false))
                     {
@@ -406,7 +406,7 @@ namespace Tiny.Http
             using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                using (HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false))
+                using (HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false))
                 {
                     using (var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false))
                     {
@@ -432,7 +432,7 @@ namespace Tiny.Http
             using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false);
+                HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false);
                 var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false);
                 if (stream == null || !stream.CanRead)
                 {
@@ -450,7 +450,7 @@ namespace Tiny.Http
             using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                HttpResponseMessage response = await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false);
+                HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false);
                 var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false);
                 if (stream == null || !stream.CanRead)
                 {
@@ -471,7 +471,7 @@ namespace Tiny.Http
             using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                return await SendRequestAsync(ConvertToHttpMethod(tinyRequest.HttpVerb), requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false);
+                return await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -690,27 +690,6 @@ namespace Tiny.Http
                    uri.AbsoluteUri,
                    httpMethod.Method,
                    ex);
-            }
-        }
-
-        private HttpMethod ConvertToHttpMethod(HttpVerb httpVerb)
-        {
-            switch (httpVerb)
-            {
-                case HttpVerb.Get:
-                    return HttpMethod.Get;
-                case HttpVerb.Post:
-                    return HttpMethod.Post;
-                case HttpVerb.Put:
-                    return HttpMethod.Put;
-                case HttpVerb.Delete:
-                    return HttpMethod.Delete;
-                case HttpVerb.Head:
-                    return HttpMethod.Head;
-                case HttpVerb.Patch:
-                    return _PatchMethod;
-                default:
-                    throw new NotImplementedException();
             }
         }
 
