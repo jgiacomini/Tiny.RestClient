@@ -21,26 +21,38 @@ namespace Tiny.Http
         /// <summary>
         /// Executes the request.
         /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns><see cref="Task{Stream}"/></returns>
         Task<Stream> ExecuteAsStreamAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Executes the request.
         /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task of string</returns>
         Task<string> ExecuteAsStringAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Executes the request.
         /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task of byte array</returns>
         Task<byte[]> ExecuteAsByteArrayAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Executes the request.
         /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task of <see cref="HttpResponseMessage"/></returns>
         Task<HttpResponseMessage> ExecuteAsHttpResponseMessageAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Download file async
+        /// </summary>
+        /// <param name="path">path to download</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>return a file info</returns>
+        Task<FileInfo> DonwloadFileAsync(string path, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Executes the request.
