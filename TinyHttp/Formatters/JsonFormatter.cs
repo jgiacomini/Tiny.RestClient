@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -55,7 +55,16 @@ namespace Tiny.Http
         /// <inheritdoc/>
         public string Serialize<T>(T data, Encoding encoding)
         {
-            return JsonConvert.SerializeObject(data);
+            using (var stringWriter = new StringWriter(new StringBuilder(256), CultureInfo.InvariantCulture))
+            {
+                using (var jsonTextWriter = new JsonTextWriter(stringWriter))
+                {
+                    jsonTextWriter.Formatting = JsonSerializer.Formatting;
+                    JsonSerializer.Serialize(jsonTextWriter, data, typeof(T));
+                }
+
+                return stringWriter.ToString();
+            }
         }
     }
 }
