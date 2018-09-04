@@ -118,7 +118,7 @@ var response = await client.
 string filePath = "c:\map.pdf";
 FileInfo fileInfo = await client.
                 GetRequest("City/map.pdf").
-                DonwloadFileAsync("c:\map.pdf");
+                DownloadFileAsync("c:\map.pdf");
 // GET http://MyAPI.com/api/City/map.pdf 
 ```
 
