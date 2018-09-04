@@ -52,7 +52,7 @@ namespace Tiny.Http
         /// <param name="path">path to download</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>return a file info</returns>
-        Task<FileInfo> DonwloadFileAsync(string path, CancellationToken cancellationToken = default);
+        Task<FileInfo> DownloadFileAsync(string path, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Executes the request.

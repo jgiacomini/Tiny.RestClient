@@ -35,7 +35,7 @@ namespace Tiny.Http.Tests
             var fileName = System.IO.Path.GetTempFileName().Replace(".tmp", ".pdf");
             var data = await client.
               GetRequest("File/GetPdf").
-              DonwloadFileAsync(fileName);
+              DownloadFileAsync(fileName);
 
             Assert.IsTrue(data.Exists);
             data.Delete();
@@ -49,7 +49,7 @@ namespace Tiny.Http.Tests
 
             var data = await client.
               GetRequest("File/GetPdf").
-              DonwloadFileAsync(null);
+              DownloadFileAsync(null);
         }
 
         [ExpectedException(typeof(ArgumentNullException))]

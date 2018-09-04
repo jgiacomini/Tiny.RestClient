@@ -330,7 +330,7 @@ namespace Tiny.Http
         }
 
         /// <inheritdoc/>
-        public async Task<FileInfo> DonwloadFileAsync(string fileName, CancellationToken cancellationToken)
+        public async Task<FileInfo> DownloadFileAsync(string fileName, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(fileName))
             {
