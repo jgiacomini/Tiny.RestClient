@@ -27,6 +27,31 @@ namespace Tiny.Http.Tests
               ExecuteAsync<string>();
         }
 
+        [TestMethod]
+        public async Task TestDownloadFile()
+        {
+            var client = GetClient();
+
+            var fileName = System.IO.Path.GetTempFileName().Replace(".tmp", ".pdf");
+            var data = await client.
+              GetRequest("File/GetPdf").
+              DonwloadFileAsync(fileName);
+
+            Assert.IsTrue(data.Exists);
+            data.Delete();
+        }
+
+        [ExpectedException(typeof(ArgumentNullException))]
+        [TestMethod]
+        public async Task TestDownloadFileFilePathNull()
+        {
+            var client = GetClient();
+
+            var data = await client.
+              GetRequest("File/GetPdf").
+              DonwloadFileAsync(null);
+        }
+
         [ExpectedException(typeof(ArgumentNullException))]
         [TestMethod]
         public async Task TestMultiPartArgumentNullException()

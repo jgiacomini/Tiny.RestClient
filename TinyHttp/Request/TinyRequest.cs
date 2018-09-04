@@ -329,6 +329,29 @@ namespace Tiny.Http
             return _client.ExecuteAsHttpResponseMessageResultAsync(this, cancellationToken);
         }
 
+        /// <inheritdoc/>
+        public async Task<FileInfo> DonwloadFileAsync(string fileName, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                throw new ArgumentNullException(nameof(File));
+            }
+
+            if (File.Exists(fileName))
+            {
+                File.Delete(fileName);
+            }
+
+            using (var fileStream = File.Create(fileName))
+            {
+                var stream = await _client.ExecuteAsStreamResultAsync(this, cancellationToken);
+                stream.Seek(0, SeekOrigin.Begin);
+                stream.CopyTo(fileStream);
+            }
+
+            return new FileInfo(fileName);
+        }
+
         #region MultiPart
 
         /// <inheritdoc/>
