@@ -1,5 +1,7 @@
 # Release notes
 
+## 1.2.2
+* Fix null reference exception if ContentType of response is null
 ## 1.2.1
 * Fix AddQueryParameter when value is null (for server which are not in ASP.net Core)
 
