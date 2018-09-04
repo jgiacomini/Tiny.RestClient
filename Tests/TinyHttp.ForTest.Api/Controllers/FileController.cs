@@ -37,5 +37,10 @@ namespace Tiny.Http.ForTest.Api.Controllers
             memory.Position = 0;
             return File(memory, "application/pdf", Path.GetFileName(path));
         }
+
+        [HttpGet("NoResult")]
+        public void NoResult()
+        {
+        }
     }
 }

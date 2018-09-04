@@ -41,6 +41,20 @@ namespace Tiny.Http.Tests
             data.Delete();
         }
 
+        [TestMethod]
+        public async Task TestDownloadFileStreamEmpty()
+        {
+            var client = GetClient();
+
+            var fileName = System.IO.Path.GetTempFileName().Replace(".tmp", ".pdf");
+            var data = await client.
+              GetRequest("File/NoResult").
+              DownloadFileAsync(fileName);
+
+            Assert.IsTrue(data.Exists);
+            data.Delete();
+        }
+
         [ExpectedException(typeof(ArgumentNullException))]
         [TestMethod]
         public async Task TestDownloadFileFilePathNull()
@@ -50,6 +64,8 @@ namespace Tiny.Http.Tests
             var data = await client.
               GetRequest("File/GetPdf").
               DownloadFileAsync(null);
+            Assert.IsTrue(data.Exists);
+            data.Delete();
         }
 
         [ExpectedException(typeof(ArgumentNullException))]

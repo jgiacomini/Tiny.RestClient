@@ -344,9 +344,14 @@ namespace Tiny.Http
 
             using (var fileStream = File.Create(fileName))
             {
-                var stream = await _client.ExecuteAsStreamResultAsync(this, cancellationToken);
-                stream.Seek(0, SeekOrigin.Begin);
-                stream.CopyTo(fileStream);
+                using (var stream = await _client.ExecuteAsStreamResultAsync(this, cancellationToken))
+                {
+                    if (stream != null)
+                    {
+                        stream.Seek(0, SeekOrigin.Begin);
+                        stream.CopyTo(fileStream);
+                    }
+                }
             }
 
             return new FileInfo(fileName);
