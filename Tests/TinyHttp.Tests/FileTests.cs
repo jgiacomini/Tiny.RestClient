@@ -2,7 +2,6 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Tiny.Http.Tests.Models;
 
 namespace Tiny.Http.Tests
 {
@@ -25,6 +24,47 @@ namespace Tiny.Http.Tests
               PostRequest("File/One").
               AddFileContent(null, "text/plain").
               ExecuteAsync<string>();
+        }
+
+        [TestMethod]
+        public async Task TestDownloadFile()
+        {
+            var client = GetClient();
+
+            var fileName = System.IO.Path.GetTempFileName().Replace(".tmp", ".pdf");
+            var data = await client.
+              GetRequest("File/GetPdf").
+              DownloadFileAsync(fileName);
+
+            Assert.IsTrue(data.Exists);
+            data.Delete();
+        }
+
+        [TestMethod]
+        public async Task TestDownloadFileStreamEmpty()
+        {
+            var client = GetClient();
+
+            var fileName = System.IO.Path.GetTempFileName().Replace(".tmp", ".pdf");
+            var data = await client.
+              GetRequest("File/NoResult").
+              DownloadFileAsync(fileName);
+
+            Assert.IsTrue(data.Exists);
+            data.Delete();
+        }
+
+        [ExpectedException(typeof(ArgumentNullException))]
+        [TestMethod]
+        public async Task TestDownloadFileFilePathNull()
+        {
+            var client = GetClient();
+
+            var data = await client.
+              GetRequest("File/GetPdf").
+              DownloadFileAsync(null);
+            Assert.IsTrue(data.Exists);
+            data.Delete();
         }
 
         [ExpectedException(typeof(ArgumentNullException))]

@@ -2,6 +2,8 @@
 TinyHttp make easier the dialog between your API and your application.
 It hide all the complexity of communication, deserialisation ...
 
+[![Build status](https://ci.appveyor.com/api/projects/status/08prv6a3pon8vx86?svg=true)](https://ci.appveyor.com/project/jgiacomini/tinyhttp)
+
 ## Nuget
 * Available on NuGet: [Tiny.Http](http://www.nuget.org/packages/Tiny.Http) [![NuGet](https://img.shields.io/nuget/v/Tiny.Http.svg?label=NuGet)](https://www.nuget.org/packages/Tiny.Http/)
 
@@ -18,6 +20,8 @@ It hide all the complexity of communication, deserialisation ...
 * Automatic XML and JSON serialization / deserialization
 * Support of custom serialisation / deserialisation
 * Support of multi-part form data
+* Download file
+* Upload file
 * Optimized http calls
 * Typed exceptions which are easier to interpret
 * Provide an easy way to log : all sending of request, failed to get response,  and the time get response.
@@ -110,6 +114,15 @@ var response = await client.
 // POST text file at http://MyAPI.com/api/City/Add 
 ```
 
+
+### Download file
+```cs
+string filePath = "c:\map.pdf";
+FileInfo fileInfo = await client.
+                GetRequest("City/map.pdf").
+                DownloadFileAsync("c:\map.pdf");
+// GET http://MyAPI.com/api/City/map.pdf 
+```
 
 ## Get raw HttpResponseMessage
 
