@@ -9,8 +9,19 @@ namespace Tiny.Http
     /// </summary>
     public class DebugListener : IListener
     {
+        private readonly bool _measureTime;
+
+        /// <summary>
+        ///  Initializes a new instance of the <see cref="DebugListener"/> class.
+        /// </summary>
+        /// <param name="measureTime">true if measure time</param>
+        public DebugListener(bool measureTime)
+        {
+            _measureTime = measureTime;
+        }
+
         /// <inheritdoc/>
-        public bool MeasureTime => true;
+        public bool MeasureTime => _measureTime;
 
         /// <inheritdoc/>
         public void OnFailedToReceiveResponse(Uri uri, HttpMethod httpMethod, Exception exception, TimeSpan? elapsedTime)
@@ -34,7 +45,7 @@ namespace Tiny.Http
         {
             if (span == null)
             {
-                return string.Empty;
+                return "-";
             }
 
             var spanNotNullable = span.Value;

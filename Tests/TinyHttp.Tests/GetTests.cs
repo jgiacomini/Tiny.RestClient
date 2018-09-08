@@ -35,11 +35,10 @@ namespace Tiny.Http.Tests
         [TestMethod]
         public async Task GetHeadersOfResponse()
         {
-            Headers headersOfResponse = null;
             var client = GetClient();
             await client.
                 GetRequest("GetTest/HeadersOfResponse").
-                FillResponseHeaders(out headersOfResponse).
+                FillResponseHeaders(out Headers headersOfResponse).
                 ExecuteAsync();
 
             Assert.IsTrue(headersOfResponse.Count() == 3);

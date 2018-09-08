@@ -11,6 +11,7 @@ namespace Tiny.Http.Tests
         {
             var client = GetClient();
             client.Listeners.AddDebug();
+            client.Listeners.AddDebug(false);
             await client.
                 NewRequest(new System.Net.Http.HttpMethod("GET"), "GetTest/noResponse").
                 ExecuteAsync();

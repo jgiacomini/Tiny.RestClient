@@ -6,6 +6,9 @@ using System.Net.Http;
 
 namespace Tiny.Http
 {
+    /// <summary>
+    /// Collection of <see cref="IListener"/>
+    /// </summary>
     public class Listeners : ICollection<IListener>, IListener
     {
         private readonly List<IListener> _loggers;
