@@ -364,7 +364,7 @@ To add it you have to call AddDebug on Listeners property
 client.Settings.Listeners.AddDebug();
 ```
 
-You can also create you own listener by implementing IListerner.
+You can also create you own listener by implementing IListener.
 
 ```cs
 IListener myCustomListerner = ..
