@@ -2,7 +2,7 @@
 
 ## 1.3.0
 * Rewrite the way to listen the client
-* Add settings property with all settings of client
+* Add 'Settings' property with all settings of client
 
 ## 1.2.2
 * Fix null reference exception if ContentType of response is null
