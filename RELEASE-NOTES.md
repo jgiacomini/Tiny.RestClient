@@ -3,6 +3,8 @@
 ## 1.3.0
 * Rewrite the way to listen the client
 * Add 'Settings' property with all settings of client
+* Fix a bug on JsonFormatter which not used JsonSerializer config
+* Now NewRequest use HttpMethod instead of HttpVerb enum
 
 ## 1.2.2
 * Fix null reference exception if ContentType of response is null
