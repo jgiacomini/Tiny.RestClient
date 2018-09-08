@@ -16,6 +16,7 @@ It hide all the complexity of communication, deserialisation ...
 ## Features
 * Modern async http client for REST API.
 * Support of verbs : GET, POST , PUT, DELETE, PATCH, HEAD
+* Support of custom http verbs
 * Support of cancellation token on each requests
 * Automatic XML and JSON serialization / deserialization
 * Support of custom serialisation / deserialisation
