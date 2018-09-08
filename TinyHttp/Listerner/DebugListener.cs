@@ -17,7 +17,10 @@ namespace Tiny.Http
         /// <param name="measureTime">true if measure time</param>
         public DebugListener(bool measureTime)
         {
-            _measureTime = measureTime;
+            if (System.Diagnostics.Debugger.IsAttached)
+            {
+                _measureTime = measureTime;
+            }
         }
 
         /// <inheritdoc/>
@@ -26,19 +29,28 @@ namespace Tiny.Http
         /// <inheritdoc/>
         public void OnFailedToReceiveResponse(Uri uri, HttpMethod httpMethod, Exception exception, TimeSpan? elapsedTime)
         {
-            Debug.WriteLine($"FailedToGetResponse Method = {httpMethod}, Uri = {exception}, ElapsedTime = {ToReadableString(elapsedTime)}");
+            if (System.Diagnostics.Debugger.IsAttached)
+            {
+                Trace.WriteLine($"FailedToGetResponse Method = {httpMethod}, Uri = {exception}, ElapsedTime = {ToReadableString(elapsedTime)}");
+            }
         }
 
         /// <inheritdoc/>
         public void OnReceivedResponse(Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan? elapsedTime)
         {
-            Debug.WriteLine($"Received Method = {httpMethod}, Uri = {uri}, StatusCode = {response.StatusCode}, ElapsedTime = {ToReadableString(elapsedTime)}");
+            if (System.Diagnostics.Debugger.IsAttached)
+            {
+                Trace.WriteLine($"Received Method = {httpMethod}, Uri = {uri}, StatusCode = {response.StatusCode}, ElapsedTime = {ToReadableString(elapsedTime)}");
+            }
         }
 
         /// <inheritdoc/>
         public void OnSendingRequest(Uri uri, HttpMethod httpMethod, HttpRequestMessage httpRequestMessage)
         {
-            Debug.WriteLine($"Sending Method = {httpMethod}, Uri = {uri}");
+            if (System.Diagnostics.Debugger.IsAttached)
+            {
+                Trace.WriteLine($"Sending Method = {httpMethod}, Uri = {uri}");
+            }
         }
 
         private string ToReadableString(TimeSpan? span)

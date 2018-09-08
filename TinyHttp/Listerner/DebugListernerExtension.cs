@@ -12,7 +12,10 @@
         /// <param name="measureTime">allow to measure time to this listener</param>
         public static void AddDebug(this Listeners listeners, bool measureTime = true)
         {
-            listeners.Add(new DebugListener(measureTime));
+            if (System.Diagnostics.Debugger.IsAttached)
+            {
+                listeners.Add(new DebugListener(measureTime));
+            }
         }
     }
 }

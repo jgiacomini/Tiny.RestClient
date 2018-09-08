@@ -1,16 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.3.0-alpha0003</Version>
+    <Version>1.3.0-alpha0005</Version>
     <Copyright>Copyright © Jérôme Giacomini 2018</Copyright>
     <NeutralLanguage>en</NeutralLanguage>
     <Authors>Jérôme Giacomini</Authors>
-    <Description> 
+    <Description>
       TinyHttp make easier the dialog between your API and your application. It hide all the complexity of communication, deserialisation ...
 
       Features :
       * Modern async http client for REST API.
       * Support of verbs : GET, POST , PUT, DELETE, PATCH, HEAD
+      * Support of custom http verbs
       * Support of cancellation token on each requests
       * Automatic XML and JSON serialization / deserialization
       * Support of custom serialisation / deserialisation
@@ -25,12 +26,12 @@
     <PackageLicenseUrl>https://github.com/jgiacomini/TinyHttp/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/jgiacomini/TinyHttp</PackageProjectUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/jgiacomini/TinyHttp/master/icon.png</PackageIconUrl>
-    <PackageTags>httpClient;webapi;FluentHttp;RestClient;Rest;TinyHttp</PackageTags>
+    <PackageTags>httpClient;FluentHttp;Fluent;RestClient;REST;TinyRestClient;</PackageTags>
 
     <RepositoryUrl>https://github.com/jgiacomini/TinyHttp.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <MinClientVersion>3.0.3</MinClientVersion>
-    <PackageReleaseNotes>See release notes at https://github.com/jgiacomini/TinyHttp/blob/1.2.2/RELEASE-NOTES.md</PackageReleaseNotes>
+    <PackageReleaseNotes>See release notes at https://github.com/jgiacomini/TinyHttp/blob/1.3.0/RELEASE-NOTES.md</PackageReleaseNotes>
   </PropertyGroup>
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
