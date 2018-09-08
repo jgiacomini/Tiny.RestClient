@@ -41,7 +41,7 @@ var client = new TinyHttpClient("http://MyAPI.com/api", new HttpClient());
 
 ```cs
 // Add default header for each calls
-client.DefaultHeaders.Add("Token", "MYTOKEN");
+client.Settings.DefaultHeaders.Add("Token", "MYTOKEN");
 ```
 #### Add header for current request
 
@@ -56,9 +56,8 @@ client.GetRequest("City/All").
 #### Read headers of response
 
 ```cs
-Headers headersOfResponse = null;
 await client.GetRequest("GetTest/HeadersOfResponse").
-             FillResponseHeaders(out headersOfResponse).
+             FillResponseHeaders(out headersOfResponse Headers).
              ExecuteAsync();
 foreach(var header in headersOfResponse)
 {
@@ -281,16 +280,16 @@ Add a new custom formatter as default formatter.
 ```cs
 bool isDefaultFormatter = true;
 var customFormatter = new CustomFormatter();
-client.Add(customFormatter, isDefaultFormatter);
+client.Settings.Formatters.Add(customFormatter, isDefaultFormatter);
 ```
 
 ### Remove a formatter
 ```cs
-var lastFormatter = client.Formatters.Where( f=> f is XmlSerializer>).First();
+var lastFormatter = client.Settings.Formatters.Where( f=> f is XmlSerializer>).First();
 client.Remove(lastFormatter);
 ```
 
-### Define a specific formatter for one request
+### Define a specific serialize for one request
 ```cs
 IFormatter serializer = new XmlFormatter();
  var response = await client.
@@ -298,7 +297,7 @@ IFormatter serializer = new XmlFormatter();
      ExecuteAsync();
 ```
 
-### Define a specific formatter for one request
+### Define a specific deserializer for one request
 ```cs
 IFormatter deserializer = new XmlFormatter();
 
@@ -354,26 +353,17 @@ public class XmlFormatter : IFormatter
    }
 ```
 
-## Logging events
+## Listener events
+
+Add debug lister
+```cs
+
+client.Settings.Listeners.AddDebug();
+```
+
+You can also create you own listener by implementing IListerner.
 
 ```cs
-using Tiny.Http;
-var client = new TinyHttpClient("http://MyAPI.com/api");
-
-
-client.SendingRequest += (sender , e) =>
-{    
-    Debug.WriteLine($"Sending RequestId = {e.RequestId}, Method = {e.Method}, Uri = {e.Uri}");
-};
-
-client.ReceivedResponse += (sender , e)=>
-{
-    Debug.WriteLine($"Received RequestId = {e.RequestId}, Method = {e.Method}, Uri = {e.Uri}, StatusCode = {e.StatusCode}, ElapsedTime = {ToReadableString(e.ElapsedTime)}");
-};
-
-client.FailedToGetResponse  += (sender , e)=>
-{
-    Debug.WriteLine($"FailedToGetResponse RequestId = {e.RequestId}, Method = {e.Method}, Uri = {e.Uri}, ElapsedTime = {ToReadableString(e.ElapsedTime)}");
-}
-
+IListener myCustomListerner = ..
+client.Settings.Listeners.Add(myCustomListerner);
 ```
