@@ -353,9 +353,12 @@ public class XmlFormatter : IFormatter
    }
 ```
 
-## Listener events
+## Listeners
+You can easily add listener to listen all request sended / responses received and all exceptions.
 
-Add debug lister
+A debug listener is provided.
+
+To add it you have to call AddDebug on Listeners property
 ```cs
 
 client.Settings.Listeners.AddDebug();
