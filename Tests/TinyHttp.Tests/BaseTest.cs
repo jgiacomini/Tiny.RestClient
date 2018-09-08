@@ -34,11 +34,11 @@ namespace Tiny.Http.Tests
                 {
                     _clientXML = new TinyHttpClient(Program.Client, _serverUrl);
 
-                    var xmlFormatter = _clientXML.Formatters.Where(f => f is XmlFormatter).First();
-                    var jsonFormatter = _clientXML.Formatters.Where(f => f is JsonFormatter).First();
-                    _clientXML.AddFormatter(new XmlFormatter(), true);
-                    _clientXML.RemoveFormatter(jsonFormatter);
-                    _clientXML.RemoveFormatter(xmlFormatter);
+                    var xmlFormatter = _clientXML.Settings.Formatters.Where(f => f is XmlFormatter).First();
+                    var jsonFormatter = _clientXML.Settings.Formatters.Where(f => f is JsonFormatter).First();
+                    _clientXML.Settings.Formatters.Add(new XmlFormatter(), true);
+                    _clientXML.Settings.Formatters.Remove(jsonFormatter);
+                    _clientXML.Settings.Formatters.Remove(xmlFormatter);
                 }
             }
 

@@ -10,8 +10,8 @@ namespace Tiny.Http.Tests
         public async Task AddDebugListener()
         {
             var client = GetClient();
-            client.Listeners.AddDebug();
-            client.Listeners.AddDebug(false);
+            client.Settings.Listeners.AddDebug();
+            client.Settings.Listeners.AddDebug(false);
             await client.
                 NewRequest(new System.Net.Http.HttpMethod("GET"), "GetTest/noResponse").
                 ExecuteAsync();

@@ -6,7 +6,7 @@
     public static class DebugListernerExtension
     {
         /// <summary>
-        /// Add <see cref="DebugListener" to listeners />
+        /// Add <see cref="DebugListener"/> to listeners />
         /// </summary>
         /// <param name="listeners">all listeners</param>
         /// <param name="measureTime">allow to measure time to this listener</param>
