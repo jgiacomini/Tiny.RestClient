@@ -27,24 +27,6 @@ namespace Tiny.Http
         private Encoding _encoding;
         #endregion
 
-        #region Logging events
-
-        /// <summary>
-        /// Raised whenever a request is sending.
-        /// </summary>
-        public event EventHandler<HttpSendingRequestEventArgs> SendingRequest;
-
-        /// <summary>
-        /// Raised whenever a response of resquest is received.
-        /// </summary>
-        public event EventHandler<HttpReceivedResponseEventArgs> ReceivedResponse;
-
-        /// <summary>
-        /// Raised whenever it failed to get of resquest.
-        /// </summary>
-        public event EventHandler<FailedToGetResponseEventArgs> FailedToGetResponse;
-        #endregion
-
         #region Constructors
 
         /// <summary>
@@ -79,11 +61,16 @@ namespace Tiny.Http
                 _defaultFormatter,
                 new XmlFormatter()
             };
-
+            Listeners = new Listeners();
             Formatters = formatters.ToArray();
             _encoding = Encoding.UTF8;
         }
         #endregion
+
+        /// <summary>
+        /// Log all requests.
+        /// </summary>
+        public Listeners Listeners { get; private set; }
 
         /// <summary>
         /// Add to all request the AcceptLanguage based on CurrentCulture of the Thread
@@ -634,8 +621,13 @@ namespace Tiny.Http
 
         private async Task<HttpResponseMessage> SendRequestAsync(HttpMethod httpMethod, Uri uri, Dictionary<string, string> requestHeader, HttpContent content, IFormatter deserializer, CancellationToken cancellationToken)
         {
-            var requestId = Guid.NewGuid().ToString();
-            Stopwatch sw = new Stopwatch();
+            Stopwatch stopwatch = null;
+
+            if (Listeners.MeasureTime)
+            {
+                stopwatch = new Stopwatch();
+            }
+
             try
             {
                 using (var request = new HttpRequestMessage(httpMethod, uri))
@@ -670,20 +662,20 @@ namespace Tiny.Http
                         request.Content = content;
                     }
 
-                    OnSendingRequest(requestId, uri, httpMethod);
-                    sw.Start();
+                    Listeners.OnSendingRequest(uri, httpMethod, request);
+                    stopwatch?.Start();
                     var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
 
-                    sw.Stop();
-                    OnReceivedResponse(requestId, uri, httpMethod, response, sw.Elapsed);
+                    stopwatch?.Stop();
+                    Listeners.OnReceivedResponse(uri, httpMethod, response, stopwatch?.Elapsed);
                     return response;
                 }
             }
             catch (Exception ex)
             {
-                sw.Stop();
+                stopwatch?.Stop();
 
-                OnFailedToReceiveResponse(requestId, uri, httpMethod, ex, sw.Elapsed);
+                Listeners.OnFailedToReceiveResponse(uri, httpMethod, ex, stopwatch?.Elapsed);
 
                 throw new ConnectionException(
                    "Failed to get a response from server",
@@ -749,44 +741,6 @@ namespace Tiny.Http
             }
 
             return content;
-        }
-        #endregion
-
-        #region Events invoker
-        private void OnSendingRequest(string requestId, Uri url, HttpMethod httpMethod)
-        {
-            try
-            {
-                SendingRequest?.Invoke(this, new HttpSendingRequestEventArgs(requestId, url.ToString(), httpMethod.Method));
-            }
-            catch
-            {
-                // ignored
-            }
-        }
-
-        private void OnReceivedResponse(string requestId, Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan elapsedTime)
-        {
-            try
-            {
-                ReceivedResponse?.Invoke(this, new HttpReceivedResponseEventArgs(requestId, uri.AbsoluteUri, httpMethod.Method, response.StatusCode, response.ReasonPhrase, elapsedTime));
-            }
-            catch
-            {
-                // ignored
-            }
-        }
-
-        private void OnFailedToReceiveResponse(string requestId, Uri uri, HttpMethod httpMethod, Exception exception, TimeSpan elapsedTime)
-        {
-            try
-            {
-                FailedToGetResponse?.Invoke(this, new FailedToGetResponseEventArgs(requestId, uri.AbsoluteUri, httpMethod.Method, exception, elapsedTime));
-            }
-            catch
-            {
-                // ignored
-            }
         }
         #endregion
     }
