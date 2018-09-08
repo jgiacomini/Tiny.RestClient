@@ -23,26 +23,6 @@ namespace Tiny.Http
         private static readonly HttpMethod _PatchMethod = new HttpMethod("Patch");
         private readonly HttpClient _httpClient;
         private readonly string _serverAddress;
-        private IFormatter _defaultFormatter;
-        private Encoding _encoding;
-        #endregion
-
-        #region Logging events
-
-        /// <summary>
-        /// Raised whenever a request is sending.
-        /// </summary>
-        public event EventHandler<HttpSendingRequestEventArgs> SendingRequest;
-
-        /// <summary>
-        /// Raised whenever a response of resquest is received.
-        /// </summary>
-        public event EventHandler<HttpReceivedResponseEventArgs> ReceivedResponse;
-
-        /// <summary>
-        /// Raised whenever it failed to get of resquest.
-        /// </summary>
-        public event EventHandler<FailedToGetResponseEventArgs> FailedToGetResponse;
         #endregion
 
         #region Constructors
@@ -65,121 +45,19 @@ namespace Tiny.Http
         {
             _serverAddress = serverAddress ?? throw new ArgumentNullException(nameof(serverAddress));
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-
-            DefaultHeaders = new Dictionary<string, string>();
-
             if (!_serverAddress.EndsWith("/"))
             {
                 _serverAddress += "/";
             }
 
-            _defaultFormatter = new JsonFormatter();
-            var formatters = new List<IFormatter>
-            {
-                _defaultFormatter,
-                new XmlFormatter()
-            };
-
-            Formatters = formatters.ToArray();
-            _encoding = Encoding.UTF8;
+            Settings = new RestClientSettings();
         }
         #endregion
 
         /// <summary>
-        /// Add to all request the AcceptLanguage based on CurrentCulture of the Thread
+        /// Settings of <see cref="TinyHttpClient"/>
         /// </summary>
-        public bool AddAcceptLanguageBasedOnCurrentCulture { get; set; }
-
-        /// <summary>
-        /// Gets the default headers.
-        /// </summary>
-        /// <value>
-        /// The default headers.
-        /// </value>
-        public Dictionary<string, string> DefaultHeaders
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets or set the encoding use by the client
-        /// </summary>
-        public Encoding Encoding
-        {
-            get
-            {
-                return _encoding;
-            }
-            set
-            {
-                _encoding = value ?? throw new ArgumentNullException(nameof(Encoding));
-            }
-        }
-
-        /// <summary>
-        /// Gets the list of formatter used to serialize and deserialize data
-        /// </summary>
-        public IFormatter DefaultFormatter
-        {
-            get
-            {
-                return _defaultFormatter;
-            }
-        }
-
-        /// <summary>
-        /// Gets the list of formatter used to serialize and deserialize data
-        /// </summary>
-        public IEnumerable<IFormatter> Formatters { get; private set; }
-
-        /// <summary>
-        /// Add a formatter in the list of supported formatters
-        /// </summary>
-        /// <param name="formatter">Add the formatter to the list of supported formatter. The value can't be null</param>
-        /// <param name="isDefault">Define this formatter as default formatter</param>
-        /// <exception cref="ArgumentNullException">throw <see cref="ArgumentNullException"/> if formatter is null</exception>
-        public void AddFormatter(IFormatter formatter, bool isDefault)
-        {
-            if (formatter == null)
-            {
-                throw new ArgumentNullException(nameof(formatter));
-            }
-
-            if (isDefault)
-            {
-                _defaultFormatter = formatter;
-            }
-
-            var newFormatters = Formatters.ToList();
-            newFormatters.Add(formatter);
-            Formatters = newFormatters.ToArray();
-        }
-
-        /// <summary>
-        /// Removes a formatter in the list of supported formatters
-        /// </summary>
-        /// <param name="formatter">The formatter to remove on the supported formatter list</param>
-        /// <returns>true if item is successfully removed; otherwise, false. This method also returns false if item was not found.</returns>
-        /// <exception cref="ArgumentNullException">throw <see cref="ArgumentNullException"/> if formatter is null</exception>
-        /// <exception cref="ArgumentException">throw <see cref="ArgumentException"/> if the current formatter removed is the default one </exception>
-        public bool RemoveFormatter(IFormatter formatter)
-        {
-            if (formatter == null)
-            {
-                throw new ArgumentNullException(nameof(formatter));
-            }
-
-            if (_defaultFormatter == formatter)
-            {
-                throw new ArgumentException("Add a new default formatter before remove the current one");
-            }
-
-            var newList = Formatters.ToList();
-            bool result = newList.Remove(formatter);
-            Formatters = newList.ToArray();
-
-            return result;
-        }
+        public RestClientSettings Settings { get; }
 
         #region Requests
 
@@ -344,19 +222,19 @@ namespace Tiny.Http
                             {
                                 // TODO : optimize the seach of formatter ?
                                 // Try to find best formatter
-                                var formatterFinded = Formatters.FirstOrDefault(f => f.SupportedMediaTypes.Any(m => m == response.Content.Headers.ContentType.MediaType.ToLower()));
+                                var formatterFinded = Settings.Formatters.FirstOrDefault(f => f.SupportedMediaTypes.Any(m => m == response.Content.Headers.ContentType.MediaType.ToLower()));
                                 formatter = formatterFinded;
                             }
 
                             if (formatter == null)
                             {
-                                formatter = _defaultFormatter;
+                                formatter = Settings.Formatters.Default;
                             }
                         }
 
                         try
                         {
-                            return formatter.Deserialize<TResult>(stream, _encoding);
+                            return formatter.Deserialize<TResult>(stream, Settings.Encoding);
                         }
                         catch (Exception ex)
                         {
@@ -366,7 +244,7 @@ namespace Tiny.Http
                                 if (stream.CanRead)
                                 {
                                     stream.Position = 0;
-                                    using (var reader = new StreamReader(stream, _encoding))
+                                    using (var reader = new StreamReader(stream, Settings.Encoding))
                                     {
                                         data = await reader.ReadToEndAsync().ConfigureAwait(false);
                                     }
@@ -457,7 +335,7 @@ namespace Tiny.Http
                     return null;
                 }
 
-                using (StreamReader reader = new StreamReader(stream, Encoding))
+                using (StreamReader reader = new StreamReader(stream, Settings.Encoding))
                 {
                     return await reader.ReadToEndAsync().ConfigureAwait(false);
                 }
@@ -565,20 +443,20 @@ namespace Tiny.Http
 
         private StringContent GetSerializedContent(IToSerializeContent content)
         {
-            IFormatter serializer = _defaultFormatter;
+            IFormatter serializer = Settings.Formatters.Default;
 
             if (content.Serializer != null)
             {
                 serializer = content.Serializer;
             }
 
-            var serializedString = content.GetSerializedStream(serializer, _encoding);
+            var serializedString = content.GetSerializedStream(serializer, Settings.Encoding);
             if (serializedString == null)
             {
                 return null;
             }
 
-            var stringContent = new StringContent(serializedString, _encoding);
+            var stringContent = new StringContent(serializedString, Settings.Encoding);
             stringContent.Headers.ContentType = new MediaTypeHeaderValue(serializer.DefaultMediaType);
             return stringContent;
         }
@@ -634,25 +512,30 @@ namespace Tiny.Http
 
         private async Task<HttpResponseMessage> SendRequestAsync(HttpMethod httpMethod, Uri uri, Dictionary<string, string> requestHeader, HttpContent content, IFormatter deserializer, CancellationToken cancellationToken)
         {
-            var requestId = Guid.NewGuid().ToString();
-            Stopwatch sw = new Stopwatch();
+            Stopwatch stopwatch = null;
+
+            if (Settings.Listeners.MeasureTime)
+            {
+                stopwatch = new Stopwatch();
+            }
+
             try
             {
                 using (var request = new HttpRequestMessage(httpMethod, uri))
                 {
                     if (deserializer == null)
                     {
-                        deserializer = _defaultFormatter;
+                        deserializer = Settings.Formatters.Default;
                     }
 
                     request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(deserializer.DefaultMediaType));
 
-                    if (AddAcceptLanguageBasedOnCurrentCulture)
+                    if (Settings.AddAcceptLanguageBasedOnCurrentCulture)
                     {
                         request.Headers.AcceptLanguage.Add(new StringWithQualityHeaderValue(CultureInfo.CurrentCulture.TwoLetterISOLanguageName));
                     }
 
-                    foreach (var item in DefaultHeaders)
+                    foreach (var item in Settings.DefaultHeaders)
                     {
                         request.Headers.Add(item.Key, item.Value);
                     }
@@ -670,20 +553,20 @@ namespace Tiny.Http
                         request.Content = content;
                     }
 
-                    OnSendingRequest(requestId, uri, httpMethod);
-                    sw.Start();
+                    Settings.Listeners.OnSendingRequest(uri, httpMethod, request);
+                    stopwatch?.Start();
                     var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
 
-                    sw.Stop();
-                    OnReceivedResponse(requestId, uri, httpMethod, response, sw.Elapsed);
+                    stopwatch?.Stop();
+                    Settings.Listeners.OnReceivedResponse(uri, httpMethod, response, stopwatch?.Elapsed);
                     return response;
                 }
             }
             catch (Exception ex)
             {
-                sw.Stop();
+                stopwatch?.Stop();
 
-                OnFailedToReceiveResponse(requestId, uri, httpMethod, ex, sw.Elapsed);
+                Settings.Listeners.OnFailedToReceiveResponse(uri, httpMethod, ex, stopwatch?.Elapsed);
 
                 throw new ConnectionException(
                    "Failed to get a response from server",
@@ -749,44 +632,6 @@ namespace Tiny.Http
             }
 
             return content;
-        }
-        #endregion
-
-        #region Events invoker
-        private void OnSendingRequest(string requestId, Uri url, HttpMethod httpMethod)
-        {
-            try
-            {
-                SendingRequest?.Invoke(this, new HttpSendingRequestEventArgs(requestId, url.ToString(), httpMethod.Method));
-            }
-            catch
-            {
-                // ignored
-            }
-        }
-
-        private void OnReceivedResponse(string requestId, Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan elapsedTime)
-        {
-            try
-            {
-                ReceivedResponse?.Invoke(this, new HttpReceivedResponseEventArgs(requestId, uri.AbsoluteUri, httpMethod.Method, response.StatusCode, response.ReasonPhrase, elapsedTime));
-            }
-            catch
-            {
-                // ignored
-            }
-        }
-
-        private void OnFailedToReceiveResponse(string requestId, Uri uri, HttpMethod httpMethod, Exception exception, TimeSpan elapsedTime)
-        {
-            try
-            {
-                FailedToGetResponse?.Invoke(this, new FailedToGetResponseEventArgs(requestId, uri.AbsoluteUri, httpMethod.Method, exception, elapsedTime));
-            }
-            catch
-            {
-                // ignored
-            }
         }
         #endregion
     }
