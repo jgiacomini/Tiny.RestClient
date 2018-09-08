@@ -41,7 +41,7 @@ var client = new TinyHttpClient("http://MyAPI.com/api", new HttpClient());
 
 ```cs
 // Add default header for each calls
-client.DefaultHeaders.Add("Token", "MYTOKEN");
+client.Settings.DefaultHeaders.Add("Token", "MYTOKEN");
 ```
 #### Add header for current request
 
