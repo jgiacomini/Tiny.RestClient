@@ -1,4 +1,4 @@
-# TinyHttp
+# Tiny.RestClient
 TinyHttp make easier the dialog between your API and your application.
 It hide all the complexity of communication, deserialisation ...
 
