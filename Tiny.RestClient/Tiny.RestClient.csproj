@@ -39,7 +39,7 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
-    <DocumentationFile>$(TargetDir)\Tiny.Tiny.RestClient.xml</DocumentationFile>
+    <DocumentationFile>$(TargetDir)\Tiny.RestClient.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
