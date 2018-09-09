@@ -1,5 +1,5 @@
 # Tiny.RestClient
-TinyHttp make easier the dialog between your API and your application.
+Tiny.RestClient make easier the dialog between your API and your application.
 It hide all the complexity of communication, deserialisation ...
 
 [![Build status](https://ci.appveyor.com/api/projects/status/08prv6a3pon8vx86?svg=true)](https://ci.appveyor.com/project/jgiacomini/tinyhttp)
