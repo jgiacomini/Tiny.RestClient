@@ -5,7 +5,7 @@ It hide all the complexity of communication, deserialisation ...
 [![Build status](https://ci.appveyor.com/api/projects/status/08prv6a3pon8vx86?svg=true)](https://ci.appveyor.com/project/jgiacomini/tinyhttp)
 
 ## Nuget
-* Available on NuGet: [Tiny.Http](http://www.nuget.org/packages/Tiny.RestClient) [![NuGet](https://img.shields.io/nuget/v/Tiny.RestClient.svg?label=NuGet)](https://www.nuget.org/packages/Tiny.RestClient/)
+* Available on NuGet: [Tiny.RestClient](http://www.nuget.org/packages/Tiny.RestClient) [![NuGet](https://img.shields.io/nuget/v/Tiny.RestClient.svg?label=NuGet)](https://www.nuget.org/packages/Tiny.RestClient/)
 
 ## Platform Support
 |Platform|Supported|Version|
