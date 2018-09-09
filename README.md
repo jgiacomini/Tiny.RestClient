@@ -1,11 +1,11 @@
-# TinyHttp
-TinyHttp make easier the dialog between your API and your application.
+# Tiny.RestClient
+Tiny.RestClient make easier the dialog between your API and your application.
 It hide all the complexity of communication, deserialisation ...
 
 [![Build status](https://ci.appveyor.com/api/projects/status/08prv6a3pon8vx86?svg=true)](https://ci.appveyor.com/project/jgiacomini/tinyhttp)
 
 ## Nuget
-* Available on NuGet: [Tiny.Http](http://www.nuget.org/packages/Tiny.Http) [![NuGet](https://img.shields.io/nuget/v/Tiny.Http.svg?label=NuGet)](https://www.nuget.org/packages/Tiny.Http/)
+* Available on NuGet: [Tiny.RestClient](http://www.nuget.org/packages/Tiny.RestClient) [![NuGet](https://img.shields.io/nuget/v/Tiny.RestClient.svg?label=NuGet)](https://www.nuget.org/packages/Tiny.RestClient/)
 
 ## Platform Support
 |Platform|Supported|Version|
@@ -30,9 +30,9 @@ It hide all the complexity of communication, deserialisation ...
 
 ### Create the client
 ```cs
-using Tiny.Http;
+using Tiny.RestClient;
 
-var client = new TinyHttpClient("http://MyAPI.com/api", new HttpClient());
+var client = new TinyRestClient("http://MyAPI.com/api", new HttpClient());
 ```
 
 ### Headers
@@ -246,7 +246,6 @@ All requests can throw 3 exceptions :
 
 ### Catch a specific error code
 ```cs
-using Tiny.Http;
 string cityName = "Paris";
 try
 { 
@@ -272,7 +271,7 @@ By default :
  * Xml Formatter is added in Formatters
 
 Each formatter have a list of supported media types.
-It allow TinyHttpClient to detect which formatter will be used.
+It allow TinyRestClient to detect which formatter will be used.
 If the no formatter is found it use the default formatter.
 
 ### Add a new formatter
