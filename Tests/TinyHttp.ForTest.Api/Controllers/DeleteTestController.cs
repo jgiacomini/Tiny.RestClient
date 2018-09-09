@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.IO;
 using System.Threading.Tasks;
-using Tiny.Http.Tests.Models;
+using Tiny.RestClient.Tests.Models;
 
-namespace Tiny.Http.ForTest.Api.Controllers
+namespace Tiny.RestClient.ForTest.Api.Controllers
 {
     [Route("api/DeleteTest")]
     [ApiController]

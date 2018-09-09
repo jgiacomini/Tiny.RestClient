@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
-namespace Tiny.Http.ForTest.Api
+namespace Tiny.RestClient.ForTest.Api
 {
     public class Program
     {

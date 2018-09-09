@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace Tiny.Http
+namespace Tiny.RestClient
 {
     /// <summary>
     /// Class ConnectionException.
     /// </summary>
-    /// <seealso cref="Tiny.Http.TinyHttpException" />
+    /// <seealso cref="TinyHttpException" />
     public class ConnectionException : TinyHttpException
     {
         internal ConnectionException(string message, string url, string verb, Exception innerException)

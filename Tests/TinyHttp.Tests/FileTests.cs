@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Tiny.Http.Tests
+namespace Tiny.RestClient.Tests
 {
     [TestClass]
     public class FileTests : BaseTest

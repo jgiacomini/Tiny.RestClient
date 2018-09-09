@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Tiny.Http
+namespace Tiny.RestClient
 {
     /// <summary>
     /// Class DeserializeException.
     /// </summary>
-    /// <seealso cref="Tiny.Http.TinyHttpException" />
+    /// <seealso cref="TinyHttpException" />
     public class DeserializeException : TinyHttpException
     {
         internal DeserializeException(string message, Exception innerException, string dataToDeserialize)

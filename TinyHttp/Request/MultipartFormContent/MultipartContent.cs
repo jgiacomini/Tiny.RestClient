@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Tiny.Http
+namespace Tiny.RestClient
 {
-    internal class MultipartContent : List<MultipartData>, ITinyContent
+    internal class MultipartContent : List<MultipartData>, IContent
     {
         public MultipartContent(string contentType)
         {

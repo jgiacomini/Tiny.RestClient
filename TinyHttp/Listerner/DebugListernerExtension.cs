@@ -1,4 +1,4 @@
-﻿namespace Tiny.Http
+﻿namespace Tiny.RestClient
 {
     /// <summary>
     /// Extension to add easily debug listener

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Tiny.Http
+namespace Tiny.RestClient
 {
     /// <inheritdoc/>
     public class Headers : IEnumerable<KeyValuePair<string, IEnumerable<string>>>

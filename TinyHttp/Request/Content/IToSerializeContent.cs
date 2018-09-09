@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Tiny.Http
+namespace Tiny.RestClient
 {
     internal interface IToSerializeContent
     {

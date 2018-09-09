@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Tiny.Http
+namespace Tiny.RestClient
 {
     /// <summary>
     /// Collection of <see cref="IFormatter"/>

@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 
-namespace Tiny.Http
+namespace Tiny.RestClient
 {
     /// <summary>
     /// A httpException

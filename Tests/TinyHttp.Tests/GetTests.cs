@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Tiny.Http.Tests
+namespace Tiny.RestClient.Tests
 {
     [TestClass]
     public class GetTests : BaseTest

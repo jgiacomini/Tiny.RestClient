@@ -12,12 +12,12 @@ using System.Threading.Tasks;
 using System.Web;
 using HttpStreamContent = System.Net.Http.StreamContent;
 
-namespace Tiny.Http
+namespace Tiny.RestClient
 {
     /// <summary>
     /// Class TinyHttpClient.
     /// </summary>
-    public class TinyHttpClient
+    public class TinyRestClient
     {
         #region Fields
         private static readonly HttpMethod _PatchMethod = new HttpMethod("Patch");
@@ -28,20 +28,11 @@ namespace Tiny.Http
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TinyHttpClient" /> class.
-        /// </summary>
-        /// <param name="serverAddress">The server address.</param>
-        public TinyHttpClient(string serverAddress)
-            : this(new HttpClient(), serverAddress)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TinyHttpClient"/> class.
+        /// Initializes a new instance of the <see cref="TinyRestClient"/> class.
         /// </summary>
         /// <param name="httpClient">The httpclient used</param>
         /// <param name="serverAddress">The server address.</param>
-        public TinyHttpClient(HttpClient httpClient, string serverAddress)
+        public TinyRestClient(HttpClient httpClient, string serverAddress)
         {
             _serverAddress = serverAddress ?? throw new ArgumentNullException(nameof(serverAddress));
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
@@ -55,7 +46,7 @@ namespace Tiny.Http
         #endregion
 
         /// <summary>
-        /// Settings of <see cref="TinyHttpClient"/>
+        /// Settings of <see cref="TinyRestClient"/>
         /// </summary>
         public RestClientSettings Settings { get; }
 
@@ -69,7 +60,7 @@ namespace Tiny.Http
         /// <returns>The new request.</returns>
         public IRequest NewRequest(HttpMethod httpMethod, string route = null)
         {
-            return new TinyRequest(httpMethod, route, this);
+            return new Request(httpMethod, route, this);
         }
 
         /// <summary>
@@ -79,7 +70,7 @@ namespace Tiny.Http
         /// <returns>The new request.</returns>
         public IRequest GetRequest(string route = null)
         {
-            return new TinyRequest(HttpMethod.Get, route, this);
+            return new Request(HttpMethod.Get, route, this);
         }
 
         /// <summary>
@@ -89,7 +80,7 @@ namespace Tiny.Http
         /// <returns>The new request.</returns>
         public IRequest PostRequest(string route = null)
         {
-            return new TinyRequest(HttpMethod.Post, route, this);
+            return new Request(HttpMethod.Post, route, this);
         }
 
         /// <summary>
@@ -100,7 +91,7 @@ namespace Tiny.Http
         /// <returns>The new request.</returns>
         public IParameterRequest PostRequest<TContent>(TContent content, IFormatter formatter = null)
         {
-            return new TinyRequest(HttpMethod.Post, null, this).
+            return new Request(HttpMethod.Post, null, this).
                 AddContent<TContent>(content, formatter);
         }
 
@@ -113,7 +104,7 @@ namespace Tiny.Http
         /// <returns>The new request.</returns>
         public IParameterRequest PostRequest<TContent>(string route, TContent content, IFormatter formatter = null)
         {
-            return new TinyRequest(HttpMethod.Post, route, this).
+            return new Request(HttpMethod.Post, route, this).
                 AddContent<TContent>(content, formatter);
         }
 
@@ -124,7 +115,7 @@ namespace Tiny.Http
         /// <returns>The new request.</returns>
         public IRequest PutRequest(string route = null)
         {
-            return new TinyRequest(HttpMethod.Put, route, this);
+            return new Request(HttpMethod.Put, route, this);
         }
 
         /// <summary>
@@ -135,7 +126,7 @@ namespace Tiny.Http
         /// <returns>The new request.</returns>
         public IParameterRequest PutRequest<TContent>(TContent content, IFormatter formatter = null)
         {
-            return new TinyRequest(HttpMethod.Put, null, this).
+            return new Request(HttpMethod.Put, null, this).
                 AddContent<TContent>(content, formatter);
         }
 
@@ -148,7 +139,7 @@ namespace Tiny.Http
         /// <returns>The new request.</returns>
         public IParameterRequest PutRequest<TContent>(string route, TContent content, IFormatter formatter = null)
         {
-            return new TinyRequest(HttpMethod.Put, route, this).
+            return new Request(HttpMethod.Put, route, this).
                 AddContent<TContent>(content, formatter);
         }
 
@@ -159,7 +150,7 @@ namespace Tiny.Http
         /// <returns>The new request.</returns>
         public IRequest PatchRequest(string route = null)
         {
-            return new TinyRequest(_PatchMethod, route, this);
+            return new Request(_PatchMethod, route, this);
         }
 
         /// <summary>
@@ -170,7 +161,7 @@ namespace Tiny.Http
         /// <returns>The new request.</returns>
         public IParameterRequest PatchRequest<TContent>(TContent content, IFormatter serializer = null)
         {
-            return new TinyRequest(_PatchMethod, null, this).
+            return new Request(_PatchMethod, null, this).
                 AddContent<TContent>(content, serializer);
         }
 
@@ -183,7 +174,7 @@ namespace Tiny.Http
         /// <returns>The new request.</returns>
         public IParameterRequest PatchRequest<TContent>(string route, TContent content, IFormatter serializer = null)
         {
-            return new TinyRequest(_PatchMethod, route, this).
+            return new Request(_PatchMethod, route, this).
                 AddContent<TContent>(content, serializer);
         }
 
@@ -194,13 +185,13 @@ namespace Tiny.Http
         /// <returns>The new request.</returns>
         public IRequest DeleteRequest(string route = null)
         {
-            return new TinyRequest(HttpMethod.Delete, route, this);
+            return new Request(HttpMethod.Delete, route, this);
         }
 
         #endregion
 
         internal async Task<TResult> ExecuteAsync<TResult>(
-            TinyRequest tinyRequest,
+            Request tinyRequest,
             IFormatter formatter,
             CancellationToken cancellationToken)
         {
@@ -262,7 +253,7 @@ namespace Tiny.Http
         }
 
         internal async Task ExecuteAsync(
-            TinyRequest tinyRequest,
+            Request tinyRequest,
             CancellationToken cancellationToken)
         {
             using (var content = CreateContent(tinyRequest.Content))
@@ -278,7 +269,7 @@ namespace Tiny.Http
         }
 
         internal async Task<byte[]> ExecuteAsByteArrayResultAsync(
-           TinyRequest tinyRequest,
+           Request tinyRequest,
            CancellationToken cancellationToken)
         {
             using (var content = CreateContent(tinyRequest.Content))
@@ -304,7 +295,7 @@ namespace Tiny.Http
         }
 
         internal async Task<Stream> ExecuteAsStreamResultAsync(
-           TinyRequest tinyRequest,
+           Request tinyRequest,
            CancellationToken cancellationToken)
         {
             using (var content = CreateContent(tinyRequest.Content))
@@ -322,7 +313,7 @@ namespace Tiny.Http
         }
 
         internal async Task<string> ExecuteAsStringResultAsync(
-           TinyRequest tinyRequest,
+           Request tinyRequest,
            CancellationToken cancellationToken)
         {
             using (var content = CreateContent(tinyRequest.Content))
@@ -343,7 +334,7 @@ namespace Tiny.Http
         }
 
         internal async Task<HttpResponseMessage> ExecuteAsHttpResponseMessageResultAsync(
-           TinyRequest tinyRequest,
+           Request tinyRequest,
            CancellationToken cancellationToken)
         {
             using (var content = CreateContent(tinyRequest.Content))
@@ -353,7 +344,7 @@ namespace Tiny.Http
             }
         }
 
-        private HttpContent CreateContent(ITinyContent content)
+        private HttpContent CreateContent(IContent content)
         {
             if (content == null)
             {

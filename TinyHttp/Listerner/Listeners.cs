@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 
-namespace Tiny.Http
+namespace Tiny.RestClient
 {
     /// <summary>
     /// Collection of <see cref="IListener"/>

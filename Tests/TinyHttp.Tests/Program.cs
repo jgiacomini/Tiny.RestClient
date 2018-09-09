@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Net.Http;
-using Tiny.Http.ForTest.Api;
+using Tiny.RestClient.ForTest.Api;
 
-namespace Tiny.Http.Tests
+namespace Tiny.RestClient.Tests
 {
     [TestClass]
     public static class Program

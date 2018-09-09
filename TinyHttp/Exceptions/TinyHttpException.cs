@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Tiny.Http
+namespace Tiny.RestClient
 {
     /// <summary>
-    /// Base Class of all TinyHttpException.
+    /// Base Class of all <see cref="TinyHttpException"/>.
     /// </summary>
     /// <seealso cref="System.Exception" />
     public abstract class TinyHttpException : Exception

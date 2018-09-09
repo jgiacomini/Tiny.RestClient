@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Tiny.Http
+namespace Tiny.RestClient
 {
     /// <summary>
-    /// All settings of <see cref="TinyHttpClient"/>
+    /// All settings of <see cref="TinyRestClient"/>
     /// </summary>
     public class RestClientSettings
     {

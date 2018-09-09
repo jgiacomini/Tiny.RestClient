@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Tiny.Http.ForTest.Api
+namespace Tiny.RestClient.ForTest.Api
 {
     public class Startup
     {

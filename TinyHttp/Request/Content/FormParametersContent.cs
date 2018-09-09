@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Tiny.Http
+namespace Tiny.RestClient
 {
     internal class FormParametersContent : BaseContent<List<KeyValuePair<string, string>>>
     {

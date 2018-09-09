@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 
-namespace Tiny.Http
+namespace Tiny.RestClient
 {
     internal class DynamicEncodingStringWriter : StringWriter
     {

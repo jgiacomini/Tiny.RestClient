@@ -14,9 +14,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{BA692F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{04546413-FE1B-43A1-B36C-9991DF5D5C4F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tiny.Http.ForTest.Api", "Tests\TinyHttp.ForTest.Api\Tiny.Http.ForTest.Api.csproj", "{FD51EA34-F479-4CCA-B2AC-7AC17638A261}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tiny.RestClient.ForTest.Api", "Tests\TinyHttp.ForTest.Api\Tiny.RestClient.ForTest.Api.csproj", "{FD51EA34-F479-4CCA-B2AC-7AC17638A261}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tiny.Http.Tests", "Tests\TinyHttp.Tests\Tiny.Http.Tests.csproj", "{6F1FB439-F177-4682-99FB-164323945A5D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tiny.RestClient.Tests", "Tests\TinyHttp.Tests\Tiny.RestClient.Tests.csproj", "{6F1FB439-F177-4682-99FB-164323945A5D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

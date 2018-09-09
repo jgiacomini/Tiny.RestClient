@@ -1,38 +1,38 @@
 ﻿using System.Linq;
-namespace Tiny.Http.Tests
+namespace Tiny.RestClient.Tests
 {
     public class BaseTest
     {
         private readonly object _toLock = new object();
-        private TinyHttpClient _client;
-        private TinyHttpClient _clientXML;
+        private TinyRestClient _client;
+        private TinyRestClient _clientXML;
         protected static readonly string _serverUrl = "http://localhost:4242/api/";
 
-        protected TinyHttpClient GetClientForUrl(string url)
+        protected TinyRestClient GetClientForUrl(string url)
         {
-            return new TinyHttpClient(Program.Client, url);
+            return new TinyRestClient(Program.Client, url);
         }
 
-        protected TinyHttpClient GetClient()
+        protected TinyRestClient GetClient()
         {
             lock (_toLock)
             {
                 if (_client == null)
                 {
-                    _client = new TinyHttpClient(Program.Client, _serverUrl);
+                    _client = new TinyRestClient(Program.Client, _serverUrl);
                 }
             }
 
             return _client;
         }
 
-        protected TinyHttpClient GetClientXML()
+        protected TinyRestClient GetClientXML()
         {
             lock (_toLock)
             {
                 if (_clientXML == null)
                 {
-                    _clientXML = new TinyHttpClient(Program.Client, _serverUrl);
+                    _clientXML = new TinyRestClient(Program.Client, _serverUrl);
 
                     var xmlFormatter = _clientXML.Settings.Formatters.Where(f => f is XmlFormatter).First();
                     var jsonFormatter = _clientXML.Settings.Formatters.Where(f => f is JsonFormatter).First();

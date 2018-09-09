@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Tiny.Http
+namespace Tiny.RestClient
 {
     /// <summary>
     /// Interface IMultiPartFromDataRequest

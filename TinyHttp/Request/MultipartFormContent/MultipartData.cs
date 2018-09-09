@@ -1,6 +1,6 @@
-﻿namespace Tiny.Http
+﻿namespace Tiny.RestClient
 {
-    internal abstract class MultipartData : ITinyContent
+    internal abstract class MultipartData : IContent
     {
         public MultipartData(string name, string fileName, string contentType)
         {

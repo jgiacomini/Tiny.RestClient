@@ -4,12 +4,12 @@ using System.IO;
 using System.Text;
 using System.Xml.Serialization;
 
-namespace Tiny.Http
+namespace Tiny.RestClient
 {
     /// <summary>
     /// Class TinyXmlSerializer.
     /// </summary>
-    /// <seealso cref="Tiny.Http.IFormatter" />
+    /// <seealso cref="IFormatter" />
     public class XmlFormatter : IFormatter
     {
         /// <inheritdoc/>

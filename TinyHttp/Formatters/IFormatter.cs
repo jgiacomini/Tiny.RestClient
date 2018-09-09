@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace Tiny.Http
+namespace Tiny.RestClient
 {
     /// <summary>
     /// Interface IFormatter

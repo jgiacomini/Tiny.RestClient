@@ -1,9 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Threading.Tasks;
-using Tiny.Http.Tests.Models;
+using Tiny.RestClient.Tests.Models;
 
-namespace Tiny.Http.Tests
+namespace Tiny.RestClient.Tests
 {
     [TestClass]
     public class DeleteTests : BaseTest

@@ -4,12 +4,12 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace Tiny.Http
+namespace Tiny.RestClient
 {
     /// <summary>
     ///  Serializes and deserializes objects into and from the JSON format using the Newtonsoft.Json.JsonSerializer
     /// </summary>
-    /// <seealso cref="Tiny.Http.IFormatter" />
+    /// <seealso cref="IFormatter" />
     public class JsonFormatter : IFormatter
     {
         /// <summary>

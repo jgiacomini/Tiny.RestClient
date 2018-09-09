@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Net.Http;
 
-namespace Tiny.Http
+namespace Tiny.RestClient
 {
     /// <summary>
     /// A listener which will trace all requests with <see cref="Debug.WriteLine(object)"/>

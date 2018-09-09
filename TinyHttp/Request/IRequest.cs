@@ -1,12 +1,12 @@
 ﻿using System.IO;
 
-namespace Tiny.Http
+namespace Tiny.RestClient
 {
     /// <summary>
     /// Interface IRequest
     /// </summary>
-    /// <seealso cref="Tiny.Http.IFormRequest" />
-    /// <seealso cref="Tiny.Http.IExecutableRequest" />
+    /// <seealso cref="IFormRequest" />
+    /// <seealso cref="IExecutableRequest" />
     public interface IRequest : IExecutableRequest, IFormRequest
     {
         /// <summary>

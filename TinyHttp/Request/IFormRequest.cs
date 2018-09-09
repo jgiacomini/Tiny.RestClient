@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 
-namespace Tiny.Http
+namespace Tiny.RestClient
 {
     /// <summary>
     /// Interface IFormRequest
     /// </summary>
-    /// <seealso cref="Tiny.Http.IParameterRequest" />
+    /// <seealso cref="IParameterRequest" />
     public interface IFormRequest : IParameterRequest
     {
         /// <summary>

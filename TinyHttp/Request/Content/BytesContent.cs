@@ -1,4 +1,4 @@
-﻿namespace Tiny.Http
+﻿namespace Tiny.RestClient
 {
     internal class BytesContent : BaseContent<byte[]>
     {

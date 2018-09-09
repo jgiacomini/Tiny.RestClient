@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Tiny.Http
+﻿namespace Tiny.RestClient
 {
     /// <summary>
     /// Interface IParameterRequest
     /// </summary>
-    /// <seealso cref="Tiny.Http.IExecutableRequest" />
+    /// <seealso cref="IExecutableRequest" />
     public interface IParameterRequest : IExecutableRequest
     {
         /// <summary>

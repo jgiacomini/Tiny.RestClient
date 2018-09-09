@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 
-namespace Tiny.Http.Tests
+namespace Tiny.RestClient.Tests
 {
     [TestClass]
     public class ListenerTests : BaseTest

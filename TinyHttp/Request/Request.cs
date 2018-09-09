@@ -6,24 +6,24 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Tiny.Http
+namespace Tiny.RestClient
 {
     /// <summary>
     /// Class TinyRequest.
     /// </summary>
-    /// <seealso cref="Tiny.Http.IRequest" />
-    internal class TinyRequest :
+    /// <seealso cref="IRequest" />
+    internal class Request :
         IRequest,
         IMultipartFromDataRequest,
         IMultiPartFromDataExecutableRequest
     {
         private static readonly NumberFormatInfo _nfi;
         private readonly HttpMethod _httpMethod;
-        private readonly TinyHttpClient _client;
+        private readonly TinyRestClient _client;
         private readonly string _route;
         private Dictionary<string, string> _headers;
         private Dictionary<string, string> _queryParameters;
-        private ITinyContent _content;
+        private IContent _content;
         private List<KeyValuePair<string, string>> _formParameters;
         private MultipartContent _multiPartFormData;
         private Headers _reponseHeaders;
@@ -31,11 +31,11 @@ namespace Tiny.Http
         internal HttpMethod HttpMethod { get => _httpMethod; }
         internal Dictionary<string, string> QueryParameters { get => _queryParameters; }
         internal string Route { get => _route; }
-        internal ITinyContent Content { get => _content; }
+        internal IContent Content { get => _content; }
         internal Headers ReponseHeaders { get => _reponseHeaders; }
         internal Dictionary<string, string> Headers { get => _headers; }
 
-        static TinyRequest()
+        static Request()
         {
             _nfi = new NumberFormatInfo
             {
@@ -43,7 +43,7 @@ namespace Tiny.Http
             };
         }
 
-        internal TinyRequest(HttpMethod httpMethod, string route, TinyHttpClient client)
+        internal Request(HttpMethod httpMethod, string route, TinyRestClient client)
         {
             _httpMethod = httpMethod;
             _route = route;

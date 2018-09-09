@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 
-namespace Tiny.Http
+namespace Tiny.RestClient
 {
     /// <summary>
     /// Represent a request listener

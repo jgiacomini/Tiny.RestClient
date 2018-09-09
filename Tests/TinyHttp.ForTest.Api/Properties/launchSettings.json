@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Tiny.Http.ForTest.Api": {
+    "Tiny.ForTest.Api": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

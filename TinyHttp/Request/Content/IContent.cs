@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Tiny.Http
+namespace Tiny.RestClient
 {
-    internal interface ITinyContent
+    internal interface IContent
     {
         string ContentType { get; }
     }

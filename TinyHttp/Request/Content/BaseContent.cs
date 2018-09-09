@@ -1,6 +1,6 @@
-﻿namespace Tiny.Http
+﻿namespace Tiny.RestClient
 {
-    internal abstract class BaseContent<T> : ITinyContent
+    internal abstract class BaseContent<T> : IContent
     {
         public BaseContent(T data, string contentType)
         {
