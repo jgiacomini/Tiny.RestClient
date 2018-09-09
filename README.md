@@ -310,7 +310,7 @@ IFormatter deserializer = new XmlFormatter();
 
 ### Custom formatter
 
-You create your own serializers/deserializer by implementing IFormatter
+You create your own serializer/deserializer by implementing IFormatter
 
 For example the implementation of XmlFormatter is really simple : 
 ```cs
