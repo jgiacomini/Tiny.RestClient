@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\TinyHttp\Tiny.Http.csproj" />
+    <ProjectReference Include="..\..\TinyHttp\Tiny.RestClient.csproj" />
   </ItemGroup>
 
 </Project>
