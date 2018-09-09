@@ -1,11 +1,12 @@
-# Tiny.RestClient
-Tiny.RestClient make easier the dialog between your API and your application.
-It hide all the complexity of communication, deserialisation ...
+<img src="https://raw.githubusercontent.com/jgiacomini/Tiny.RestClient/master/icon.png" width="200" height="200" />
 
+[![NuGet](https://img.shields.io/nuget/v/Tiny.RestClient.svg?label=NuGet)](https://www.nuget.org/packages/Tiny.RestClient/)
 [![Build status](https://ci.appveyor.com/api/projects/status/08prv6a3pon8vx86?svg=true)](https://ci.appveyor.com/project/jgiacomini/tinyhttp)
 
-## Nuget
-* Available on NuGet: [Tiny.RestClient](http://www.nuget.org/packages/Tiny.RestClient) [![NuGet](https://img.shields.io/nuget/v/Tiny.RestClient.svg?label=NuGet)](https://www.nuget.org/packages/Tiny.RestClient/)
+
+Tiny.RestClient facilitates the dialog between your API and your application.
+It hides all the complexity of communication, deserialisation ...
+
 
 ## Platform Support
 |Platform|Supported|Version|
@@ -16,6 +17,7 @@ It hide all the complexity of communication, deserialisation ...
 ## Features
 * Modern async http client for REST API.
 * Support of verbs : GET, POST , PUT, DELETE, PATCH, HEAD
+* Support of custom http verbs
 * Support of cancellation token on each requests
 * Automatic XML and JSON serialization / deserialization
 * Support of custom serialisation / deserialisation
@@ -270,9 +272,9 @@ By default :
  * the Json is used as default Formatter.
  * Xml Formatter is added in Formatters
 
-Each formatter have a list of supported media types.
-It allow TinyRestClient to detect which formatter will be used.
-If the no formatter is found it use the default formatter.
+Each formatter has a list of supported media types.
+It allows TinyRestClient to detect which formatter will be used.
+If no formatter is found it uses the default formatter.
 
 ### Add a new formatter
 Add a new custom formatter as default formatter.
@@ -352,7 +354,7 @@ public class XmlFormatter : IFormatter
    }
 ```
 
-## Listeners
+
 You can easily add a listener to listen all the sent requests / responses received and all exceptions.
 
 A debug listener is provided.
