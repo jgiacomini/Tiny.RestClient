@@ -3,7 +3,7 @@
 [![NuGet](https://img.shields.io/nuget/v/Tiny.RestClient.svg?label=NuGet)](https://www.nuget.org/packages/Tiny.RestClient/)
 ![Build status](https://ci.appveyor.com/api/projects/status/08prv6a3pon8vx86?svg=true)
 
-Tiny.RestClient makes easier the dialog between your API and your application.
+Tiny.RestClient facilitates the dialog between your API and your application.
 It hides all the complexity of communication, deserialisation ...
 
 
