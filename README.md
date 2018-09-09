@@ -355,7 +355,7 @@ public class XmlFormatter : IFormatter
 ```
 
 ## Listeners
-You can easily add listener to listen all request sended / responses received and all exceptions.
+You can easily add listener to listen all requests sended / responses received and all exceptions.
 
 A debug listener is provided.
 
