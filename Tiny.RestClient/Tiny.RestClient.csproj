@@ -6,7 +6,7 @@
     <NeutralLanguage>en</NeutralLanguage>
     <Authors>Jérôme Giacomini</Authors>
     <Description>
-      Tiny.RestClient makes easier the dialog between your API and your application. It hides all the complexity of communication, deserialisation ...
+      Tiny.RestClient facilitates the dialog between your API and your application. It hides all the complexity of communication, deserialisation ...
 
       Features :
       * Modern async http client for REST API.
