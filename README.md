@@ -4,7 +4,7 @@
 ![Build status](https://ci.appveyor.com/api/projects/status/08prv6a3pon8vx86?svg=true)
 
 Tiny.RestClient make easier the dialog between your API and your application.
-It hide all the complexity of communication, deserialisation ...
+It hides all the complexity of communication, deserialisation ...
 
 
 ## Platform Support
