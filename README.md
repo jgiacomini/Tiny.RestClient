@@ -246,7 +246,6 @@ All requests can throw 3 exceptions :
 
 ### Catch a specific error code
 ```cs
-using Tiny.Http;
 string cityName = "Paris";
 try
 { 
@@ -272,7 +271,7 @@ By default :
  * Xml Formatter is added in Formatters
 
 Each formatter have a list of supported media types.
-It allow TinyHttpClient to detect which formatter will be used.
+It allow TinyRestClient to detect which formatter will be used.
 If the no formatter is found it use the default formatter.
 
 ### Add a new formatter
