@@ -14,7 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\TinyHttp\Tiny.RestClient.csproj" />
+    <ProjectReference Include="..\..\Tiny.RestClient\Tiny.RestClient.csproj" />
+    <ProjectReference Include="..\Tiny.RestClient.ForTest.Api\Tiny.RestClient.ForTest.Api.csproj" />
   </ItemGroup>
 
 </Project>
