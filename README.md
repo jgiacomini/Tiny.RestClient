@@ -1,7 +1,8 @@
 <img src="https://raw.githubusercontent.com/jgiacomini/Tiny.RestClient/master/icon.png" width="200" height="200" />
 
 [![NuGet](https://img.shields.io/nuget/v/Tiny.RestClient.svg?label=NuGet)](https://www.nuget.org/packages/Tiny.RestClient/)
-![Build status](https://ci.appveyor.com/api/projects/status/08prv6a3pon8vx86?svg=true)
+[![Build status](https://ci.appveyor.com/api/projects/status/08prv6a3pon8vx86?svg=true)](https://ci.appveyor.com/project/jgiacomini/tinyhttp)
+
 
 Tiny.RestClient facilitates the dialog between your API and your application.
 It hides all the complexity of communication, deserialisation ...
