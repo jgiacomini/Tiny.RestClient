@@ -272,9 +272,9 @@ By default :
  * the Json is used as default Formatter.
  * Xml Formatter is added in Formatters
 
-Each formatter have a list of supported media types.
-It allow TinyRestClient to detect which formatter will be used.
-If the no formatter is found it use the default formatter.
+Each formatter has a list of supported media types.
+It allows TinyRestClient to detect which formatter will be used.
+If no formatter is found it uses the default formatter.
 
 ### Add a new formatter
 Add a new custom formatter as default formatter.
