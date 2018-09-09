@@ -1,11 +1,11 @@
-# TinyHttp
-TinyHttp make easier the dialog between your API and your application.
+# Tiny.RestClient
+Tiny.RestClient make easier the dialog between your API and your application.
 It hide all the complexity of communication, deserialisation ...
 
 [![Build status](https://ci.appveyor.com/api/projects/status/08prv6a3pon8vx86?svg=true)](https://ci.appveyor.com/project/jgiacomini/tinyhttp)
 
 ## Nuget
-* Available on NuGet: [Tiny.Http](http://www.nuget.org/packages/Tiny.Http) [![NuGet](https://img.shields.io/nuget/v/Tiny.Http.svg?label=NuGet)](https://www.nuget.org/packages/Tiny.Http/)
+* Available on NuGet: [Tiny.RestClient](http://www.nuget.org/packages/Tiny.RestClient) [![NuGet](https://img.shields.io/nuget/v/Tiny.RestClient.svg?label=NuGet)](https://www.nuget.org/packages/Tiny.RestClient/)
 
 ## Platform Support
 |Platform|Supported|Version|
@@ -31,9 +31,9 @@ It hide all the complexity of communication, deserialisation ...
 
 ### Create the client
 ```cs
-using Tiny.Http;
+using Tiny.RestClient;
 
-var client = new TinyHttpClient("http://MyAPI.com/api", new HttpClient());
+var client = new TinyRestClient("http://MyAPI.com/api", new HttpClient());
 ```
 
 ### Headers
@@ -42,7 +42,7 @@ var client = new TinyHttpClient("http://MyAPI.com/api", new HttpClient());
 
 ```cs
 // Add default header for each calls
-client.DefaultHeaders.Add("Token", "MYTOKEN");
+client.Settings.DefaultHeaders.Add("Token", "MYTOKEN");
 ```
 #### Add header for current request
 
@@ -57,9 +57,8 @@ client.GetRequest("City/All").
 #### Read headers of response
 
 ```cs
-Headers headersOfResponse = null;
 await client.GetRequest("GetTest/HeadersOfResponse").
-             FillResponseHeaders(out headersOfResponse).
+             FillResponseHeaders(out headersOfResponse Headers).
              ExecuteAsync();
 foreach(var header in headersOfResponse)
 {
@@ -248,7 +247,6 @@ All requests can throw 3 exceptions :
 
 ### Catch a specific error code
 ```cs
-using Tiny.Http;
 string cityName = "Paris";
 try
 { 
@@ -274,7 +272,7 @@ By default :
  * Xml Formatter is added in Formatters
 
 Each formatter have a list of supported media types.
-It allow TinyHttpClient to detect which formatter will be used.
+It allow TinyRestClient to detect which formatter will be used.
 If the no formatter is found it use the default formatter.
 
 ### Add a new formatter
@@ -282,16 +280,16 @@ Add a new custom formatter as default formatter.
 ```cs
 bool isDefaultFormatter = true;
 var customFormatter = new CustomFormatter();
-client.Add(customFormatter, isDefaultFormatter);
+client.Settings.Formatters.Add(customFormatter, isDefaultFormatter);
 ```
 
 ### Remove a formatter
 ```cs
-var lastFormatter = client.Formatters.Where( f=> f is XmlSerializer>).First();
+var lastFormatter = client.Settings.Formatters.Where( f=> f is XmlSerializer>).First();
 client.Remove(lastFormatter);
 ```
 
-### Define a specific formatter for one request
+### Define a specific serialize for one request
 ```cs
 IFormatter serializer = new XmlFormatter();
  var response = await client.
@@ -299,7 +297,7 @@ IFormatter serializer = new XmlFormatter();
      ExecuteAsync();
 ```
 
-### Define a specific formatter for one request
+### Define a specific deserializer for one request
 ```cs
 IFormatter deserializer = new XmlFormatter();
 
@@ -355,26 +353,20 @@ public class XmlFormatter : IFormatter
    }
 ```
 
-## Logging events
+## Listeners
+You can easily add listener to listen all request sended / responses received and all exceptions.
+
+A debug listener is provided.
+
+To add it you have to call AddDebug on Listeners property
+```cs
+
+client.Settings.Listeners.AddDebug();
+```
+
+You can also create you own listener by implementing IListener.
 
 ```cs
-using Tiny.Http;
-var client = new TinyHttpClient("http://MyAPI.com/api");
-
-
-client.SendingRequest += (sender , e) =>
-{    
-    Debug.WriteLine($"Sending RequestId = {e.RequestId}, Method = {e.Method}, Uri = {e.Uri}");
-};
-
-client.ReceivedResponse += (sender , e)=>
-{
-    Debug.WriteLine($"Received RequestId = {e.RequestId}, Method = {e.Method}, Uri = {e.Uri}, StatusCode = {e.StatusCode}, ElapsedTime = {ToReadableString(e.ElapsedTime)}");
-};
-
-client.FailedToGetResponse  += (sender , e)=>
-{
-    Debug.WriteLine($"FailedToGetResponse RequestId = {e.RequestId}, Method = {e.Method}, Uri = {e.Uri}, ElapsedTime = {ToReadableString(e.ElapsedTime)}");
-}
-
+IListener myCustomListerner = ..
+client.Settings.Listeners.Add(myCustomListerner);
 ```
