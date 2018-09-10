@@ -9,9 +9,10 @@ It hides all the complexity of communication, deserialisation ...
 
 
 ## Platform Support
-|Platform|Supported|Version|
-| ------------------- | :-----------: | :------------------: |
-|.Net Standard|Yes|2.0|
+|Platform|Supported|Version|Dependencies|
+| ------------------- | :-----------: | :------------------: | :------------------: |
+|.Net Standard|Yes|1.3|Use System.Xml.XmlSerializer and Newtonsoft.Json|
+|.Net Standard|Yes|2.0|Use Newtonsoft.Json|
 
 
 ## Features
