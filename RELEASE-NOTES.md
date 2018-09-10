@@ -1,5 +1,8 @@
 # Release notes
-## 1.3.2 && ## 1.3.1
+## 1.3.3
+* Now the DebugListener use the class Debug to log data. (Thx to Thomas Levesque for the code review)
+
+## 1.3.2 && 1.3.1
 *  Fix some typos
 ## 1.3.0
 * Rewrite the way to listen the client
