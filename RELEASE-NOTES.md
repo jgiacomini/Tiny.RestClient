@@ -1,4 +1,6 @@
 # Release notes
+## 1.3.4
+* Support of netstandard1.3 (thanks to Benoit F) 
 ## 1.3.3
 * Now the DebugListener use the class Debug to log data. (Thx to Thomas Levesque for the code review)
 
