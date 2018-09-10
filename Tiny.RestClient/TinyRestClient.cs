@@ -4,12 +4,12 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 using HttpStreamContent = System.Net.Http.StreamContent;
 
 namespace Tiny.RestClient
@@ -494,7 +494,7 @@ namespace Tiny.RestClient
                 {
                     var item = queryParameters.ElementAt(i);
                     var separator = i == queryParameters.Count - 1 ? string.Empty : "&";
-                    stringBuilder.Append($"{item.Key}={HttpUtility.UrlEncode(item.Value)}{separator}");
+                    stringBuilder.Append($"{item.Key}={WebUtility.UrlEncode(item.Value)}{separator}");
                 }
             }
 
