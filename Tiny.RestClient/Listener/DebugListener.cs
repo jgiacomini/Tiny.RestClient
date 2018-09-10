@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define DEBUG
+// We define debug symbol to be able to log in debug even if we are compiled in release mode
+using System;
 using System.Diagnostics;
 using System.Net.Http;
 
@@ -9,48 +11,34 @@ namespace Tiny.RestClient
     /// </summary>
     public class DebugListener : IListener
     {
-        private readonly bool _measureTime;
-
         /// <summary>
         ///  Initializes a new instance of the <see cref="DebugListener"/> class.
         /// </summary>
         /// <param name="measureTime">true if measure time</param>
         public DebugListener(bool measureTime)
         {
-            if (System.Diagnostics.Debugger.IsAttached)
-            {
-                _measureTime = measureTime;
-            }
+            MeasureTime = measureTime;
         }
 
         /// <inheritdoc/>
-        public bool MeasureTime => _measureTime;
+        public bool MeasureTime { get; }
 
         /// <inheritdoc/>
         public void OnFailedToReceiveResponse(Uri uri, HttpMethod httpMethod, Exception exception, TimeSpan? elapsedTime)
         {
-            if (System.Diagnostics.Debugger.IsAttached)
-            {
-                Trace.WriteLine($"FailedToGetResponse Method = {httpMethod}, Uri = {exception}, ElapsedTime = {ToReadableString(elapsedTime)}");
-            }
+            Debug.WriteLine($"FailedToGetResponse Method = {httpMethod}, Uri = {exception}, ElapsedTime = {ToReadableString(elapsedTime)}");
         }
 
         /// <inheritdoc/>
         public void OnReceivedResponse(Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan? elapsedTime)
         {
-            if (System.Diagnostics.Debugger.IsAttached)
-            {
-                Trace.WriteLine($"Received Method = {httpMethod}, Uri = {uri}, StatusCode = {response.StatusCode}, ElapsedTime = {ToReadableString(elapsedTime)}");
-            }
+            Debug.WriteLine($"Received Method = {httpMethod}, Uri = {uri}, StatusCode = {response.StatusCode}, ElapsedTime = {ToReadableString(elapsedTime)}");
         }
 
         /// <inheritdoc/>
         public void OnSendingRequest(Uri uri, HttpMethod httpMethod, HttpRequestMessage httpRequestMessage)
         {
-            if (System.Diagnostics.Debugger.IsAttached)
-            {
-                Trace.WriteLine($"Sending Method = {httpMethod}, Uri = {uri}");
-            }
+            Debug.WriteLine($"Sending Method = {httpMethod}, Uri = {uri}");
         }
 
         private string ToReadableString(TimeSpan? span)
