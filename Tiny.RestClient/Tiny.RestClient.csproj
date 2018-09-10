@@ -8,7 +8,7 @@
     <Description>
       Tiny.RestClient facilitates the dialog between your API and your application. It hides all the complexity of communication, deserialisation ...
 
-      Features :
+      Features : 
       * Modern async http client for REST API.
       * Support of verbs : GET, POST , PUT, DELETE, PATCH, HEAD
       * Support of custom http verbs
