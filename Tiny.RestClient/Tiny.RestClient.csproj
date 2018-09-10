@@ -31,7 +31,7 @@
     <RepositoryUrl>https://github.com/jgiacomini/Tiny.RestClient.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <MinClientVersion>3.0.3</MinClientVersion>
-    <PackageReleaseNotes>See release notes at https://github.com/jgiacomini/Tiny.RestClient/blob/1.3.2/RELEASE-NOTES.md</PackageReleaseNotes>
+    <PackageReleaseNotes>See release notes at https://github.com/jgiacomini/Tiny.RestClient/blob/1.3.3/RELEASE-NOTES.md</PackageReleaseNotes>
   </PropertyGroup>
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
