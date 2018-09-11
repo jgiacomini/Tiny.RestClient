@@ -42,7 +42,8 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
-  <ItemGroup Condition=" $(TargetFramework.StartsWith('netstandard1.')) ">
+  
+  <ItemGroup Condition=" $(TargetFramework) =='netstandard1.3' ">
     <PackageReference Include="System.Xml.XmlSerializer" Version=" 4.3.0" />
   </ItemGroup>
 </Project>
