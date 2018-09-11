@@ -23,7 +23,6 @@
       * Typed exceptions which are easier to interpret
       * Provide an easy way to log : all sending of request, failed to get response, and the time get response.
     </Description>
-    <Title>TinyHttp</Title>
     <PackageLicenseUrl>https://github.com/jgiacomini/Tiny.RestClient/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/jgiacomini/Tiny.RestClient</PackageProjectUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/jgiacomini/Tiny.RestClient/master/icon.png</PackageIconUrl>
