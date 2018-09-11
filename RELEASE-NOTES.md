@@ -1,4 +1,7 @@
 # Release notes
+## 1.3.5
+* Fix small issue on formatting of debug formatter
+
 ## 1.3.4
 * Support of netstandard1.3 (thanks to Benoit F) 
 ## 1.3.3
