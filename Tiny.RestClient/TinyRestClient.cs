@@ -15,7 +15,7 @@ using HttpStreamContent = System.Net.Http.StreamContent;
 namespace Tiny.RestClient
 {
     /// <summary>
-    /// Class TinyHttpClient.
+    /// Class <see cref="TinyRestClient"/>.
     /// </summary>
     public class TinyRestClient
     {

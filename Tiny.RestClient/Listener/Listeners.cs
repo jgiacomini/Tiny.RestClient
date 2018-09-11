@@ -96,7 +96,7 @@ namespace Tiny.RestClient
             {
                 try
                 {
-                    item.OnFailedToReceiveResponse(uri, httpMethod, exception, elapsedTime);
+                    item.OnFailedToReceiveResponse(uri, httpMethod, exception, item.MeasureTime ? elapsedTime : null);
                 }
                 catch
                 {
@@ -112,7 +112,7 @@ namespace Tiny.RestClient
             {
                 try
                 {
-                    item.OnReceivedResponse(uri, httpMethod, response, elapsedTime);
+                    item.OnReceivedResponse(uri, httpMethod, response, item.MeasureTime ? elapsedTime : null);
                 }
                 catch (Exception)
                 {

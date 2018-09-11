@@ -3,6 +3,7 @@
 using System;
 using System.Diagnostics;
 using System.Net.Http;
+using System.Text;
 
 namespace Tiny.RestClient
 {
@@ -41,32 +42,39 @@ namespace Tiny.RestClient
             Debug.WriteLine($"Sending Method = {httpMethod}, Uri = {uri}");
         }
 
-        private string ToReadableString(TimeSpan? span)
+        private string ToReadableString(TimeSpan? spanNullable)
         {
-            if (span == null)
+            if (spanNullable == null)
             {
                 return "-";
             }
 
-            var spanNotNullable = span.Value;
+            // TODO : redo this code
+            var span = spanNullable.Value;
 
-            string formatted = string.Format(
-                "{0}{1}{2}",
-                spanNotNullable.Duration().Hours > 0 ? string.Format("{0:0} hour{1}, ", spanNotNullable.Hours, spanNotNullable.Hours == 1 ? string.Empty : "s") : string.Empty,
-                spanNotNullable.Duration().Minutes > 0 ? string.Format("{0:0} minute{1}, ", spanNotNullable.Minutes, spanNotNullable.Minutes == 1 ? string.Empty : "s") : string.Empty,
-                spanNotNullable.Duration().Seconds > 0 ? string.Format("{0:0} second{1}", spanNotNullable.Seconds, spanNotNullable.Seconds == 1 ? string.Empty : "s") : string.Empty);
+            bool addComa = false;
+            var stringBuilder = new StringBuilder(200);
+            AddItem(ref addComa, span.Days, "day", stringBuilder);
+            AddItem(ref addComa, span.Hours, "hour", stringBuilder);
+            AddItem(ref addComa, span.Minutes, "minute", stringBuilder);
+            AddItem(ref addComa, span.Seconds, "second", stringBuilder);
+            AddItem(ref addComa, span.Milliseconds, "millisecond", stringBuilder);
 
-            if (formatted.EndsWith(", "))
+            return stringBuilder.ToString();
+        }
+
+        private void AddItem(ref bool addComa, int value, string text, StringBuilder stringBuilder)
+        {
+            if (value > 0)
             {
-                formatted = formatted.Substring(0, formatted.Length - 2);
-            }
+                if (addComa)
+                {
+                    stringBuilder.AppendFormat(", ");
+                }
 
-            if (string.IsNullOrEmpty(formatted))
-            {
-                formatted = "0 seconds";
+                stringBuilder.AppendFormat("{0:0} {2}{1}", value, value == 1 ? string.Empty : "s", text);
+                addComa = true;
             }
-
-            return formatted;
         }
     }
 }
