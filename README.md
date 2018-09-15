@@ -350,7 +350,7 @@ public class XmlFormatter : IFormatter
       }
    }
 ```
-
+## Listeners 
 
 You can easily add a listener to listen all the sent requests / responses received and all exceptions.
 
