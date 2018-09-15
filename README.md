@@ -143,11 +143,9 @@ var response = await client.
 ```cs
 
 var response = await client.
-                PostRequest("City/Add").
-                AddFormParameter("country", "France").
-                AddFormParameter("name", "Paris").
+                GetRequest("City/All").
                 ExecuteAsStringAsync();
-// POST http://MyAPI.com/api/City/Add with from url encoded content
+// GET http://MyAPI.com/api/City/All with from url encoded content
 ```
 
 ## multi-part form data
