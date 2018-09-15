@@ -50,7 +50,7 @@ client.Settings.DefaultHeaders.Add("Token", "MYTOKEN");
 
 
 ```cs
-// Add header for each calls
+// Add header for this request only
 client.GetRequest("City/All").
       AddHeader("Token", "MYTOKEN").
       ExecuteAsync();
