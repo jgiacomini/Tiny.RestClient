@@ -12,6 +12,8 @@ namespace Tiny.RestClient
             Serializer = serializer;
         }
 
+        public Type TypeToSerialize => typeof(T);
+
         public string GetSerializedString(IFormatter serializer, Encoding encoding)
         {
             try

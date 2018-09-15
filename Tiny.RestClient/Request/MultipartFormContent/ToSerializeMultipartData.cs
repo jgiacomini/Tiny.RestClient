@@ -11,18 +11,12 @@ namespace Tiny.RestClient
             Data = data;
         }
 
+        public Type TypeToSerialize => typeof(T);
         public T Data { get; }
 
         public string GetSerializedString(IFormatter serializer, Encoding encoding)
         {
-            try
-            {
-                return serializer.Serialize<T>(Data, encoding);
-            }
-            catch (Exception ex)
-            {
-                throw new SerializeException(typeof(T), ex);
-            }
+            return serializer.Serialize<T>(Data, encoding);
         }
 
         public IFormatter Serializer { get; private set; }
