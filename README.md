@@ -118,6 +118,12 @@ var response = await client.
 ```
 
 
+### Custom Http Verb requests
+```cs
+ await client.
+       NewRequest(new System.Net.Http.HttpMethod("HEAD"), "GetTest/noResponse").
+       ExecuteAsync();
+```
 ### Download file
 ```cs
 string filePath = "c:\map.pdf";
