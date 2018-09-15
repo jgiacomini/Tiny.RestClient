@@ -211,11 +211,9 @@ If you use these methods no serializer will be used.
 
 ### Streams
 ```cs
-
 // Read stream response
  Stream stream = await client.
               GetRequest("File").
-              WithStreamResponse().
               ExecuteAsStreamAsync();
 // Post Stream as content
 await client.PostRequest("File/Add").
