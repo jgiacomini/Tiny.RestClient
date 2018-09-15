@@ -2,6 +2,7 @@
 
 [![NuGet](https://img.shields.io/nuget/v/Tiny.RestClient.svg?label=NuGet)](https://www.nuget.org/packages/Tiny.RestClient/)
 [![Build status](https://ci.appveyor.com/api/projects/status/08prv6a3pon8vx86?svg=true)](https://ci.appveyor.com/project/jgiacomini/tinyhttp)
+[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/Tiny-RestClient/Lobby)
 
 
 Tiny.RestClient facilitates the dialog between your API and your application.
@@ -50,7 +51,7 @@ client.Settings.DefaultHeaders.Add("Token", "MYTOKEN");
 
 
 ```cs
-// Add header for each calls
+// Add header for this request only
 client.GetRequest("City/All").
       AddHeader("Token", "MYTOKEN").
       ExecuteAsync();
@@ -59,7 +60,7 @@ client.GetRequest("City/All").
 #### Read headers of response
 
 ```cs
-await client.GetRequest("GetTest/HeadersOfResponse").
+await client.GetRequest("City/GetAll").
              FillResponseHeaders(out headersOfResponse Headers).
              ExecuteAsync();
 foreach(var header in headersOfResponse)
@@ -85,7 +86,7 @@ var cities = client.
     AddQueryParameter("country", "France").
     ExecuteAsync<City>> ();
 
-// GET http://MyAPI.com/api/City?id=2&country=France an deserialize automaticaly the content
+// GET http://MyAPI.com/api/City?id=2&country=France deserialize automaticaly the content
 
 ```
 
@@ -142,12 +143,10 @@ var response = await client.
 
 ```cs
 
-var response = await client.
-                PostRequest("City/Add").
-                AddFormParameter("country", "France").
-                AddFormParameter("name", "Paris").
+string response = await client.
+                GetRequest("City/All").
                 ExecuteAsStringAsync();
-// POST http://MyAPI.com/api/City/Add with from url encoded content
+// GET http://MyAPI.com/api/City/All with from url encoded content
 ```
 
 ## multi-part form data
@@ -213,11 +212,9 @@ If you use these methods no serializer will be used.
 
 ### Streams
 ```cs
-
 // Read stream response
  Stream stream = await client.
               GetRequest("File").
-              WithStreamResponse().
               ExecuteAsStreamAsync();
 // Post Stream as content
 await client.PostRequest("File/Add").
@@ -225,7 +222,7 @@ await client.PostRequest("File/Add").
             ExecuteAsync();
 ```
 
-### Bytes array
+### Byte array
 ```cs
 // Read byte array response         
 byte[] byteArray = await client.
@@ -354,7 +351,7 @@ public class XmlFormatter : IFormatter
       }
    }
 ```
-
+## Listeners 
 
 You can easily add a listener to listen all the sent requests / responses received and all exceptions.
 
