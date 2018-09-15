@@ -221,7 +221,7 @@ await client.PostRequest("File/Add").
             ExecuteAsync();
 ```
 
-### Bytes array
+### Byte array
 ```cs
 // Read byte array response         
 byte[] byteArray = await client.
