@@ -59,7 +59,7 @@ client.GetRequest("City/All").
 #### Read headers of response
 
 ```cs
-await client.GetRequest("GetTest/HeadersOfResponse").
+await client.GetRequest("City/GetAll").
              FillResponseHeaders(out headersOfResponse Headers).
              ExecuteAsync();
 foreach(var header in headersOfResponse)
