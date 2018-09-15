@@ -142,7 +142,7 @@ var response = await client.
 
 ```cs
 
-var response = await client.
+string response = await client.
                 GetRequest("City/All").
                 ExecuteAsStringAsync();
 // GET http://MyAPI.com/api/City/All with from url encoded content
