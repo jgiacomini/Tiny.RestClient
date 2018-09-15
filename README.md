@@ -121,8 +121,8 @@ var response = await client.
 ### Custom Http Verb requests
 ```cs
  await client.
-       NewRequest(new System.Net.Http.HttpMethod("HEAD"), "GetTest/noResponse").
-       ExecuteAsync();
+       NewRequest(new System.Net.Http.HttpMethod("HEAD"), "City/All").
+       ExecuteAsync<List<City>>();
 ```
 ### Download file
 ```cs
