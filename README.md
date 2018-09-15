@@ -85,7 +85,7 @@ var cities = client.
     AddQueryParameter("country", "France").
     ExecuteAsync<City>> ();
 
-// GET http://MyAPI.com/api/City?id=2&country=France an deserialize automaticaly the content
+// GET http://MyAPI.com/api/City?id=2&country=France deserialize automaticaly the content
 
 ```
 
