@@ -441,7 +441,7 @@ namespace Tiny.RestClient
                 serializer = content.Serializer;
             }
 
-            var serializedString = content.GetSerializedStream(serializer, Settings.Encoding);
+            var serializedString = content.GetSerializedString(serializer, Settings.Encoding);
             if (serializedString == null)
             {
                 return null;

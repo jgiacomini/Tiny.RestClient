@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace Tiny.RestClient
 {
@@ -12,9 +13,16 @@ namespace Tiny.RestClient
 
         public T Data { get; }
 
-        public string GetSerializedStream(IFormatter serializer, Encoding encoding)
+        public string GetSerializedString(IFormatter serializer, Encoding encoding)
         {
-            return serializer.Serialize<T>(Data, encoding);
+            try
+            {
+                return serializer.Serialize<T>(Data, encoding);
+            }
+            catch (Exception ex)
+            {
+                throw new SerializeException(typeof(T), ex);
+            }
         }
 
         public IFormatter Serializer { get; private set; }
