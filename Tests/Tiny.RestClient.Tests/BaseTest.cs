@@ -20,7 +20,7 @@ namespace Tiny.RestClient.Tests
                 if (_client == null)
                 {
                     _client = new TinyRestClient(Program.Client, _serverUrl);
-                    _client.Settings.Listeners.AddPostMan("tests");
+                    _client.Settings.Listeners.AddPostman("tests");
                 }
             }
 
