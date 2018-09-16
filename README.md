@@ -29,6 +29,7 @@ It hides all the complexity of communication, deserialisation ...
 * Optimized http calls
 * Typed exceptions which are easier to interpret
 * Provide an easy way to log : all sending of request, failed to get response,  and the time get response.
+* Support of export requests to PostManCollection
 
 ## Basic usage
 
