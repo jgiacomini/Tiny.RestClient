@@ -14,22 +14,22 @@ namespace Tiny.RestClient
     /// <summary>
     /// A listener which will create a postMan collection/>
     /// </summary>
-    public class PostManListener : IListener
+    public class PostmanListener : IListener
     {
         private readonly object _toLock = new object();
 
         /// <summary>
-        ///  Initializes a new instance of the <see cref="PostManListener"/> class.
+        ///  Initializes a new instance of the <see cref="PostmanListener"/> class.
         /// </summary>
         /// <param name="name">name of the postMan collection</param>
-        public PostManListener(string name)
+        public PostmanListener(string name)
         {
             if (string.IsNullOrEmpty(name))
             {
                 throw new ArgumentException("name of collection can't be null or empty", nameof(name));
             }
 
-            Collection = new PostManCollection
+            Collection = new PostmanCollection
             {
                 Info = new Info
                 {
@@ -41,7 +41,7 @@ namespace Tiny.RestClient
             };
         }
 
-        internal PostMan.PostManCollection Collection { get; }
+        internal PostMan.PostmanCollection Collection { get; }
 
         /// <inheritdoc/>
         public bool MeasureTime => false;
@@ -82,7 +82,7 @@ namespace Tiny.RestClient
                     using (var jsonTextWriter = new JsonTextWriter(stringWriter))
                     {
                         jsonTextWriter.Formatting = Formatting.Indented;
-                        serializer.Serialize(jsonTextWriter, Collection, typeof(PostManCollection));
+                        serializer.Serialize(jsonTextWriter, Collection, typeof(PostmanCollection));
                     }
 
                     return stringWriter.ToString();

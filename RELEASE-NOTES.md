@@ -1,4 +1,7 @@
 # Release notes
+## 1.4.1
+* Rename PostMan to Postman
+
 ## 1.4.0
 * Add SerializerException
 * Add PostMan listener
