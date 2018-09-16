@@ -10,9 +10,13 @@
         /// </summary>
         /// <param name="listeners">all listeners</param>
         /// <param name="name">name of the collection</param>
-        public static void AddPostMan(this Listeners listeners, string name)
+        /// <returns>listener created</returns>
+        public static PostManListener AddPostMan(this Listeners listeners, string name)
         {
-            listeners.Add(new PostManListener(name));
+            var listener = new PostManListener(name);
+            listeners.Add(listener);
+
+            return listener;
         }
     }
 }
