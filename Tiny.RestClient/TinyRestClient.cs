@@ -483,7 +483,7 @@ namespace Tiny.RestClient
 
         private void SetContentType(string contentType, HttpContent content)
         {
-            if (contentType == null)
+            if (string.IsNullOrEmpty(contentType))
             {
                 return;
             }
@@ -528,7 +528,10 @@ namespace Tiny.RestClient
                         deserializer = Settings.Formatters.Default;
                     }
 
-                    request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(deserializer.DefaultMediaType));
+                    if (!string.IsNullOrEmpty(deserializer.DefaultMediaType))
+                    {
+                        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(deserializer.DefaultMediaType));
+                    }
 
                     if (Settings.AddAcceptLanguageBasedOnCurrentCulture)
                     {
