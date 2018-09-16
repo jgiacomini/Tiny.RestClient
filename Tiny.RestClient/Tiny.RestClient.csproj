@@ -1,15 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3;netstandard2.0</TargetFrameworks>
-    <Version>1.4.0-alpha001</Version>
+    <Version>1.4.0</Version>
     <Copyright>Copyright © Jérôme Giacomini 2018</Copyright>
     <NeutralLanguage>en</NeutralLanguage>
     <Title>Tiny.RestClient</Title>
     <Authors>Jérôme Giacomini</Authors>
-    <Description>
-      Tiny.RestClient facilitates the dialog between your API and your application. It hides all the complexity of communication, deserialisation ...
+    <Description>Tiny.RestClient facilitates the dialog between your API and your application. It hides all the complexity of communication, deserialisation ...
 
-      Features : 
+Features : 
       * Modern async http client for REST API.
       * Support of verbs : GET, POST , PUT, DELETE, PATCH
       * Support of custom http verbs
@@ -22,8 +21,7 @@
       * Optimized http calls
       * Typed exceptions which are easier to interpret
       * Provide an easy way to log : all sending of request, failed to get response, and the time get response.
-      * Support of export requests to PostManCollection
-    </Description>
+      * Support of export requests to PostManCollection</Description>
     <PackageLicenseUrl>https://github.com/jgiacomini/Tiny.RestClient/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/jgiacomini/Tiny.RestClient</PackageProjectUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/jgiacomini/Tiny.RestClient/master/icon.png</PackageIconUrl>
