@@ -36,7 +36,6 @@ namespace Tiny.RestClient
         {
             _serverAddress = serverAddress ?? throw new ArgumentNullException(nameof(serverAddress));
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-            _httpClient.Timeout = Timeout.InfiniteTimeSpan;
             if (!_serverAddress.EndsWith("/"))
             {
                 _serverAddress += "/";
