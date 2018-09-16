@@ -28,14 +28,30 @@ namespace Tiny.RestClient
         /// <inheritdoc/>
         public Task OnFailedToReceiveResponseAsync(Uri uri, HttpMethod httpMethod, Exception exception, TimeSpan? elapsedTime)
         {
-            Debug.WriteLine($"FailedToGetResponse Method = {httpMethod}, Uri = {exception}, ElapsedTime = {ToReadableString(elapsedTime)}");
+            if (elapsedTime.HasValue)
+            {
+                Debug.WriteLine($"FailedToGetResponse Method = {httpMethod}, Uri = {exception}, ElapsedTime = {ToReadableString(elapsedTime.Value)}");
+            }
+            else
+            {
+                Debug.WriteLine($"FailedToGetResponse Method = {httpMethod}, Uri = {exception}");
+            }
+
             return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
         public Task OnReceivedResponseAsync(Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan? elapsedTime)
         {
-            Debug.WriteLine($"Received Method = {httpMethod}, Uri = {uri}, StatusCode = {response.StatusCode}, ElapsedTime = {ToReadableString(elapsedTime)}");
+            if (elapsedTime.HasValue)
+            {
+                Debug.WriteLine($"Received Method = {httpMethod}, Uri = {uri}, StatusCode = {response.StatusCode}, ElapsedTime = {ToReadableString(elapsedTime.Value)}");
+            }
+            else
+            {
+                Debug.WriteLine($"Received Method = {httpMethod}, Uri = {uri}, StatusCode = {response.StatusCode}");
+            }
+
             return Task.CompletedTask;
         }
 
@@ -46,16 +62,9 @@ namespace Tiny.RestClient
             return Task.CompletedTask;
         }
 
-        private string ToReadableString(TimeSpan? spanNullable)
+        private string ToReadableString(TimeSpan span)
         {
-            if (spanNullable == null)
-            {
-                return "-";
-            }
-
-            // TODO : redo this code
-            var span = spanNullable.Value;
-
+            // TODO : rewrite this code
             bool addComa = false;
             var stringBuilder = new StringBuilder(200);
             AddItem(ref addComa, span.Days, "day", stringBuilder);
