@@ -385,7 +385,7 @@ PostManListerner listener = client.Settings.Listeners.AddPostMan("nameOfCollecti
 
 When you want to save the postMan collection you have to call SaveAsync
 ```cs
-await listener.SaveAsync(new FileInfo("myfile.json");
+await listener.SaveAsync(new FileInfo("postManCollection.json");
 ```
 
 
