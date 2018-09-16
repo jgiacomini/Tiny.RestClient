@@ -18,7 +18,7 @@ It hides all the complexity of communication, deserialisation ...
 
 ## Features
 * Modern async http client for REST API.
-* Support of verbs : GET, POST , PUT, DELETE, PATCH, HEAD
+* Support of verbs : GET, POST , PUT, DELETE, PATCH
 * Support of custom http verbs
 * Support of cancellation token on each requests
 * Automatic XML and JSON serialization / deserialization
@@ -118,6 +118,12 @@ var response = await client.
 ```
 
 
+### Custom Http Verb requests
+```cs
+ await client.
+       NewRequest(new System.Net.Http.HttpMethod("HEAD"), "City/All").
+       ExecuteAsync<List<City>>();
+```
 ### Download file
 ```cs
 string filePath = "c:\map.pdf";

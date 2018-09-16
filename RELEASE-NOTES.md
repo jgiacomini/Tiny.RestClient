@@ -1,4 +1,7 @@
 # Release notes
+## 1.3.6
+* Add SerializerException
+
 ## 1.3.5
 * Fix small issue on formatting of debug formatter
 
