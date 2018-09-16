@@ -556,16 +556,18 @@ namespace Tiny.RestClient
 
                 try
                 {
+                    HttpResponseMessage response = null;
+                    await Settings.Listeners.OnSendingRequestAsync(uri, httpMethod, request).ConfigureAwait(false);
+                    stopwatch?.Start();
+
                     using (var cts = GetCancellationTokenSourceForTimeout(request, cancellationToken))
                     {
-                        await Settings.Listeners.OnSendingRequestAsync(uri, httpMethod, request).ConfigureAwait(false);
-                        stopwatch?.Start();
-                        var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
-
-                        stopwatch?.Stop();
-                        await Settings.Listeners.OnReceivedResponseAsync(uri, httpMethod, response, stopwatch?.Elapsed).ConfigureAwait(false);
-                        return response;
+                       response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
                     }
+
+                    stopwatch?.Stop();
+                    await Settings.Listeners.OnReceivedResponseAsync(uri, httpMethod, response, stopwatch?.Elapsed).ConfigureAwait(false);
+                    return response;
                 }
                 catch (Exception ex)
                 {
@@ -582,6 +584,7 @@ namespace Tiny.RestClient
             }
         }
 
+        // Inspired by this blog post https://www.thomaslevesque.com/2018/02/25/better-timeout-handling-with-httpclient/
         private CancellationTokenSource GetCancellationTokenSourceForTimeout(
             HttpRequestMessage request,
             CancellationToken cancellationToken)
