@@ -71,19 +71,22 @@ namespace Tiny.RestClient
         /// <returns>return a post man collection json file</returns>
         public string GetCollectionJson()
         {
-            var serializer = new JsonSerializer
+            lock (_toLock)
             {
-                NullValueHandling = NullValueHandling.Ignore
-            };
-            using (var stringWriter = new StringWriter(new StringBuilder(1024), CultureInfo.InvariantCulture))
-            {
-                using (var jsonTextWriter = new JsonTextWriter(stringWriter))
+                var serializer = new JsonSerializer
                 {
-                    jsonTextWriter.Formatting = Formatting.Indented;
-                    serializer.Serialize(jsonTextWriter, Collection, typeof(PostManCollection));
-                }
+                    NullValueHandling = NullValueHandling.Ignore
+                };
+                using (var stringWriter = new StringWriter(new StringBuilder(1024), CultureInfo.InvariantCulture))
+                {
+                    using (var jsonTextWriter = new JsonTextWriter(stringWriter))
+                    {
+                        jsonTextWriter.Formatting = Formatting.Indented;
+                        serializer.Serialize(jsonTextWriter, Collection, typeof(PostManCollection));
+                    }
 
-                return stringWriter.ToString();
+                    return stringWriter.ToString();
+                }
             }
         }
 
