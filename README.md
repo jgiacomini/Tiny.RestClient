@@ -29,7 +29,7 @@ It hides all the complexity of communication, deserialisation ...
 * Optimized http calls
 * Typed exceptions which are easier to interpret
 * Provide an easy way to log : all sending of request, failed to get response,  and the time get response.
-* Support of export requests to PostManCollection
+* Support of export requests to PostmanCollection
 
 ## Basic usage
 
@@ -365,7 +365,7 @@ You can easily add a listener to listen all the sent requests / responses receiv
 
 Two listeners are provided by the lib :
 * A debug listener : which log all request in debug console
-* A postMan listener : which allow you to export all your request in postMan collection
+* A postman listener : which allow you to export all your request in postman collection
 
 
 ### Debug Listener
@@ -377,15 +377,15 @@ client.Settings.Listeners.AddDebug();
 ```
 
 
-### PostMan Listener
-To add PostMan listener you have to call AddPostMan on Listeners property
+### Postman Listener
+To add Postman listener you have to call AddPostman on Listeners property
 ```cs
-PostManListerner listener = client.Settings.Listeners.AddPostMan("nameOfCollection");
+PostmanListerner listener = client.Settings.Listeners.AddPostman("nameOfCollection");
 ```
 
 When you want to save the postMan collection you have to call SaveAsync
 ```cs
-await listener.SaveAsync(new FileInfo("postManCollection.json");
+await listener.SaveAsync(new FileInfo("postmanCollection.json");
 ```
 
 
