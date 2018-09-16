@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Tiny.RestClient.ForTest.Api;
 
 namespace Tiny.RestClient.Tests
@@ -22,8 +24,12 @@ namespace Tiny.RestClient.Tests
         }
 
         [AssemblyCleanup]
-        public static void Cleanup()
+        public static async Task Cleanup()
         {
+            var client = BaseTest.GetClient();
+            var postManListener = client.Settings.Listeners.OfType<PostManListener>().First();
+            await postManListener.SaveAsync(new System.IO.FileInfo("test_postMan.json"));
+
             _server?.Dispose();
             Client?.Dispose();
         }

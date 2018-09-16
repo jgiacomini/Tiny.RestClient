@@ -519,63 +519,63 @@ namespace Tiny.RestClient
                 stopwatch = new Stopwatch();
             }
 
-            try
+            using (var request = new HttpRequestMessage(httpMethod, uri))
             {
-                using (var request = new HttpRequestMessage(httpMethod, uri))
+                if (deserializer == null)
                 {
-                    if (deserializer == null)
-                    {
-                        deserializer = Settings.Formatters.Default;
-                    }
+                    deserializer = Settings.Formatters.Default;
+                }
 
-                    if (!string.IsNullOrEmpty(deserializer.DefaultMediaType))
-                    {
-                        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(deserializer.DefaultMediaType));
-                    }
+                if (!string.IsNullOrEmpty(deserializer.DefaultMediaType))
+                {
+                    request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(deserializer.DefaultMediaType));
+                }
 
-                    if (Settings.AddAcceptLanguageBasedOnCurrentCulture)
-                    {
-                        request.Headers.AcceptLanguage.Add(new StringWithQualityHeaderValue(CultureInfo.CurrentCulture.TwoLetterISOLanguageName));
-                    }
+                if (Settings.AddAcceptLanguageBasedOnCurrentCulture)
+                {
+                    request.Headers.AcceptLanguage.Add(new StringWithQualityHeaderValue(CultureInfo.CurrentCulture.TwoLetterISOLanguageName));
+                }
 
-                    foreach (var item in Settings.DefaultHeaders)
+                foreach (var item in Settings.DefaultHeaders)
+                {
+                    request.Headers.Add(item.Key, item.Value);
+                }
+
+                if (requestHeader != null)
+                {
+                    foreach (var item in requestHeader)
                     {
                         request.Headers.Add(item.Key, item.Value);
                     }
+                }
 
-                    if (requestHeader != null)
-                    {
-                        foreach (var item in requestHeader)
-                        {
-                            request.Headers.Add(item.Key, item.Value);
-                        }
-                    }
+                if (content != null)
+                {
+                    request.Content = content;
+                }
 
-                    if (content != null)
-                    {
-                        request.Content = content;
-                    }
-
-                    Settings.Listeners.OnSendingRequest(uri, httpMethod, request);
+                try
+                {
+                    await Settings.Listeners.OnSendingRequestAsync(uri, httpMethod, request).ConfigureAwait(false);
                     stopwatch?.Start();
                     var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
 
                     stopwatch?.Stop();
-                    Settings.Listeners.OnReceivedResponse(uri, httpMethod, response, stopwatch?.Elapsed);
+                    await Settings.Listeners.OnReceivedResponseAsync(uri, httpMethod, response, stopwatch?.Elapsed).ConfigureAwait(false);
                     return response;
                 }
-            }
-            catch (Exception ex)
-            {
-                stopwatch?.Stop();
+                catch (Exception ex)
+                {
+                    stopwatch?.Stop();
 
-                Settings.Listeners.OnFailedToReceiveResponse(uri, httpMethod, ex, stopwatch?.Elapsed);
+                    await Settings.Listeners.OnFailedToReceiveResponseAsync(uri, httpMethod, ex, stopwatch?.Elapsed).ConfigureAwait(false);
 
-                throw new ConnectionException(
-                   "Failed to get a response from server",
-                   uri.AbsoluteUri,
-                   httpMethod.Method,
-                   ex);
+                    throw new ConnectionException(
+                       "Failed to get a response from server",
+                       uri.AbsoluteUri,
+                       httpMethod.Method,
+                       ex);
+                }
             }
         }
 

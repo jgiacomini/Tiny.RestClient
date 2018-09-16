@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Tiny.RestClient
 {
@@ -25,33 +26,45 @@ namespace Tiny.RestClient
         public bool MeasureTime { get; }
 
         /// <inheritdoc/>
-        public void OnFailedToReceiveResponse(Uri uri, HttpMethod httpMethod, Exception exception, TimeSpan? elapsedTime)
+        public Task OnFailedToReceiveResponseAsync(Uri uri, HttpMethod httpMethod, Exception exception, TimeSpan? elapsedTime)
         {
-            Debug.WriteLine($"FailedToGetResponse Method = {httpMethod}, Uri = {exception}, ElapsedTime = {ToReadableString(elapsedTime)}");
-        }
-
-        /// <inheritdoc/>
-        public void OnReceivedResponse(Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan? elapsedTime)
-        {
-            Debug.WriteLine($"Received Method = {httpMethod}, Uri = {uri}, StatusCode = {response.StatusCode}, ElapsedTime = {ToReadableString(elapsedTime)}");
-        }
-
-        /// <inheritdoc/>
-        public void OnSendingRequest(Uri uri, HttpMethod httpMethod, HttpRequestMessage httpRequestMessage)
-        {
-            Debug.WriteLine($"Sending Method = {httpMethod}, Uri = {uri}");
-        }
-
-        private string ToReadableString(TimeSpan? spanNullable)
-        {
-            if (spanNullable == null)
+            if (elapsedTime.HasValue)
             {
-                return "-";
+                Debug.WriteLine($"FailedToGetResponse Method = {httpMethod}, Uri = {exception}, ElapsedTime = {ToReadableString(elapsedTime.Value)}");
+            }
+            else
+            {
+                Debug.WriteLine($"FailedToGetResponse Method = {httpMethod}, Uri = {exception}");
             }
 
-            // TODO : redo this code
-            var span = spanNullable.Value;
+            return Task.CompletedTask;
+        }
 
+        /// <inheritdoc/>
+        public Task OnReceivedResponseAsync(Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan? elapsedTime)
+        {
+            if (elapsedTime.HasValue)
+            {
+                Debug.WriteLine($"Received Method = {httpMethod}, Uri = {uri}, StatusCode = {response.StatusCode}, ElapsedTime = {ToReadableString(elapsedTime.Value)}");
+            }
+            else
+            {
+                Debug.WriteLine($"Received Method = {httpMethod}, Uri = {uri}, StatusCode = {response.StatusCode}");
+            }
+
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public Task OnSendingRequestAsync(Uri uri, HttpMethod httpMethod, HttpRequestMessage httpRequestMessage)
+        {
+            Debug.WriteLine($"Sending Method = {httpMethod}, Uri = {uri}");
+            return Task.CompletedTask;
+        }
+
+        private string ToReadableString(TimeSpan span)
+        {
+            // TODO : rewrite this code
             bool addComa = false;
             var stringBuilder = new StringBuilder(200);
             AddItem(ref addComa, span.Days, "day", stringBuilder);

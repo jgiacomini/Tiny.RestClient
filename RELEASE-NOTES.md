@@ -1,6 +1,7 @@
 # Release notes
-## 1.3.6
+## 1.4.0
 * Add SerializerException
+* Add PostMan listener
 
 ## 1.3.5
 * Fix small issue on formatting of debug formatter

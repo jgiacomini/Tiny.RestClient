@@ -362,14 +362,38 @@ public class XmlFormatter : IFormatter
 
 You can easily add a listener to listen all the sent requests / responses received and all exceptions.
 
-A debug listener is provided.
+Two listeners are provided by the lib :
+* A debug listener : which log all request in debug console
+* A postMan listener : which allow you to export all your request in postMan collection
 
-To add it you have to call AddDebug on Listeners property
+
+### Debug Listener
+
+To add Debug listener you have to call AddDebug on Listeners property
 ```cs
 
 client.Settings.Listeners.AddDebug();
 ```
 
+
+### PostMan Listener
+To add PostMan listener you have to call AddPostMan on Listeners property
+```cs
+PostManListerner listener = client.Settings.Listeners.AddPostMan("nameOfCollection");
+```
+
+When you want to save the postMan collection you have to call SaveAsync
+```cs
+await listener.SaveAsync(new FileInfo("myfile.json");
+```
+
+
+If you only want the Json of collection you can call the method GetCollectionJson 
+```cs
+await listener.GetCollectionJson();
+```
+
+### Custom Listener
 You can also create you own listener by implementing IListener.
 
 ```cs
