@@ -37,7 +37,7 @@ namespace Tiny.RestClient
                     Name = name,
                     Schema = "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
                 },
-                Items = new List<Item>()
+                Items = new List<Folder>()
             };
         }
 
@@ -112,9 +112,25 @@ namespace Tiny.RestClient
                 Request = await GetRequestAsync(uri, httpMethod, httpRequestMessage)
             };
 
+            var segmentsForFolder = string.Join("_", SegmentsWithoutSlashAndLastSegment(uri));
             lock (_toLock)
             {
-                Collection.Items.Add(item);
+                var folder = Collection.Items.FirstOrDefault(f => f.Name == segmentsForFolder);
+
+                if (folder != null)
+                {
+                    folder.Items.Add(item);
+                }
+                else
+                {
+                    folder = new Folder
+                    {
+                        Name = segmentsForFolder,
+                        Items = new List<Item>()
+                    };
+                    folder.Items.Add(item);
+                    Collection.Items.Add(folder);
+                }
             }
         }
 
@@ -188,6 +204,20 @@ namespace Tiny.RestClient
         private string[] SegmentsWithoutSlash(Uri uri)
         {
             return uri.Segments.
+                Select(s => s.Replace("/", string.Empty)).
+                Where(s => s != string.Empty).
+                ToArray();
+        }
+
+        private string[] SegmentsWithoutSlashAndLastSegment(Uri uri)
+        {
+            var segments = uri.Segments.ToList();
+            if (segments.Count > 1)
+            {
+                segments.RemoveAt(segments.Count - 1);
+            }
+
+            return segments.
                 Select(s => s.Replace("/", string.Empty)).
                 Where(s => s != string.Empty).
                 ToArray();
