@@ -209,7 +209,7 @@ namespace Tiny.RestClient
 
                         if (formatter == null)
                         {
-                            if (response.Content.Headers?.ContentType.MediaType != null)
+                            if (response.Content.Headers?.ContentType?.MediaType != null)
                             {
                                 // TODO : optimize the seach of formatter ?
                                 // Try to find best formatter
@@ -556,13 +556,16 @@ namespace Tiny.RestClient
 
                 try
                 {
-                    await Settings.Listeners.OnSendingRequestAsync(uri, httpMethod, request).ConfigureAwait(false);
-                    stopwatch?.Start();
-                    var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
+                    using (var cts = GetCancellationTokenSourceForTimeout(request, cancellationToken))
+                    {
+                        await Settings.Listeners.OnSendingRequestAsync(uri, httpMethod, request).ConfigureAwait(false);
+                        stopwatch?.Start();
+                        var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
 
-                    stopwatch?.Stop();
-                    await Settings.Listeners.OnReceivedResponseAsync(uri, httpMethod, response, stopwatch?.Elapsed).ConfigureAwait(false);
-                    return response;
+                        stopwatch?.Stop();
+                        await Settings.Listeners.OnReceivedResponseAsync(uri, httpMethod, response, stopwatch?.Elapsed).ConfigureAwait(false);
+                        return response;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -576,6 +579,24 @@ namespace Tiny.RestClient
                        httpMethod.Method,
                        ex);
                 }
+            }
+        }
+
+        private CancellationTokenSource GetCancellationTokenSourceForTimeout(
+            HttpRequestMessage request,
+            CancellationToken cancellationToken)
+        {
+            var timeout = Settings.DefaultTimeout;
+            if (timeout == Timeout.InfiniteTimeSpan)
+            {
+                // No need to create a CTS if there's no timeout
+                return null;
+            }
+            else
+            {
+                var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                cts.CancelAfter(timeout);
+                return cts;
             }
         }
 
