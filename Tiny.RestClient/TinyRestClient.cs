@@ -36,6 +36,7 @@ namespace Tiny.RestClient
         {
             _serverAddress = serverAddress ?? throw new ArgumentNullException(nameof(serverAddress));
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            _httpClient.Timeout = Timeout.InfiniteTimeSpan;
             if (!_serverAddress.EndsWith("/"))
             {
                 _serverAddress += "/";
@@ -559,10 +560,16 @@ namespace Tiny.RestClient
                     HttpResponseMessage response = null;
                     await Settings.Listeners.OnSendingRequestAsync(uri, httpMethod, request).ConfigureAwait(false);
                     stopwatch?.Start();
-
                     using (var cts = GetCancellationTokenSourceForTimeout(request, cancellationToken))
                     {
-                       response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
+                        try
+                        {
+                            response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead, cts?.Token ?? cancellationToken).ConfigureAwait(false);
+                        }
+                        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+                        {
+                            throw new TimeoutException();
+                        }
                     }
 
                     stopwatch?.Stop();
