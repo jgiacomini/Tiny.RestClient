@@ -52,21 +52,6 @@ namespace Tiny.RestClient.PostMan
 
         [JsonProperty(PropertyName = "raw")]
         public string Raw { get; set; }
-
-        [JsonProperty(PropertyName = "urlencoded")]
-        public List<Urlencoded> Urlencoded { get; set; }
-    }
-
-    internal class Urlencoded
-    {
-        [JsonProperty(PropertyName = "key")]
-        public string Key { get; set; }
-
-        [JsonProperty(PropertyName = "value")]
-        public string Value { get; set; }
-
-        [JsonProperty(PropertyName = "type")]
-        public string Type { get; set; }
     }
 
     internal class Url
