@@ -556,12 +556,12 @@ namespace Tiny.RestClient
                         request.Content = content;
                     }
 
-                    Settings.Listeners.OnSendingRequest(uri, httpMethod, request);
+                    await Settings.Listeners.OnSendingRequestAsync(uri, httpMethod, request).ConfigureAwait(false);
                     stopwatch?.Start();
                     var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
 
                     stopwatch?.Stop();
-                    Settings.Listeners.OnReceivedResponse(uri, httpMethod, response, stopwatch?.Elapsed);
+                    await Settings.Listeners.OnReceivedResponseAsync(uri, httpMethod, response, stopwatch?.Elapsed).ConfigureAwait(false);
                     return response;
                 }
             }
@@ -569,7 +569,7 @@ namespace Tiny.RestClient
             {
                 stopwatch?.Stop();
 
-                Settings.Listeners.OnFailedToReceiveResponse(uri, httpMethod, ex, stopwatch?.Elapsed);
+                await Settings.Listeners.OnFailedToReceiveResponseAsync(uri, httpMethod, ex, stopwatch?.Elapsed).ConfigureAwait(false);
 
                 throw new ConnectionException(
                    "Failed to get a response from server",

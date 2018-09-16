@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Tiny.RestClient
 {
@@ -74,13 +75,13 @@ namespace Tiny.RestClient
         }
 
         /// <inheritdoc/>
-        public void OnSendingRequest(Uri uri, HttpMethod httpMethod, HttpRequestMessage httpRequestMessage)
+        public async Task OnSendingRequestAsync(Uri uri, HttpMethod httpMethod, HttpRequestMessage httpRequestMessage)
         {
             foreach (var item in this)
             {
                 try
                 {
-                    item.OnSendingRequest(uri, httpMethod, httpRequestMessage);
+                    await item.OnSendingRequestAsync(uri, httpMethod, httpRequestMessage).ConfigureAwait(false);
                 }
                 catch (Exception)
                 {
@@ -90,13 +91,13 @@ namespace Tiny.RestClient
         }
 
         /// <inheritdoc/>
-        public void OnFailedToReceiveResponse(Uri uri, HttpMethod httpMethod, Exception exception, TimeSpan? elapsedTime)
+        public async Task OnFailedToReceiveResponseAsync(Uri uri, HttpMethod httpMethod, Exception exception, TimeSpan? elapsedTime)
         {
             foreach (var item in this)
             {
                 try
                 {
-                    item.OnFailedToReceiveResponse(uri, httpMethod, exception, item.MeasureTime ? elapsedTime : null);
+                    await item.OnFailedToReceiveResponseAsync(uri, httpMethod, exception, item.MeasureTime ? elapsedTime : null).ConfigureAwait(false);
                 }
                 catch
                 {
@@ -106,13 +107,13 @@ namespace Tiny.RestClient
         }
 
         /// <inheritdoc/>
-        public void OnReceivedResponse(Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan? elapsedTime)
+        public async Task OnReceivedResponseAsync(Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan? elapsedTime)
         {
             foreach (var item in this)
             {
                 try
                 {
-                    item.OnReceivedResponse(uri, httpMethod, response, item.MeasureTime ? elapsedTime : null);
+                    await item.OnReceivedResponseAsync(uri, httpMethod, response, item.MeasureTime ? elapsedTime : null).ConfigureAwait(false);
                 }
                 catch (Exception)
                 {
