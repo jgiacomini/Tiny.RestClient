@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 namespace Tiny.RestClient.PostMan
 {
-    internal class PostManCollection
+    internal class PostmanCollection
     {
         [JsonProperty(PropertyName = "info")]
         public Info Info { get; set; }
