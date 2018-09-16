@@ -18,7 +18,7 @@ It hides all the complexity of communication, deserialisation ...
 
 ## Features
 * Modern async http client for REST API.
-* Support of verbs : GET, POST , PUT, DELETE, PATCH, HEAD
+* Support of verbs : GET, POST , PUT, DELETE, PATCH
 * Support of custom http verbs
 * Support of cancellation token on each requests
 * Automatic XML and JSON serialization / deserialization
@@ -29,6 +29,7 @@ It hides all the complexity of communication, deserialisation ...
 * Optimized http calls
 * Typed exceptions which are easier to interpret
 * Provide an easy way to log : all sending of request, failed to get response,  and the time get response.
+* Support of export requests to PostManCollection
 
 ## Basic usage
 
@@ -118,6 +119,12 @@ var response = await client.
 ```
 
 
+### Custom Http Verb requests
+```cs
+ await client.
+       NewRequest(new System.Net.Http.HttpMethod("HEAD"), "City/All").
+       ExecuteAsync<List<City>>();
+```
 ### Download file
 ```cs
 string filePath = "c:\map.pdf";
@@ -238,10 +245,11 @@ await client.
 
 
 ## Error handling
-All requests can throw 3 exceptions : 
+All requests can throw 4 exceptions : 
 
 * ConnectionException : thrown when the request can't reach the server
 * HttpException : thrown when the server has invalid error code
+* SerializeException : thrown when the serializer can't serialize the content
 * DeserializeException : thrown when the deserializer can't deserialize the response
 
 ### Catch a specific error code
@@ -355,14 +363,38 @@ public class XmlFormatter : IFormatter
 
 You can easily add a listener to listen all the sent requests / responses received and all exceptions.
 
-A debug listener is provided.
+Two listeners are provided by the lib :
+* A debug listener : which log all request in debug console
+* A postMan listener : which allow you to export all your request in postMan collection
 
-To add it you have to call AddDebug on Listeners property
+
+### Debug Listener
+
+To add Debug listener you have to call AddDebug on Listeners property
 ```cs
 
 client.Settings.Listeners.AddDebug();
 ```
 
+
+### PostMan Listener
+To add PostMan listener you have to call AddPostMan on Listeners property
+```cs
+PostManListerner listener = client.Settings.Listeners.AddPostMan("nameOfCollection");
+```
+
+When you want to save the postMan collection you have to call SaveAsync
+```cs
+await listener.SaveAsync(new FileInfo("postManCollection.json");
+```
+
+
+If you only want the Json of collection you can call the method GetCollectionJson 
+```cs
+await listener.GetCollectionJson();
+```
+
+### Custom Listener
 You can also create you own listener by implementing IListener.
 
 ```cs

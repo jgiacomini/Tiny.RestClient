@@ -5,12 +5,12 @@ using System.Text;
 namespace Tiny.RestClient
 {
     /// <summary>
-    /// Base Class of all <see cref="TinyHttpException"/>.
+    /// Base Class of all <see cref="TinyRestClientException"/>.
     /// </summary>
     /// <seealso cref="System.Exception" />
-    public abstract class TinyHttpException : Exception
+    public abstract class TinyRestClientException : Exception
     {
-        internal TinyHttpException(string message, Exception innerException)
+        internal TinyRestClientException(string message, Exception innerException)
             : base(message, innerException)
         {
         }

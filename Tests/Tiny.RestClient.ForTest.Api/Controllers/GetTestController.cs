@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -17,6 +18,12 @@ namespace Tiny.RestClient.ForTest.Api.Controllers
         public Task NoResponse()
         {
             return Task.Delay(1);
+        }
+
+        [HttpGet("ThreeSecsResponse")]
+        public Task ThreeSecsResponse()
+        {
+            return Task.Delay(TimeSpan.FromSeconds(3));
         }
 
         [HttpGet("Simple")]

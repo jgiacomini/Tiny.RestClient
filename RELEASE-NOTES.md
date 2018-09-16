@@ -1,4 +1,10 @@
 # Release notes
+## 1.4.0
+* Add SerializerException
+* Add PostMan listener
+* Fix NullReferenceException when ContentType is null and the client try to deserialize it.
+* Fix small bugs
+
 ## 1.3.5
 * Fix small issue on formatting of debug formatter
 

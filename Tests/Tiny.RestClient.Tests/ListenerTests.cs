@@ -13,7 +13,7 @@ namespace Tiny.RestClient.Tests
             client.Settings.Listeners.AddDebug();
             client.Settings.Listeners.AddDebug(false);
             await client.
-                NewRequest(new System.Net.Http.HttpMethod("GET"), "GetTest/noResponse").
+                NewRequest(new System.Net.Http.HttpMethod("GET"), "GetTest/ThreeSecsResponse").
                 ExecuteAsync();
         }
     }

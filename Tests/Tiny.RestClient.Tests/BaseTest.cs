@@ -3,9 +3,9 @@ namespace Tiny.RestClient.Tests
 {
     public class BaseTest
     {
-        private readonly object _toLock = new object();
-        private TinyRestClient _client;
-        private TinyRestClient _clientXML;
+        private static readonly object _toLock = new object();
+        private static TinyRestClient _client;
+        private static TinyRestClient _clientXML;
         protected static readonly string _serverUrl = "http://localhost:4242/api/";
 
         protected TinyRestClient GetClientForUrl(string url)
@@ -13,20 +13,21 @@ namespace Tiny.RestClient.Tests
             return new TinyRestClient(Program.Client, url);
         }
 
-        protected TinyRestClient GetClient()
+        public static TinyRestClient GetClient()
         {
             lock (_toLock)
             {
                 if (_client == null)
                 {
                     _client = new TinyRestClient(Program.Client, _serverUrl);
+                    _client.Settings.Listeners.AddPostMan("tests");
                 }
             }
 
             return _client;
         }
 
-        protected TinyRestClient GetClientXML()
+        public static TinyRestClient GetClientXML()
         {
             lock (_toLock)
             {
