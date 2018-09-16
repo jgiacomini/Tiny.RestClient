@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3;netstandard2.0</TargetFrameworks>
-    <Version>1.4.0</Version>
+    <Version>1.4.0-alpha001</Version>
     <Copyright>Copyright © Jérôme Giacomini 2018</Copyright>
     <NeutralLanguage>en</NeutralLanguage>
     <Title>Tiny.RestClient</Title>
@@ -22,6 +22,7 @@
       * Optimized http calls
       * Typed exceptions which are easier to interpret
       * Provide an easy way to log : all sending of request, failed to get response, and the time get response.
+      * Support of export requests to PostManCollection
     </Description>
     <PackageLicenseUrl>https://github.com/jgiacomini/Tiny.RestClient/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/jgiacomini/Tiny.RestClient</PackageProjectUrl>
