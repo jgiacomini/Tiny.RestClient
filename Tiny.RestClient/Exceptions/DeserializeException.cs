@@ -5,8 +5,8 @@ namespace Tiny.RestClient
     /// <summary>
     /// Class DeserializeException.
     /// </summary>
-    /// <seealso cref="TinyHttpException" />
-    public class DeserializeException : TinyHttpException
+    /// <seealso cref="TinyRestClientException" />
+    public class DeserializeException : TinyRestClientException
     {
         internal DeserializeException(string message, Exception innerException, string dataToDeserialize)
             : base(message, innerException)

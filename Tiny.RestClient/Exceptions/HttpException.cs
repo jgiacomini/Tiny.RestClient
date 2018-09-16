@@ -13,8 +13,8 @@ namespace Tiny.RestClient
     /// <summary>
     /// A httpexception
     /// </summary>
-    /// <seealso cref="TinyHttpException" />
-    public class HttpException : TinyHttpException
+    /// <seealso cref="TinyRestClientException" />
+    public class HttpException : TinyRestClientException
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="HttpException"/> class.
