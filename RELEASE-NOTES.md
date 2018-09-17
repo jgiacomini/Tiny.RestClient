@@ -1,4 +1,10 @@
 # Release notes
+## 1.4.2
+* Add the possibility to define timeout globaly or by request
+* Now the API throw a TimeoutException when request is in timeout
+
+Thanks to TLV for the help.
+
 ## 1.4.1
 * Rename PostMan to Postman
 
