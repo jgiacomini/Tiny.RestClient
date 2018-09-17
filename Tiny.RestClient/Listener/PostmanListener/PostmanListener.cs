@@ -41,7 +41,7 @@ namespace Tiny.RestClient
             };
         }
 
-        internal PostMan.PostmanCollection Collection { get; }
+        internal PostmanCollection Collection { get; }
 
         /// <inheritdoc/>
         public bool MeasureTime => false;
