@@ -3,17 +3,17 @@
     /// <summary>
     /// Extension to add easily debug listener
     /// </summary>
-    public static class PostManListenerExtension
+    public static class PostmanListenerExtension
     {
         /// <summary>
-        /// Add <see cref="PostManListener"/> to listeners />
+        /// Add <see cref="PostmanListener"/> to listeners />
         /// </summary>
         /// <param name="listeners">all listeners</param>
         /// <param name="name">name of the collection</param>
         /// <returns>listener created</returns>
-        public static PostManListener AddPostMan(this Listeners listeners, string name)
+        public static PostmanListener AddPostman(this Listeners listeners, string name)
         {
-            var listener = new PostManListener(name);
+            var listener = new PostmanListener(name);
             listeners.Add(listener);
 
             return listener;

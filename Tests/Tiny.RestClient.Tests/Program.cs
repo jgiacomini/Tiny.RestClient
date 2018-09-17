@@ -27,7 +27,7 @@ namespace Tiny.RestClient.Tests
         public static async Task Cleanup()
         {
             var client = BaseTest.GetClient();
-            var postManListener = client.Settings.Listeners.OfType<PostManListener>().First();
+            var postManListener = client.Settings.Listeners.OfType<PostmanListener>().First();
             await postManListener.SaveAsync(new System.IO.FileInfo("test_postMan.json"));
 
             _server?.Dispose();

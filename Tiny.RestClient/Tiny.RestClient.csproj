@@ -1,15 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3;netstandard2.0</TargetFrameworks>
-    <Version>1.4.0</Version>
+    <Version>1.4.1</Version>
     <Copyright>Copyright © Jérôme Giacomini 2018</Copyright>
     <NeutralLanguage>en</NeutralLanguage>
     <Title>Tiny.RestClient</Title>
     <Authors>Jérôme Giacomini</Authors>
-    <Description>
-      Tiny.RestClient facilitates the dialog between your API and your application. It hides all the complexity of communication, deserialisation ...
+    <Description>Tiny.RestClient facilitates the dialog between your API and your application. It hides all the complexity of communication, deserialisation ...
 
-      Features : 
+Features : 
       * Modern async http client for REST API.
       * Support of verbs : GET, POST , PUT, DELETE, PATCH
       * Support of custom http verbs
@@ -22,15 +21,15 @@
       * Optimized http calls
       * Typed exceptions which are easier to interpret
       * Provide an easy way to log : all sending of request, failed to get response, and the time get response.
-    </Description>
+      * Support of export requests to Postman collection</Description>
     <PackageLicenseUrl>https://github.com/jgiacomini/Tiny.RestClient/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/jgiacomini/Tiny.RestClient</PackageProjectUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/jgiacomini/Tiny.RestClient/master/icon.png</PackageIconUrl>
-    <PackageTags>httpClient;FluentHttp;Fluent;RestClient;REST;TinyRestClient;</PackageTags>
+    <PackageTags>httpClient;FluentHttp;Fluent;RestClient;REST;TinyRestClient;PostMan</PackageTags>
     <RepositoryUrl>https://github.com/jgiacomini/Tiny.RestClient.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <MinClientVersion>3.0.3</MinClientVersion>
-    <PackageReleaseNotes>See release notes at https://github.com/jgiacomini/Tiny.RestClient/blob/1.4.0/RELEASE-NOTES.md</PackageReleaseNotes>
+    <PackageReleaseNotes>See release notes at https://github.com/jgiacomini/Tiny.RestClient/blob/1.4.1/RELEASE-NOTES.md</PackageReleaseNotes>
   </PropertyGroup>
   <PropertyGroup>
     <LangVersion>latest</LangVersion>

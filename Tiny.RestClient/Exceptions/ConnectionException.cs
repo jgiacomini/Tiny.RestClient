@@ -5,8 +5,8 @@ namespace Tiny.RestClient
     /// <summary>
     /// Class ConnectionException.
     /// </summary>
-    /// <seealso cref="TinyHttpException" />
-    public class ConnectionException : TinyHttpException
+    /// <seealso cref="TinyRestClientException" />
+    public class ConnectionException : TinyRestClientException
     {
         internal ConnectionException(string message, string url, string verb, Exception innerException)
             : base($"{message} url : {url}, Verb {verb}", innerException)

@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 namespace Tiny.RestClient.PostMan
 {
-    internal class PostManCollection
+    internal class PostmanCollection
     {
         [JsonProperty(PropertyName = "info")]
         public Info Info { get; set; }
 
         [JsonProperty(PropertyName = "item")]
-        public List<Item> Items { get; set; }
+        public List<Folder> Items { get; set; }
     }
 
     internal class Info
@@ -19,6 +19,14 @@ namespace Tiny.RestClient.PostMan
         public string Name { get; set; }
         [JsonProperty(PropertyName = "schema")]
         public string Schema { get; set; }
+    }
+
+    internal class Folder
+    {
+        [JsonProperty(PropertyName = "name")]
+        public string Name { get; set; }
+        [JsonProperty(PropertyName = "item")]
+        public List<Item> Items { get; set; }
     }
 
     internal class Item
