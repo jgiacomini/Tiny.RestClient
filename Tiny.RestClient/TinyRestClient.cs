@@ -25,7 +25,7 @@ namespace Tiny.RestClient
         private readonly string _serverAddress;
         #endregion
 
-        #region Constructors
+        #region Constructor
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TinyRestClient"/> class.
@@ -36,6 +36,13 @@ namespace Tiny.RestClient
         {
             _serverAddress = serverAddress ?? throw new ArgumentNullException(nameof(serverAddress));
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+
+            // We manage it in by our own settings
+            if (httpClient.Timeout != Timeout.InfiniteTimeSpan)
+            {
+                httpClient.Timeout = Timeout.InfiniteTimeSpan;
+            }
+
             if (!_serverAddress.EndsWith("/"))
             {
                 _serverAddress += "/";
