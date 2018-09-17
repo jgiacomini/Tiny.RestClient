@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Tiny.RestClient
@@ -21,7 +22,7 @@ namespace Tiny.RestClient
         /// <param name="httpMethod">verb of the request</param>
         /// <param name="httpRequestMessage">message sended to server</param>
         /// <returns>A <see cref="Task"/></returns>
-        Task OnSendingRequestAsync(Uri uri, HttpMethod httpMethod, HttpRequestMessage httpRequestMessage);
+        Task OnSendingRequestAsync(Uri uri, HttpMethod httpMethod, HttpRequestMessage httpRequestMessage, CancellationToken cancellationToken);
 
         /// <summary>
         /// Invoked when received a response from server
@@ -31,7 +32,7 @@ namespace Tiny.RestClient
         /// <param name="response">response of the server</param>
         /// <param name="elapsedTime">time ellapsed between the send of request and response of server</param>
         /// <returns>A <see cref="Task"/></returns>
-        Task OnReceivedResponseAsync(Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan? elapsedTime);
+        Task OnReceivedResponseAsync(Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan? elapsedTime, CancellationToken cancellationToken);
 
         /// <summary>
         /// Invoke when a request failed to be invoked
@@ -41,6 +42,6 @@ namespace Tiny.RestClient
         /// <param name="exception">exception</param>
         /// <param name="elapsedTime">time ellapsed between the send of request and response of server (can be null if no listener measure time)</param>
         /// <returns>A <see cref="Task"/></returns>
-        Task OnFailedToReceiveResponseAsync(Uri uri, HttpMethod httpMethod, Exception exception, TimeSpan? elapsedTime);
+        Task OnFailedToReceiveResponseAsync(Uri uri, HttpMethod httpMethod, Exception exception, TimeSpan? elapsedTime, CancellationToken cancellationToken);
     }
 }
