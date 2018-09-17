@@ -566,7 +566,7 @@ namespace Tiny.RestClient
                 {
                     HttpResponseMessage response = null;
 
-                    await Settings.Listeners.OnSendingRequestAsync(uri, httpMethod, request).ConfigureAwait(false);
+                    await Settings.Listeners.OnSendingRequestAsync(uri, httpMethod, request, cancellationToken).ConfigureAwait(false);
                     cancellationToken.ThrowIfCancellationRequested();
                     stopwatch?.Start();
                     using (var cts = GetCancellationTokenSourceForTimeout(request, cancellationToken))
@@ -591,7 +591,7 @@ namespace Tiny.RestClient
 
                     stopwatch?.Stop();
                     cancellationToken.ThrowIfCancellationRequested();
-                    await Settings.Listeners.OnReceivedResponseAsync(uri, httpMethod, response, stopwatch?.Elapsed).ConfigureAwait(false);
+                    await Settings.Listeners.OnReceivedResponseAsync(uri, httpMethod, response, stopwatch?.Elapsed, cancellationToken).ConfigureAwait(false);
                     return response;
                 }
                 catch (OperationCanceledException e)
@@ -606,7 +606,7 @@ namespace Tiny.RestClient
                 {
                     stopwatch?.Stop();
 
-                    await Settings.Listeners.OnFailedToReceiveResponseAsync(uri, httpMethod, ex, stopwatch?.Elapsed).ConfigureAwait(false);
+                    await Settings.Listeners.OnFailedToReceiveResponseAsync(uri, httpMethod, ex, stopwatch?.Elapsed, cancellationToken).ConfigureAwait(false);
 
                     throw new ConnectionException(
                        "Failed to get a response from server",

@@ -21,6 +21,7 @@ namespace Tiny.RestClient
         /// <param name="uri">uri of the request</param>
         /// <param name="httpMethod">verb of the request</param>
         /// <param name="httpRequestMessage">message sended to server</param>
+        /// <param name="cancellationToken">The cancellation token to cancel operation.</param>
         /// <returns>A <see cref="Task"/></returns>
         Task OnSendingRequestAsync(Uri uri, HttpMethod httpMethod, HttpRequestMessage httpRequestMessage, CancellationToken cancellationToken);
 
@@ -31,6 +32,7 @@ namespace Tiny.RestClient
         /// <param name="httpMethod">verb of the request</param>
         /// <param name="response">response of the server</param>
         /// <param name="elapsedTime">time ellapsed between the send of request and response of server</param>
+        /// <param name="cancellationToken">The cancellation token to cancel operation.</param>
         /// <returns>A <see cref="Task"/></returns>
         Task OnReceivedResponseAsync(Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan? elapsedTime, CancellationToken cancellationToken);
 
@@ -41,6 +43,7 @@ namespace Tiny.RestClient
         /// <param name="httpMethod">verb of the request</param>
         /// <param name="exception">exception</param>
         /// <param name="elapsedTime">time ellapsed between the send of request and response of server (can be null if no listener measure time)</param>
+        /// <param name="cancellationToken">The cancellation token to cancel operation.</param>
         /// <returns>A <see cref="Task"/></returns>
         Task OnFailedToReceiveResponseAsync(Uri uri, HttpMethod httpMethod, Exception exception, TimeSpan? elapsedTime, CancellationToken cancellationToken);
     }
