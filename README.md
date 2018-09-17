@@ -377,15 +377,15 @@ client.Settings.Listeners.AddDebug();
 ```
 
 
-### PostMan Listener
-To add PostMan listener you have to call AddPostMan on Listeners property
+### Postman Listener
+To add Postman listener you have to call AddPostman on Listeners property
 ```cs
-PostManListerner listener = client.Settings.Listeners.AddPostMan("nameOfCollection");
+PostManListerner listener = client.Settings.Listeners.AddPostman("nameOfCollection");
 ```
 
-When you want to save the postMan collection you have to call SaveAsync
+When you want to save the postman collection you have to call SaveAsync
 ```cs
-await listener.SaveAsync(new FileInfo("postManCollection.json");
+await listener.SaveAsync(new FileInfo("postmanCollection.json");
 ```
 
 
