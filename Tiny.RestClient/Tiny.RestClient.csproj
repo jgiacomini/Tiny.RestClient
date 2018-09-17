@@ -23,11 +23,11 @@
 * Define timeout globally or by request
 * Timeout exception throwed if the request is in timeout (by default HttpClient send OperationCancelledException, so we can't make difference between a user annulation and timeout)
 * Provide an easy way to log : all sending of request, failed to get response,  and the time get response.
-* Support of export requests to Postman collection</Description>
+* Support of export requests to postman collection</Description>
     <PackageLicenseUrl>https://github.com/jgiacomini/Tiny.RestClient/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/jgiacomini/Tiny.RestClient</PackageProjectUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/jgiacomini/Tiny.RestClient/master/icon.png</PackageIconUrl>
-    <PackageTags>httpClient;FluentHttp;Fluent;RestClient;REST;TinyRestClient;PostMan</PackageTags>
+    <PackageTags>httpClient;FluentHttp;Fluent;RestClient;REST;TinyRestClient;postman</PackageTags>
     <RepositoryUrl>https://github.com/jgiacomini/Tiny.RestClient.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <MinClientVersion>3.0.3</MinClientVersion>
