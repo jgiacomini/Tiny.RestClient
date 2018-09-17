@@ -35,12 +35,20 @@ It hides all the complexity of communication, deserialisation ...
 ## Basic usage
 
 ### Create the client
+
+Define a global timeout for all client. (By default it's setted to 100 secondes)
 ```cs
 using Tiny.RestClient;
 
 var client = new TinyRestClient("http://MyAPI.com/api", new HttpClient());
 ```
 
+### Define timeout
+
+Define global timeout
+```cs
+client.Settings.DefaultTimeout = TimeSpan.FromSeconds(100);
+```
 ### Headers
 
 #### Default header for all requests
