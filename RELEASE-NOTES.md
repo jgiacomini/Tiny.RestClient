@@ -4,10 +4,10 @@
 * Now the API throw a TimeoutException when request is in timeout
 * Add better support of cancellation tokens
 
-Thanks to TLV for the help.
+Thanks to Thomas Levesque for the help.
 
 ## 1.4.1
-* Rename PostMan to Postman
+* Rename PostMan to postman
 
 ## 1.4.0
 * Add SerializerException
