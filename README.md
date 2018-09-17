@@ -30,7 +30,7 @@ It hides all the complexity of communication, deserialisation ...
 * Typed exceptions which are easier to interpret
 * Define timeout globally or by request
 * Timeout exception throwed if the request is in timeout (by default HttpClient send OperationCancelledException, so we can't make difference between a user annulation and timeout)
-* Provide an easy way to log : all sending of request, failed to get response,  and the time get response.
+* Provide an easy way to log : all sending of request, failed to get response, and the time get response.
 * Support of export requests to postman collection
 
 ## Basic usage
