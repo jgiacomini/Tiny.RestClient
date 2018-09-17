@@ -383,7 +383,7 @@ You can easily add a listener to listen all the sent requests / responses receiv
 
 Two listeners are provided by the lib :
 * A debug listener : which log all request in debug console
-* A postMan listener : which allow you to export all your request in postMan collection
+* A postman listener : which allow you to export all your request in postman collection
 
 
 ### Debug Listener
@@ -396,9 +396,9 @@ client.Settings.Listeners.AddDebug();
 
 
 ### Postman Listener
-To add Postman listener you have to call AddPostman on Listeners property
+To add postman listener you have to call AddPostman on Listeners property
 ```cs
-PostManListerner listener = client.Settings.Listeners.AddPostman("nameOfCollection");
+PostmanListerner listener = client.Settings.Listeners.AddPostman("nameOfCollection");
 ```
 
 When you want to save the postman collection you have to call SaveAsync
