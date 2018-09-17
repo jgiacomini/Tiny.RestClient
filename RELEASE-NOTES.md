@@ -2,6 +2,7 @@
 ## 1.4.2
 * Add the possibility to define timeout globaly or by request
 * Now the API throw a TimeoutException when request is in timeout
+* Add better support of cancellation tokens
 
 Thanks to TLV for the help.
 
