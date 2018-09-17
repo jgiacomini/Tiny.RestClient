@@ -23,7 +23,7 @@ namespace Tiny.RestClient.Tests
             Debug.WriteLine(data);
         }
 
-        [ExpectedException(typeof(TaskCanceledException))]
+        [ExpectedException(typeof(OperationCanceledException))]
         [TestMethod]
         public async Task TimeoutCancelledByUserTest()
         {

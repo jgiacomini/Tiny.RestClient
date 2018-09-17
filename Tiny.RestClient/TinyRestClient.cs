@@ -198,6 +198,9 @@ namespace Tiny.RestClient
             using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
+
+                cancellationToken.ThrowIfCancellationRequested();
+
                 using (HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, formatter, cancellationToken).ConfigureAwait(false))
                 {
                     using (var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false))
@@ -512,6 +515,7 @@ namespace Tiny.RestClient
 
         private async Task<HttpResponseMessage> SendRequestAsync(HttpMethod httpMethod, Uri uri, Dictionary<string, string> requestHeader, HttpContent content, IFormatter deserializer, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             Stopwatch stopwatch = null;
 
             if (Settings.Listeners.MeasureTime)
@@ -572,8 +576,17 @@ namespace Tiny.RestClient
                     }
 
                     stopwatch?.Stop();
+                    cancellationToken.ThrowIfCancellationRequested();
                     await Settings.Listeners.OnReceivedResponseAsync(uri, httpMethod, response, stopwatch?.Elapsed).ConfigureAwait(false);
                     return response;
+                }
+                catch (OperationCanceledException e)
+                {
+                    throw e;
+                }
+                catch (TimeoutException e)
+                {
+                    throw e;
                 }
                 catch (Exception ex)
                 {
@@ -616,6 +629,7 @@ namespace Tiny.RestClient
             string content = null;
             try
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
                 if (headersToFill != null)
@@ -629,10 +643,16 @@ namespace Tiny.RestClient
                 }
                 else
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
                     content = await StreamToStringAsync(stream).ConfigureAwait(false);
                 }
 
+                cancellationToken.ThrowIfCancellationRequested();
                 response.EnsureSuccessStatusCode();
+            }
+            catch (OperationCanceledException ex)
+            {
+                throw ex;
             }
             catch (Exception ex)
             {
