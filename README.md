@@ -28,9 +28,10 @@ It hides all the complexity of communication, deserialisation ...
 * Upload file
 * Optimized http calls
 * Typed exceptions which are easier to interpret
+* Define timeout globally or by request
 * Timeout exception throwed if the request is in timeout (by default HttpClient send OperationCancelledException, so we can't make difference between a user annulation and timeout)
 * Provide an easy way to log : all sending of request, failed to get response,  and the time get response.
-* Support of export requests to PostManCollection
+* Support of export requests to PostmanCollection
 
 ## Basic usage
 
@@ -43,12 +44,6 @@ using Tiny.RestClient;
 var client = new TinyRestClient("http://MyAPI.com/api", new HttpClient());
 ```
 
-### Define timeout
-
-Define global timeout
-```cs
-client.Settings.DefaultTimeout = TimeSpan.FromSeconds(100);
-```
 ### Headers
 
 #### Default header for all requests
@@ -134,6 +129,19 @@ var response = await client.
        NewRequest(new System.Net.Http.HttpMethod("HEAD"), "City/All").
        ExecuteAsync<List<City>>();
 ```
+
+### Define timeout
+
+Define global timeout
+```cs
+client.Settings.DefaultTimeout = TimeSpan.FromSeconds(100);
+```
+
+Define the timeout for one request
+```cs
+client.Settings.DefaultTimeout = TimeSpan.FromSeconds(100);
+```
+
 ### Download file
 ```cs
 string filePath = "c:\map.pdf";
