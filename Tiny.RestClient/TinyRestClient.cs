@@ -600,14 +600,14 @@ namespace Tiny.RestClient
                 }
                 catch (TimeoutException e)
                 {
+                    stopwatch?.Stop();
+                    await Settings.Listeners.OnFailedToReceiveResponseAsync(uri, httpMethod, e, stopwatch?.Elapsed, cancellationToken).ConfigureAwait(false);
                     throw e;
                 }
                 catch (Exception ex)
                 {
                     stopwatch?.Stop();
-
                     await Settings.Listeners.OnFailedToReceiveResponseAsync(uri, httpMethod, ex, stopwatch?.Elapsed, cancellationToken).ConfigureAwait(false);
-
                     throw new ConnectionException(
                        "Failed to get a response from server",
                        uri.AbsoluteUri,
