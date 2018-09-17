@@ -17,7 +17,13 @@ namespace Tiny.RestClient
             Listeners = new Listeners();
             Formatters = new Formatters();
             _encoding = Encoding.UTF8;
+            DefaultTimeout = TimeSpan.FromSeconds(100);
         }
+
+        /// <summary>
+        /// Get or set the default timeout of each request
+        /// </summary>
+        public TimeSpan DefaultTimeout { get; set; }
 
         /// <summary>
         /// Gets or set the encoding use by the client

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Tiny.RestClient
 {
@@ -9,6 +10,13 @@ namespace Tiny.RestClient
     /// <seealso cref="IExecutableRequest" />
     public interface IRequest : IExecutableRequest, IFormRequest
     {
+        /// <summary>
+        /// With timeout for current request
+        /// </summary>
+        /// <param name="timeout">timeout</param>
+        /// <returns>The current request</returns>
+        IRequest WithTimeout(TimeSpan timeout);
+
         /// <summary>
         /// Adds the content.
         /// </summary>

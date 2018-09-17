@@ -1,6 +1,13 @@
 # Release notes
+## 1.4.2
+* Add the possibility to define timeout globaly or by request
+* Now the API throw a TimeoutException when request is in timeout
+* Add better support of cancellation tokens
+
+Thanks to Thomas Levesque for the help.
+
 ## 1.4.1
-* Rename PostMan to Postman
+* Rename PostMan to postman
 
 ## 1.4.0
 * Add SerializerException

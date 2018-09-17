@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Tiny.RestClient
@@ -75,13 +76,18 @@ namespace Tiny.RestClient
         }
 
         /// <inheritdoc/>
-        public async Task OnSendingRequestAsync(Uri uri, HttpMethod httpMethod, HttpRequestMessage httpRequestMessage)
+        public async Task OnSendingRequestAsync(Uri uri, HttpMethod httpMethod, HttpRequestMessage httpRequestMessage, CancellationToken cancellationToken)
         {
             foreach (var item in this)
             {
                 try
                 {
-                    await item.OnSendingRequestAsync(uri, httpMethod, httpRequestMessage).ConfigureAwait(false);
+                    cancellationToken.ThrowIfCancellationRequested();
+                    await item.OnSendingRequestAsync(uri, httpMethod, httpRequestMessage, cancellationToken).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
                 }
                 catch (Exception)
                 {
@@ -91,13 +97,18 @@ namespace Tiny.RestClient
         }
 
         /// <inheritdoc/>
-        public async Task OnFailedToReceiveResponseAsync(Uri uri, HttpMethod httpMethod, Exception exception, TimeSpan? elapsedTime)
+        public async Task OnFailedToReceiveResponseAsync(Uri uri, HttpMethod httpMethod, Exception exception, TimeSpan? elapsedTime, CancellationToken cancellationToken)
         {
             foreach (var item in this)
             {
                 try
                 {
-                    await item.OnFailedToReceiveResponseAsync(uri, httpMethod, exception, item.MeasureTime ? elapsedTime : null).ConfigureAwait(false);
+                    cancellationToken.ThrowIfCancellationRequested();
+                    await item.OnFailedToReceiveResponseAsync(uri, httpMethod, exception, item.MeasureTime ? elapsedTime : null, cancellationToken).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
                 }
                 catch
                 {
@@ -107,13 +118,18 @@ namespace Tiny.RestClient
         }
 
         /// <inheritdoc/>
-        public async Task OnReceivedResponseAsync(Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan? elapsedTime)
+        public async Task OnReceivedResponseAsync(Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan? elapsedTime, CancellationToken cancellationToken)
         {
             foreach (var item in this)
             {
                 try
                 {
-                    await item.OnReceivedResponseAsync(uri, httpMethod, response, item.MeasureTime ? elapsedTime : null).ConfigureAwait(false);
+                    cancellationToken.ThrowIfCancellationRequested();
+                    await item.OnReceivedResponseAsync(uri, httpMethod, response, item.MeasureTime ? elapsedTime : null, cancellationToken).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
                 }
                 catch (Exception)
                 {

@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Tiny.RestClient
@@ -26,7 +27,7 @@ namespace Tiny.RestClient
         public bool MeasureTime { get; }
 
         /// <inheritdoc/>
-        public Task OnFailedToReceiveResponseAsync(Uri uri, HttpMethod httpMethod, Exception exception, TimeSpan? elapsedTime)
+        public Task OnFailedToReceiveResponseAsync(Uri uri, HttpMethod httpMethod, Exception exception, TimeSpan? elapsedTime, CancellationToken cancellationToken)
         {
             if (elapsedTime.HasValue)
             {
@@ -41,7 +42,7 @@ namespace Tiny.RestClient
         }
 
         /// <inheritdoc/>
-        public Task OnReceivedResponseAsync(Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan? elapsedTime)
+        public Task OnReceivedResponseAsync(Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan? elapsedTime, CancellationToken cancellationToken)
         {
             if (elapsedTime.HasValue)
             {
@@ -56,7 +57,7 @@ namespace Tiny.RestClient
         }
 
         /// <inheritdoc/>
-        public Task OnSendingRequestAsync(Uri uri, HttpMethod httpMethod, HttpRequestMessage httpRequestMessage)
+        public Task OnSendingRequestAsync(Uri uri, HttpMethod httpMethod, HttpRequestMessage httpRequestMessage, CancellationToken cancellationToken)
         {
             Debug.WriteLine($"Sending Method = {httpMethod}, Uri = {uri}");
             return Task.CompletedTask;

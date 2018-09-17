@@ -25,7 +25,7 @@ namespace Tiny.RestClient
         private readonly string _serverAddress;
         #endregion
 
-        #region Constructors
+        #region Constructor
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TinyRestClient"/> class.
@@ -36,6 +36,13 @@ namespace Tiny.RestClient
         {
             _serverAddress = serverAddress ?? throw new ArgumentNullException(nameof(serverAddress));
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+
+            // We manage it in by our own settings
+            if (httpClient.Timeout != Timeout.InfiniteTimeSpan)
+            {
+                httpClient.Timeout = Timeout.InfiniteTimeSpan;
+            }
+
             if (!_serverAddress.EndsWith("/"))
             {
                 _serverAddress += "/";
@@ -198,7 +205,10 @@ namespace Tiny.RestClient
             using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                using (HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, formatter, cancellationToken).ConfigureAwait(false))
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                using (HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, formatter, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false))
                 {
                     using (var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false))
                     {
@@ -259,7 +269,7 @@ namespace Tiny.RestClient
             using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                using (HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false))
+                using (HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false))
                 {
                     using (var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false))
                     {
@@ -275,7 +285,7 @@ namespace Tiny.RestClient
             using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                using (HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false))
+                using (HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false))
                 {
                     using (var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false))
                     {
@@ -286,7 +296,8 @@ namespace Tiny.RestClient
 
                         using (var ms = new MemoryStream())
                         {
-                            await stream.CopyToAsync(ms).ConfigureAwait(false);
+                            // 81920  = default value
+                            await stream.CopyToAsync(ms, 81920, cancellationToken).ConfigureAwait(false);
                             return ms.ToArray();
                         }
                     }
@@ -301,7 +312,7 @@ namespace Tiny.RestClient
             using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false);
+                HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false);
                 var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false);
                 if (stream == null || !stream.CanRead)
                 {
@@ -319,7 +330,7 @@ namespace Tiny.RestClient
             using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false);
+                HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false);
                 var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false);
                 if (stream == null || !stream.CanRead)
                 {
@@ -328,7 +339,10 @@ namespace Tiny.RestClient
 
                 using (StreamReader reader = new StreamReader(stream, Settings.Encoding))
                 {
-                    return await reader.ReadToEndAsync().ConfigureAwait(false);
+                    cancellationToken.ThrowIfCancellationRequested();
+                    var toReturn = await reader.ReadToEndAsync().ConfigureAwait(false);
+                    cancellationToken.ThrowIfCancellationRequested();
+                    return toReturn;
                 }
             }
         }
@@ -340,7 +354,7 @@ namespace Tiny.RestClient
             using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                return await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, cancellationToken).ConfigureAwait(false);
+                return await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -510,8 +524,9 @@ namespace Tiny.RestClient
             return new Uri(stringBuilder.ToString());
         }
 
-        private async Task<HttpResponseMessage> SendRequestAsync(HttpMethod httpMethod, Uri uri, Dictionary<string, string> requestHeader, HttpContent content, IFormatter deserializer, CancellationToken cancellationToken)
+        private async Task<HttpResponseMessage> SendRequestAsync(HttpMethod httpMethod, Uri uri, Dictionary<string, string> requestHeader, HttpContent content, IFormatter deserializer, TimeSpan? localTimeout, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             Stopwatch stopwatch = null;
 
             if (Settings.Listeners.MeasureTime)
@@ -556,26 +571,75 @@ namespace Tiny.RestClient
 
                 try
                 {
-                    await Settings.Listeners.OnSendingRequestAsync(uri, httpMethod, request).ConfigureAwait(false);
+                    HttpResponseMessage response = null;
+
+                    await Settings.Listeners.OnSendingRequestAsync(uri, httpMethod, request, cancellationToken).ConfigureAwait(false);
+                    cancellationToken.ThrowIfCancellationRequested();
                     stopwatch?.Start();
-                    var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
+                    using (var cts = GetCancellationTokenSourceForTimeout(request, localTimeout ?? Settings.DefaultTimeout, cancellationToken))
+                    {
+                        try
+                        {
+                            var token = cancellationToken;
+
+                            if (cts != null)
+                            {
+                                token = cts.Token;
+                            }
+
+                            response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead, token).ConfigureAwait(false);
+                            cts?.Token.ThrowIfCancellationRequested();
+                        }
+                        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+                        {
+                            throw new TimeoutException();
+                        }
+                    }
 
                     stopwatch?.Stop();
-                    await Settings.Listeners.OnReceivedResponseAsync(uri, httpMethod, response, stopwatch?.Elapsed).ConfigureAwait(false);
+                    cancellationToken.ThrowIfCancellationRequested();
+                    await Settings.Listeners.OnReceivedResponseAsync(uri, httpMethod, response, stopwatch?.Elapsed, cancellationToken).ConfigureAwait(false);
                     return response;
+                }
+                catch (OperationCanceledException e)
+                {
+                    throw e;
+                }
+                catch (TimeoutException e)
+                {
+                    stopwatch?.Stop();
+                    await Settings.Listeners.OnFailedToReceiveResponseAsync(uri, httpMethod, e, stopwatch?.Elapsed, cancellationToken).ConfigureAwait(false);
+                    throw e;
                 }
                 catch (Exception ex)
                 {
                     stopwatch?.Stop();
-
-                    await Settings.Listeners.OnFailedToReceiveResponseAsync(uri, httpMethod, ex, stopwatch?.Elapsed).ConfigureAwait(false);
-
+                    await Settings.Listeners.OnFailedToReceiveResponseAsync(uri, httpMethod, ex, stopwatch?.Elapsed, cancellationToken).ConfigureAwait(false);
                     throw new ConnectionException(
                        "Failed to get a response from server",
                        uri.AbsoluteUri,
                        httpMethod.Method,
                        ex);
                 }
+            }
+        }
+
+        // Inspired by this blog post https://www.thomaslevesque.com/2018/02/25/better-timeout-handling-with-httpclient/
+        private CancellationTokenSource GetCancellationTokenSourceForTimeout(
+            HttpRequestMessage request,
+            TimeSpan timeout,
+            CancellationToken cancellationToken)
+        {
+            if (timeout == Timeout.InfiniteTimeSpan)
+            {
+                // No need to create a CTS if there's no timeout
+                return null;
+            }
+            else
+            {
+                var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                cts.CancelAfter(timeout);
+                return cts;
             }
         }
 
@@ -587,6 +651,7 @@ namespace Tiny.RestClient
             try
             {
                 stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
 
                 if (headersToFill != null)
                 {
@@ -600,9 +665,14 @@ namespace Tiny.RestClient
                 else
                 {
                     content = await StreamToStringAsync(stream).ConfigureAwait(false);
+                    cancellationToken.ThrowIfCancellationRequested();
                 }
 
                 response.EnsureSuccessStatusCode();
+            }
+            catch (OperationCanceledException ex)
+            {
+                throw ex;
             }
             catch (Exception ex)
             {
