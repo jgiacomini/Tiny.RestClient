@@ -28,18 +28,27 @@ It hides all the complexity of communication, deserialisation ...
 * Upload file
 * Optimized http calls
 * Typed exceptions which are easier to interpret
+* Timeout exception throwed if the request is in timeout (by default HttpClient send OperationCancelledException, so we can't make difference between a user annulation and timeout)
 * Provide an easy way to log : all sending of request, failed to get response,  and the time get response.
 * Support of export requests to PostManCollection
 
 ## Basic usage
 
 ### Create the client
+
+Define a global timeout for all client. (By default it's setted to 100 secondes)
 ```cs
 using Tiny.RestClient;
 
 var client = new TinyRestClient("http://MyAPI.com/api", new HttpClient());
 ```
 
+### Define timeout
+
+Define global timeout
+```cs
+client.Settings.DefaultTimeout = TimeSpan.FromSeconds(100);
+```
 ### Headers
 
 #### Default header for all requests
