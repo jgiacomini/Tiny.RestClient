@@ -245,12 +245,13 @@ await client.
 
 
 ## Error handling
-All requests can throw 4 exceptions : 
+All requests can throw 5 exceptions : 
 
 * ConnectionException : thrown when the request can't reach the server
 * HttpException : thrown when the server has invalid error code
 * SerializeException : thrown when the serializer can't serialize the content
 * DeserializeException : thrown when the deserializer can't deserialize the response
+* TimeoutException : thrown when the request take too much time to be executed
 
 ### Catch a specific error code
 ```cs
