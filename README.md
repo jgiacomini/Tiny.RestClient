@@ -28,12 +28,16 @@ It hides all the complexity of communication, deserialisation ...
 * Upload file
 * Optimized http calls
 * Typed exceptions which are easier to interpret
-* Provide an easy way to log : all sending of request, failed to get response,  and the time get response.
-* Support of export requests to PostmanCollection
+* Define timeout globally or by request
+* Timeout exception throwed if the request is in timeout (by default HttpClient send OperationCancelledException, so we can't make difference between a user annulation and timeout)
+* Provide an easy way to log : all sending of request, failed to get response, and the time get response.
+* Support of export requests to postman collection
 
 ## Basic usage
 
 ### Create the client
+
+Define a global timeout for all client. (By default it's setted to 100 secondes)
 ```cs
 using Tiny.RestClient;
 
@@ -125,6 +129,19 @@ var response = await client.
        NewRequest(new System.Net.Http.HttpMethod("HEAD"), "City/All").
        ExecuteAsync<List<City>>();
 ```
+
+### Define timeout
+
+Define global timeout
+```cs
+client.Settings.DefaultTimeout = TimeSpan.FromSeconds(100);
+```
+
+Define the timeout for one request
+```cs
+client.Settings.DefaultTimeout = TimeSpan.FromSeconds(100);
+```
+
 ### Download file
 ```cs
 string filePath = "c:\map.pdf";
@@ -245,12 +262,13 @@ await client.
 
 
 ## Error handling
-All requests can throw 4 exceptions : 
+All requests can throw 5 exceptions : 
 
 * ConnectionException : thrown when the request can't reach the server
 * HttpException : thrown when the server has invalid error code
 * SerializeException : thrown when the serializer can't serialize the content
 * DeserializeException : thrown when the deserializer can't deserialize the response
+* TimeoutException : thrown when the request take too much time to be executed
 
 ### Catch a specific error code
 ```cs
@@ -378,12 +396,12 @@ client.Settings.Listeners.AddDebug();
 
 
 ### Postman Listener
-To add Postman listener you have to call AddPostman on Listeners property
+To add postman listener you have to call AddPostman on Listeners property
 ```cs
 PostmanListerner listener = client.Settings.Listeners.AddPostman("nameOfCollection");
 ```
 
-When you want to save the postMan collection you have to call SaveAsync
+When you want to save the postman collection you have to call SaveAsync
 ```cs
 await listener.SaveAsync(new FileInfo("postmanCollection.json");
 ```

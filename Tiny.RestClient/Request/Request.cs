@@ -27,6 +27,7 @@ namespace Tiny.RestClient
         private List<KeyValuePair<string, string>> _formParameters;
         private MultipartContent _multiPartFormData;
         private Headers _reponseHeaders;
+        private TimeSpan? _timeout;
 
         internal HttpMethod HttpMethod { get => _httpMethod; }
         internal Dictionary<string, string> QueryParameters { get => _queryParameters; }
@@ -34,6 +35,7 @@ namespace Tiny.RestClient
         internal IContent Content { get => _content; }
         internal Headers ReponseHeaders { get => _reponseHeaders; }
         internal Dictionary<string, string> Headers { get => _headers; }
+        internal TimeSpan? Timeout { get => _timeout; }
 
         static Request()
         {
@@ -286,6 +288,14 @@ namespace Tiny.RestClient
             return this;
         }
         #endregion
+
+        /// <inheritdoc/>
+        public IRequest WithTimeout(TimeSpan timeout)
+        {
+            _timeout = timeout;
+
+            return this;
+        }
 
         /// <inheritdoc/>
         public Task<TResult> ExecuteAsync<TResult>(CancellationToken cancellationToken)
