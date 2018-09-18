@@ -139,7 +139,7 @@ client.Settings.DefaultTimeout = TimeSpan.FromSeconds(100);
 
 Define the timeout for one request
 ```cs
-client.Settings.DefaultTimeout = TimeSpan.FromSeconds(100);
+request.WithTimeout(TimeSpan.FromSeconds(100));
 ```
 
 ### Download file
