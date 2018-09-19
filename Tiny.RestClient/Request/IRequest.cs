@@ -11,6 +11,21 @@ namespace Tiny.RestClient
     public interface IRequest : IExecutableRequest, IFormRequest
     {
         /// <summary>
+        /// Add a basic authentication credentials
+        /// </summary>
+        /// <param name="username">the username</param>
+        /// <param name="password">the password</param>
+        /// <returns>The current request</returns>
+        IRequest WithBasicAuthentication(string username, string password);
+
+        /// <summary>
+        /// Add a bearer token in the request headers
+        /// </summary>
+        /// <param name="token">token value</param>
+        /// <returns>The current request</returns>
+        IRequest WithOAuthBearer(string token);
+
+        /// <summary>
         /// With timeout for current request
         /// </summary>
         /// <param name="timeout">timeout</param>

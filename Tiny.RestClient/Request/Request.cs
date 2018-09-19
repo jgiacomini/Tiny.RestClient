@@ -21,7 +21,7 @@ namespace Tiny.RestClient
         private readonly HttpMethod _httpMethod;
         private readonly TinyRestClient _client;
         private readonly string _route;
-        private Dictionary<string, string> _headers;
+        private Headers _headers;
         private Dictionary<string, string> _queryParameters;
         private IContent _content;
         private List<KeyValuePair<string, string>> _formParameters;
@@ -34,7 +34,7 @@ namespace Tiny.RestClient
         internal string Route { get => _route; }
         internal IContent Content { get => _content; }
         internal Headers ReponseHeaders { get => _reponseHeaders; }
-        internal Dictionary<string, string> Headers { get => _headers; }
+        internal Headers Headers { get => _headers; }
         internal TimeSpan? Timeout { get => _timeout; }
 
         static Request()
@@ -131,10 +131,34 @@ namespace Tiny.RestClient
         {
             if (_headers == null)
             {
-                _headers = new Dictionary<string, string>();
+                _headers = new Headers();
             }
 
             _headers.Add(key, value);
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public IRequest WithBasicAuthentication(string username, string password)
+        {
+            if (_headers == null)
+            {
+                _headers = new Headers();
+            }
+
+            _headers.AddBasicAuthentication(username, password);
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public IRequest WithOAuthBearer(string token)
+        {
+            if (_headers == null)
+            {
+                _headers = new Headers();
+            }
+
+            _headers.AddBearer(token);
             return this;
         }
         #endregion

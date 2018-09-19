@@ -525,7 +525,7 @@ namespace Tiny.RestClient
             return new Uri(stringBuilder.ToString());
         }
 
-        private async Task<HttpResponseMessage> SendRequestAsync(HttpMethod httpMethod, Uri uri, Dictionary<string, string> requestHeader, HttpContent content, IFormatter deserializer, TimeSpan? localTimeout, CancellationToken cancellationToken)
+        private async Task<HttpResponseMessage> SendRequestAsync(HttpMethod httpMethod, Uri uri, Headers requestHeader, HttpContent content, IFormatter deserializer, TimeSpan? localTimeout, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             Stopwatch stopwatch = null;

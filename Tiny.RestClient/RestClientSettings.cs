@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace Tiny.RestClient
@@ -13,7 +12,7 @@ namespace Tiny.RestClient
 
         internal RestClientSettings()
         {
-            DefaultHeaders = new Dictionary<string, string>();
+            DefaultHeaders = new Headers();
             Listeners = new Listeners();
             Formatters = new Formatters();
             _encoding = Encoding.UTF8;
@@ -46,7 +45,7 @@ namespace Tiny.RestClient
         /// <value>
         /// The default headers.
         /// </value>
-        public Dictionary<string, string> DefaultHeaders
+        public Headers DefaultHeaders
         {
             get; private set;
         }
