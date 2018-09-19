@@ -31,7 +31,7 @@ namespace Tiny.RestClient
         /// Add basic authentication
         /// </summary>
         /// <param name="username">the username</param>
-        /// <param name="password">the password/param>
+        /// <param name="password">the password</param>
         public void AddBasicAuthentication(string username, string password)
         {
             var encodedCreds = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
