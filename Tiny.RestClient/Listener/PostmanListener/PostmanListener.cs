@@ -38,7 +38,7 @@ namespace Tiny.RestClient
                     Name = name,
                     Schema = "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
                 },
-                Items = new List<Folder>()
+                Items = new List<IItem>()
             };
         }
 
@@ -116,21 +116,28 @@ namespace Tiny.RestClient
             var segmentsForFolder = string.Join("_", SegmentsWithoutSlashAndLastSegment(uri));
             lock (_toLock)
             {
-                var folder = Collection.Items.FirstOrDefault(f => f.Name == segmentsForFolder);
-
-                if (folder != null)
+                if (string.IsNullOrEmpty(segmentsForFolder))
                 {
-                    folder.Items.Add(item);
+                    Collection.Items.Add(item);
                 }
                 else
                 {
-                    folder = new Folder
+                    var folder = Collection.Items.OfType<Folder>().FirstOrDefault(f => f.Name == segmentsForFolder);
+
+                    if (folder != null)
                     {
-                        Name = segmentsForFolder,
-                        Items = new List<Item>()
-                    };
-                    folder.Items.Add(item);
-                    Collection.Items.Add(folder);
+                        folder.Items.Add(item);
+                    }
+                    else
+                    {
+                        folder = new Folder
+                        {
+                            Name = segmentsForFolder,
+                            Items = new List<Item>()
+                        };
+                        folder.Items.Add(item);
+                        Collection.Items.Add(folder);
+                    }
                 }
             }
         }
@@ -198,6 +205,13 @@ namespace Tiny.RestClient
                 Port = uri.Port.ToString(),
                 QueryParameters = GetQuery(uri)
             };
+            if (uri.Scheme?.ToLower() == "http")
+            {
+                if (uri.Port == 80)
+                {
+                    url.Port = null;
+                }
+            }
 
             return url;
         }

@@ -8,7 +8,7 @@ namespace Tiny.RestClient.PostMan
         public Info Info { get; set; }
 
         [JsonProperty(PropertyName = "item")]
-        public List<Folder> Items { get; set; }
+        public List<IItem> Items { get; set; }
     }
 
     internal class Info
@@ -21,7 +21,7 @@ namespace Tiny.RestClient.PostMan
         public string Schema { get; set; }
     }
 
-    internal class Folder
+    internal class Folder : IItem
     {
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
@@ -29,13 +29,17 @@ namespace Tiny.RestClient.PostMan
         public List<Item> Items { get; set; }
     }
 
-    internal class Item
+    internal class Item : IItem
     {
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
-
         [JsonProperty(PropertyName = "request")]
         public Request Request { get; set; }
+    }
+
+    internal interface IItem
+    {
+        string Name { get; set; }
     }
 
     internal class Request
