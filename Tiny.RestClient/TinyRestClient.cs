@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -20,6 +21,7 @@ namespace Tiny.RestClient
     public class TinyRestClient
     {
         #region Fields
+        private const int BufferSize = 81920;
         private static readonly HttpMethod _PatchMethod = new HttpMethod("Patch");
         private readonly HttpClient _httpClient;
         private readonly string _serverAddress;
@@ -235,6 +237,7 @@ namespace Tiny.RestClient
 
                         try
                         {
+                            stream.Position = 0;
                             return formatter.Deserialize<TResult>(stream, Settings.Encoding);
                         }
                         catch (Exception ex)
@@ -295,7 +298,7 @@ namespace Tiny.RestClient
                         using (var ms = new MemoryStream())
                         {
                             // 81920  = default value
-                            await stream.CopyToAsync(ms, 81920, cancellationToken).ConfigureAwait(false);
+                            await stream.CopyToAsync(ms, BufferSize, cancellationToken).ConfigureAwait(false);
                             return ms.ToArray();
                         }
                     }
@@ -648,8 +651,49 @@ namespace Tiny.RestClient
         private async Task<Stream> ReadResponseAsync(HttpResponseMessage response, Headers headersToFill, CancellationToken cancellationToken)
         {
             await HandleResponseAsync(response, headersToFill, cancellationToken).ConfigureAwait(false);
-            Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
+            return await DecompressAsync(response, stream, cancellationToken).ConfigureAwait(false);
+        }
+
+        private async Task<Stream> DecompressAsync(HttpResponseMessage response, Stream stream, CancellationToken cancellationToken)
+        {
+            var encoding = response.Content.Headers.ContentEncoding;
+            if (encoding.Contains("gzip"))
+            {
+                try
+                {
+                    var decompressedStream = new MemoryStream();
+                    using (var decompressionStream = new GZipStream(stream, CompressionMode.Decompress))
+                    {
+                        await decompressionStream.CopyToAsync(decompressedStream, BufferSize, cancellationToken);
+                    }
+
+                    return decompressedStream;
+                }
+                finally
+                {
+                    stream.Dispose();
+                }
+            }
+
+            ////else if (encoding.Contains("deflate"))
+            ////{
+            ////    try
+            ////    {
+            ////        var decompressedStream = new MemoryStream();
+            ////        using (var decompressionStream = new DeflateStream(stream, CompressionMode.Decompress))
+            ////        {
+            ////            await decompressionStream.CopyToAsync(decompressedStream, BufferSize, cancellationToken);
+            ////        }
+
+            ////        return decompressedStream;
+            ////    }
+            ////    finally
+            ////    {
+            ////        stream.Dispose();
+            ////    }
+            ////}
 
             return stream;
         }
