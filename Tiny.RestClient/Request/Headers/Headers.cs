@@ -1,33 +1,32 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Tiny.RestClient
 {
     /// <inheritdoc/>
     public class Headers : IEnumerable<KeyValuePair<string, IEnumerable<string>>>
     {
-        private IEnumerable<KeyValuePair<string, IEnumerable<string>>> _source;
+        private List<KeyValuePair<string, IEnumerable<string>>> _headers;
 
         internal Headers()
         {
+            _headers = new List<KeyValuePair<string, IEnumerable<string>>>();
         }
 
-        internal void AddSource(IEnumerable<KeyValuePair<string, IEnumerable<string>>> source)
+        internal void AddRange(IEnumerable<KeyValuePair<string, IEnumerable<string>>> range)
         {
-            _source = source;
+            _headers.AddRange(range);
         }
 
         /// <inheritdoc/>
         public IEnumerator<KeyValuePair<string, IEnumerable<string>>> GetEnumerator()
         {
-            return _source.GetEnumerator();
+            return _headers.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return _source.GetEnumerator();
+            return _headers.GetEnumerator();
         }
     }
 }

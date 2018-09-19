@@ -339,6 +339,7 @@ namespace Tiny.RestClient
 
                 using (StreamReader reader = new StreamReader(stream, Settings.Encoding))
                 {
+                    stream.Position = 0;
                     cancellationToken.ThrowIfCancellationRequested();
                     var toReturn = await reader.ReadToEndAsync().ConfigureAwait(false);
                     cancellationToken.ThrowIfCancellationRequested();
@@ -655,7 +656,12 @@ namespace Tiny.RestClient
 
                 if (headersToFill != null)
                 {
-                    headersToFill.AddSource(response.Headers);
+                    headersToFill.AddRange(response.Headers);
+
+                    if (response.Content != null && response.Content.Headers != null)
+                    {
+                        headersToFill.AddRange(response.Content.Headers);
+                    }
                 }
 
                 if (response.IsSuccessStatusCode)
