@@ -7,11 +7,7 @@ using System.Text;
 namespace Tiny.RestClient
 {
     /// <summary>
-    /// A httpException
-    /// </summary>
-    /// <seealso cref="System.Exception" />
-    /// <summary>
-    /// A httpexception
+    /// A <see cref="HttpException"/>
     /// </summary>
     /// <seealso cref="TinyRestClientException" />
     public class HttpException : TinyRestClientException
