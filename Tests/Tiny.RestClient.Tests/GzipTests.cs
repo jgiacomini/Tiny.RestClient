@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Tiny.RestClient.Tests
 {
     [TestClass]
-    public class CompressionTests : BaseTest
+    public class GzipTests : BaseTest
     {
         [TestMethod]
         public async Task Gzip()
