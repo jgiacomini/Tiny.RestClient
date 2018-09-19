@@ -1,4 +1,12 @@
 # Release notes
+
+## 1.4.3
+* Fix a bug on headers reading
+* Fix a small bug on postman of generation of postman file
+* Add support of Basic authentication
+* Add support of OAuth 2.0 authentication
+
+
 ## 1.4.2
 * Add the possibility to define timeout globaly or by request
 * Now the API throw a TimeoutException when request is in timeout
