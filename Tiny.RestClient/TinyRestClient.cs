@@ -312,7 +312,7 @@ namespace Tiny.RestClient
             using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false);
+                var response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false);
                 var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false);
                 if (stream == null || !stream.CanRead)
                 {
@@ -330,20 +330,22 @@ namespace Tiny.RestClient
             using (var content = CreateContent(tinyRequest.Content))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false);
-                var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false);
-                if (stream == null || !stream.CanRead)
+                using (var response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false))
                 {
-                    return null;
-                }
+                    var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false);
+                    if (stream == null || !stream.CanRead)
+                    {
+                        return null;
+                    }
 
-                using (StreamReader reader = new StreamReader(stream, Settings.Encoding))
-                {
-                    stream.Position = 0;
-                    cancellationToken.ThrowIfCancellationRequested();
-                    var toReturn = await reader.ReadToEndAsync().ConfigureAwait(false);
-                    cancellationToken.ThrowIfCancellationRequested();
-                    return toReturn;
+                    using (var reader = new StreamReader(stream, Settings.Encoding))
+                    {
+                        stream.Position = 0;
+                        cancellationToken.ThrowIfCancellationRequested();
+                        var toReturn = await reader.ReadToEndAsync().ConfigureAwait(false);
+                        cancellationToken.ThrowIfCancellationRequested();
+                        return toReturn;
+                    }
                 }
             }
         }
