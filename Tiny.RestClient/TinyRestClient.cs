@@ -271,9 +271,7 @@ namespace Tiny.RestClient
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
                 using (HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false))
                 {
-                    using (var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false))
-                    {
-                    }
+                    await HandleResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false);
                 }
             }
         }
@@ -649,30 +647,31 @@ namespace Tiny.RestClient
         #region Read response
         private async Task<Stream> ReadResponseAsync(HttpResponseMessage response, Headers headersToFill, CancellationToken cancellationToken)
         {
-            Stream stream = null;
+            await HandleResponseAsync(response, headersToFill, cancellationToken).ConfigureAwait(false);
+            Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return stream;
+        }
+
+        private async Task HandleResponseAsync(HttpResponseMessage response, Headers headersToFill, CancellationToken cancellationToken)
+        {
             string content = null;
+            if (headersToFill != null)
+            {
+                headersToFill.AddRange(response.Headers);
+
+                if (response.Content != null && response.Content.Headers != null)
+                {
+                    headersToFill.AddRange(response.Content.Headers);
+                }
+            }
+
             try
             {
-                stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                cancellationToken.ThrowIfCancellationRequested();
-
-                if (headersToFill != null)
+                if (!response.IsSuccessStatusCode)
                 {
-                    headersToFill.AddRange(response.Headers);
-
-                    if (response.Content != null && response.Content.Headers != null)
-                    {
-                        headersToFill.AddRange(response.Content.Headers);
-                    }
-                }
-
-                if (response.IsSuccessStatusCode)
-                {
-                    return stream;
-                }
-                else
-                {
-                    content = await StreamToStringAsync(stream).ConfigureAwait(false);
+                    content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     cancellationToken.ThrowIfCancellationRequested();
                 }
 
@@ -696,8 +695,6 @@ namespace Tiny.RestClient
 
                 throw newEx;
             }
-
-            return stream;
         }
 
         private static async Task<string> StreamToStringAsync(Stream stream)
