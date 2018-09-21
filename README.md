@@ -15,6 +15,11 @@ It hides all the complexity of communication, deserialisation ...
 |.Net Standard|Yes|1.3|Use System.Xml.XmlSerializer and Newtonsoft.Json|
 |.Net Standard|Yes|2.0|Use Newtonsoft.Json|
 
+The support of .Net standard 1.3 to 2.0 allow you to use it in :
+- .Net Framework 4.6+
+- Xamarin iOS et Android
+- .Net Core
+- UWP
 
 ## Features
 * Modern async http client for REST API.
