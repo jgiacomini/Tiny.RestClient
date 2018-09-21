@@ -38,11 +38,15 @@ namespace Tiny.RestClient
                 Debug.WriteLine($"FailedToGetResponse Method = {httpMethod}, Uri = {exception}");
             }
 
+#if NETFX_45
+            return TaskHelper.CompletedTask;
+#else
             return Task.CompletedTask;
+#endif
         }
 
-        /// <inheritdoc/>
-        public Task OnReceivedResponseAsync(Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan? elapsedTime, CancellationToken cancellationToken)
+            /// <inheritdoc/>
+            public Task OnReceivedResponseAsync(Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan? elapsedTime, CancellationToken cancellationToken)
         {
             if (elapsedTime.HasValue)
             {
@@ -53,17 +57,25 @@ namespace Tiny.RestClient
                 Debug.WriteLine($"Received Method = {httpMethod}, Uri = {uri}, StatusCode = {response.StatusCode}");
             }
 
+#if NETFX_45
+            return TaskHelper.CompletedTask;
+#else
             return Task.CompletedTask;
+#endif
         }
 
-        /// <inheritdoc/>
-        public Task OnSendingRequestAsync(Uri uri, HttpMethod httpMethod, HttpRequestMessage httpRequestMessage, CancellationToken cancellationToken)
-        {
-            Debug.WriteLine($"Sending Method = {httpMethod}, Uri = {uri}");
-            return Task.CompletedTask;
-        }
+            /// <inheritdoc/>
+            public Task OnSendingRequestAsync(Uri uri, HttpMethod httpMethod, HttpRequestMessage httpRequestMessage, CancellationToken cancellationToken)
+            {
+                Debug.WriteLine($"Sending Method = {httpMethod}, Uri = {uri}");
+#if NETFX_45
+                return TaskHelper.CompletedTask;
+#else
+                return Task.CompletedTask;
+#endif
+            }
 
-        private string ToReadableString(TimeSpan span)
+                private string ToReadableString(TimeSpan span)
         {
             // TODO : rewrite this code
             bool addComa = false;

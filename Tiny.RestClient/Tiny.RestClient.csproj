@@ -48,6 +48,20 @@
     <PackageReference Include="System.Xml.XmlSerializer" Version=" 4.3.0" />
   </ItemGroup>
 
+  <ItemGroup Condition=" $(TargetFramework.StartsWith('net45')) ">
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net45')) ">
+    <DefineConstants>$(DefineConstants);NETFX_45</DefineConstants>
+  </PropertyGroup>
+  
+  <ItemGroup Condition=" $(TargetFramework.StartsWith('net45')) ">
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net45')) ">
+    <DefineConstants>NETFX_45</DefineConstants>
+  </PropertyGroup>
+  
   <ItemGroup Condition=" $(TargetFramework.StartsWith('net46')) ">
     <Reference Include="System.Net.Http" />
   </ItemGroup>
@@ -55,11 +69,4 @@
   <ItemGroup Condition=" $(TargetFramework.StartsWith('net47')) ">
     <Reference Include="System.Net.Http" />
   </ItemGroup>
-
-  <ItemGroup Condition=" $(TargetFramework.StartsWith('net45')) ">
-    <Reference Include="System.Net.Http" />
-  </ItemGroup>
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net45')) ">
-    <DefineConstants>NETFX_45</DefineConstants>
-  </PropertyGroup>
 </Project>

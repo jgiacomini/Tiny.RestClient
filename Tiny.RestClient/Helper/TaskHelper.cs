@@ -1,8 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿#if NETFX_45
+using System.Threading.Tasks;
 
 namespace Tiny.RestClient
 {
-    internal class TaskHelper
+    internal static class TaskHelper
     {
         private static Task _completedTask;
 
@@ -12,19 +13,16 @@ namespace Tiny.RestClient
         {
             get
             {
-#if NETFX_45
                 var completedTask = _completedTask;
+
                 if (completedTask == null)
                 {
-                    _completedTask = (Task)Task.FromResult(false);
+                    _completedTask = Task.FromResult(true);
                 }
 
                 return _completedTask;
-#else
-                return Task.CompletedTask;
-#endif
-
             }
         }
     }
 }
+#endif
