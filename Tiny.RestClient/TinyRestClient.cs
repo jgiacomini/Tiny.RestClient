@@ -676,24 +676,23 @@ namespace Tiny.RestClient
                     stream.Dispose();
                 }
             }
+            else if (encoding.Contains("deflate"))
+            {
+                try
+                {
+                    var decompressedStream = new MemoryStream();
+                    using (var decompressionStream = new DeflateStream(stream, CompressionMode.Decompress))
+                    {
+                        await decompressionStream.CopyToAsync(decompressedStream, BufferSize, cancellationToken);
+                    }
 
-            ////else if (encoding.Contains("deflate"))
-            ////{
-            ////    try
-            ////    {
-            ////        var decompressedStream = new MemoryStream();
-            ////        using (var decompressionStream = new DeflateStream(stream, CompressionMode.Decompress))
-            ////        {
-            ////            await decompressionStream.CopyToAsync(decompressedStream, BufferSize, cancellationToken);
-            ////        }
-
-            ////        return decompressedStream;
-            ////    }
-            ////    finally
-            ////    {
-            ////        stream.Dispose();
-            ////    }
-            ////}
+                    return decompressedStream;
+                }
+                finally
+                {
+                    stream.Dispose();
+                }
+            }
 
             return stream;
         }
