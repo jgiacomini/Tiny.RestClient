@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -10,7 +9,7 @@ namespace Tiny.RestClient.Tests
     [TestClass]
     public class DeflateTests : BaseTest
     {
-        [TestMethod]
+        // [TestMethod]
         public async Task DeflateNoResponse()
         {
             var client = GetClient();
@@ -23,7 +22,7 @@ namespace Tiny.RestClient.Tests
             await postman.SaveAsync(new FileInfo("deflate.json"));
         }
 
-        [TestMethod]
+        // [TestMethod]
         public async Task Deflate()
         {
             var handler = new HttpClientHandler()

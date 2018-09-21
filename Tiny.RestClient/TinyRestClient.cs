@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -560,6 +559,11 @@ namespace Tiny.RestClient
                     request.Headers.Add(item.Key, item.Value);
                 }
 
+                foreach (var acceptEncoding in Settings.Compressions.Where(c => c.Value.AddAcceptEncodingHeader).Select(c => c.Key))
+                {
+                    request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue(acceptEncoding));
+                }
+
                 if (requestHeader != null)
                 {
                     foreach (var item in requestHeader)
@@ -658,35 +662,13 @@ namespace Tiny.RestClient
 
         private async Task<Stream> DecompressAsync(HttpResponseMessage response, Stream stream, CancellationToken cancellationToken)
         {
-            var encoding = response.Content.Headers.ContentEncoding;
-            if (encoding.Contains("gzip"))
+            var encoding = response.Content.Headers.ContentEncoding.FirstOrDefault();
+            if (encoding != null && Settings.Compressions.Contains(encoding))
             {
+                var compression = Settings.Compressions[encoding];
                 try
                 {
-                    var decompressedStream = new MemoryStream();
-                    using (var decompressionStream = new GZipStream(stream, CompressionMode.Decompress))
-                    {
-                        await decompressionStream.CopyToAsync(decompressedStream, BufferSize, cancellationToken);
-                    }
-
-                    return decompressedStream;
-                }
-                finally
-                {
-                    stream.Dispose();
-                }
-            }
-            else if (encoding.Contains("deflate"))
-            {
-                try
-                {
-                    var decompressedStream = new MemoryStream();
-                    using (var decompressionStream = new DeflateStream(stream, CompressionMode.Decompress))
-                    {
-                        await decompressionStream.CopyToAsync(decompressedStream, BufferSize, cancellationToken);
-                    }
-
-                    return decompressedStream;
+                    return await compression.DecompressAsync(stream, BufferSize, cancellationToken).ConfigureAwait(false);
                 }
                 finally
                 {
@@ -738,21 +720,6 @@ namespace Tiny.RestClient
 
                 throw newEx;
             }
-        }
-
-        private static async Task<string> StreamToStringAsync(Stream stream)
-        {
-            string content = null;
-
-            if (stream != null)
-            {
-                using (var sr = new StreamReader(stream))
-                {
-                    content = await sr.ReadToEndAsync().ConfigureAwait(false);
-                }
-            }
-
-            return content;
         }
         #endregion
     }

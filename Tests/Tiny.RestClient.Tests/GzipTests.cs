@@ -12,10 +12,13 @@ namespace Tiny.RestClient.Tests
         {
             var client = GetClient();
             client.Settings.Listeners.AddDebug();
+
+            var compression = client.Settings.Compressions["gzip"];
+            compression.AddAcceptEncodingHeader = true;
+
             var postman = client.Settings.Listeners.AddPostman("gzip");
             var data = await client.
                 GetRequest("GetTest/Complex").
-                AddHeader("Accept-Encoding", "gzip").
                 ExecuteAsync<string[]>();
             Assert.AreEqual(data.Length, 2);
             Assert.AreEqual(data[0], "value1");
