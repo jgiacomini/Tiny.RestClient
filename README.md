@@ -53,15 +53,39 @@ var client = new TinyRestClient("http://MyAPI.com/api", new HttpClient());
 
 ```cs
 // Add default header for each calls
-client.Settings.DefaultHeaders.Add("Token", "MYTOKEN");
+client.Settings.DefaultHeaders.Add("CustomHeader", "Header");
+```
+
+
+```cs
+// Add Auth2.0 token
+client.Settings.DefaultHeaders.void AddBearer("token");
+```
+
+```cs
+// Add default basic authentication header
+client.Settings.DefaultHeaders.AddBasicAuthentication("username", "password");
 ```
 #### Add header for current request
-
 
 ```cs
 // Add header for this request only
 client.GetRequest("City/All").
-      AddHeader("Token", "MYTOKEN").
+      AddHeader("CustomHeader", "Header").
+      ExecuteAsync();
+```
+
+```cs
+// Add header for this request only
+client.GetRequest("City/All").
+      WithOAuthBearer("MYTOKEN").
+      ExecuteAsync();
+```
+
+```cs
+// Add basic authentication for this request only
+client.GetRequest("City/All").
+      WithBasicAuthentication("username", "password").
       ExecuteAsync();
 ```
 
