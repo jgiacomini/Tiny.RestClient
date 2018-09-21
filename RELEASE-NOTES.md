@@ -5,7 +5,7 @@
 * Fix a small bug on postman of generation of postman file
 * Add support of Basic authentication
 * Add support of OAuth 2.0 authentication
-
+* Add support of .NET Framework 4.5, 4.6, 4.7
 
 ## 1.4.2
 * Add the possibility to define timeout globaly or by request
