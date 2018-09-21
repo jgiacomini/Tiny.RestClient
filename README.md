@@ -14,6 +14,7 @@ It hides all the complexity of communication, deserialisation ...
 | ------------------- | :-----------: | :------------------: | :------------------: |
 |.NET Standard|Yes|1.3|Use System.Xml.XmlSerializer and Newtonsoft.Json|
 |.NET Standard|Yes|2.0|Use Newtonsoft.Json|
+|.NET Framework|Yes|4.5+|Use Newtonsoft.Json|
 |.NET Framework|Yes|4.6+|Use Newtonsoft.Json|
 |.NET Framework|Yes|4.7+|Use Newtonsoft.Json|
 
