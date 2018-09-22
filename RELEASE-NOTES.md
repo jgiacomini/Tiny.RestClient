@@ -1,6 +1,6 @@
 # Release notes
 
-## 1.4.3
+## 1.5.0
 * Fix a bug on headers reading
 * Fix a small bug on postman of generation of postman file
 * Add support of Basic authentication
