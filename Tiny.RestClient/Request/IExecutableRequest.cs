@@ -21,6 +21,15 @@ namespace Tiny.RestClient
         /// <summary>
         /// Executes the request.
         /// </summary>
+        /// <typeparam name="TResult">The type of the t result.</typeparam>
+        /// <param name="formatter">Allow to override the formatter use for the deserialization.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task of TResukt</returns>
+        Task<TResult> ExecuteAsync<TResult>(IFormatter formatter, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Executes the request.
+        /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns><see cref="Task{Stream}"/></returns>
         Task<Stream> ExecuteAsStreamAsync(CancellationToken cancellationToken = default);
@@ -54,15 +63,6 @@ namespace Tiny.RestClient
         /// <returns>return a file info</returns>
         Task<FileInfo> DownloadFileAsync(string path, CancellationToken cancellationToken = default);
 #endif
-
-        /// <summary>
-        /// Executes the request.
-        /// </summary>
-        /// <typeparam name="TResult">The type of the t result.</typeparam>
-        /// <param name="formatter">Allow to override the formatter use for the deserialization.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Task of TResukt</returns>
-        Task<TResult> ExecuteAsync<TResult>(IFormatter formatter, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Executes the request.
