@@ -70,7 +70,7 @@ namespace Tiny.RestClient
             _content = new StreamContent(stream, contentType);
             return this;
         }
-
+        #if !FILEINFO_NOT_SUPPORTED
         public IParameterRequest AddFileContent(FileInfo content, string contentType)
         {
             if (content == null)
@@ -86,8 +86,9 @@ namespace Tiny.RestClient
             _content = new FileContent(content, contentType);
             return this;
         }
+        #endif
 
-        #endregion
+#endregion
 
         #region Forms Parameters
 
@@ -363,6 +364,7 @@ namespace Tiny.RestClient
             return _client.ExecuteAsHttpResponseMessageResultAsync(this, cancellationToken);
         }
 
+        #if !FILEINFO_NOT_SUPPORTED
         /// <inheritdoc/>
         public async Task<FileInfo> DownloadFileAsync(string fileName, CancellationToken cancellationToken)
         {
@@ -390,8 +392,9 @@ namespace Tiny.RestClient
 
             return new FileInfo(fileName);
         }
+        #endif
 
-        #region MultiPart
+#region MultiPart
 
         /// <inheritdoc/>
         public IMultipartFromDataRequest AsMultiPartFromDataRequest(string contentType)
@@ -439,7 +442,7 @@ namespace Tiny.RestClient
 
             return this;
         }
-
+        #if !FILEINFO_NOT_SUPPORTED
         IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddFileContent(FileInfo content, string contentType)
         {
             IMultipartFromDataRequest me = this;
@@ -472,6 +475,7 @@ namespace Tiny.RestClient
 
             return this;
         }
-        #endregion
+        #endif
+#endregion
     }
 }

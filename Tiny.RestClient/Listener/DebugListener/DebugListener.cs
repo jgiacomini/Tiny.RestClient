@@ -38,7 +38,7 @@ namespace Tiny.RestClient
                 Debug.WriteLine($"FailedToGetResponse Method = {httpMethod}, Uri = {exception}");
             }
 
-#if NETFX_45
+#if COMPLETED_TASK_NOT_SUPPORTED
             return TaskHelper.CompletedTask;
 #else
             return Task.CompletedTask;
@@ -57,7 +57,7 @@ namespace Tiny.RestClient
                 Debug.WriteLine($"Received Method = {httpMethod}, Uri = {uri}, StatusCode = {response.StatusCode}");
             }
 
-#if NETFX_45
+#if COMPLETED_TASK_NOT_SUPPORTED
             return TaskHelper.CompletedTask;
 #else
             return Task.CompletedTask;
@@ -68,7 +68,7 @@ namespace Tiny.RestClient
             public Task OnSendingRequestAsync(Uri uri, HttpMethod httpMethod, HttpRequestMessage httpRequestMessage, CancellationToken cancellationToken)
             {
                 Debug.WriteLine($"Sending Method = {httpMethod}, Uri = {uri}");
-#if NETFX_45
+#if COMPLETED_TASK_NOT_SUPPORTED
                 return TaskHelper.CompletedTask;
 #else
                 return Task.CompletedTask;

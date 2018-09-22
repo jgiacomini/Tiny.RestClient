@@ -47,6 +47,7 @@ namespace Tiny.RestClient
         /// <inheritdoc/>
         public bool MeasureTime => false;
 
+#if !FILEINFO_NOT_SUPPORTED
         /// <summary>
         /// Save PostManCollection to file
         /// </summary>
@@ -65,6 +66,7 @@ namespace Tiny.RestClient
                 await fileStream.WriteAsync(encodedText, 0, encodedText.Length);
             }
         }
+#endif
 
         /// <summary>
         /// Get postman collection json data
@@ -94,7 +96,7 @@ namespace Tiny.RestClient
         /// <inheritdoc/>
         public Task OnFailedToReceiveResponseAsync(Uri uri, HttpMethod httpMethod, Exception exception, TimeSpan? elapsedTime, CancellationToken cancellationToken)
         {
-#if NETFX_45
+#if COMPLETED_TASK_NOT_SUPPORTED
             return TaskHelper.CompletedTask;
 #else
             return Task.CompletedTask;
@@ -104,7 +106,7 @@ namespace Tiny.RestClient
         /// <inheritdoc/>
         public Task OnReceivedResponseAsync(Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan? elapsedTime, CancellationToken cancellationToken)
         {
-#if NETFX_45
+#if COMPLETED_TASK_NOT_SUPPORTED
             return TaskHelper.CompletedTask;
 #else
             return Task.CompletedTask;

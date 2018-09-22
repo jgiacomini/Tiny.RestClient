@@ -391,13 +391,14 @@ namespace Tiny.RestClient
             {
                 return GetSerializedContent(toSerializeContent);
             }
-
+            #if !FILEINFO_NOT_SUPPORTED
             if (content is FileContent fileContent)
             {
                 var currentFileContent = new HttpStreamContent(fileContent.Data.OpenRead());
                 SetContentType(fileContent.ContentType, currentFileContent);
                 return currentFileContent;
             }
+            #endif
 
             if (content is MultipartContent multiParts)
             {
@@ -431,12 +432,14 @@ namespace Tiny.RestClient
                         var stringContent = GetSerializedContent(toSerializeMultiContent);
                         AddMulitPartContent(currentPart, stringContent, multiPartContent);
                     }
+                    #if !FILEINFO_NOT_SUPPORTED
                     else if (currentPart is FileMultipartData currentFileMultipartData)
                     {
                         var currentStreamContent = new HttpStreamContent(currentFileMultipartData.Data.OpenRead());
                         SetContentType(currentFileMultipartData.ContentType, currentStreamContent);
                         AddMulitPartContent(currentPart, currentStreamContent, multiPartContent);
                     }
+                    #endif
                     else
                     {
                         throw new NotImplementedException($"GetContent multipart for '{currentPart.GetType().Name}' not implemented");
@@ -646,7 +649,7 @@ namespace Tiny.RestClient
             }
         }
 
-        #region Read response
+#region Read response
         private async Task<Stream> ReadResponseAsync(HttpResponseMessage response, Headers headersToFill, CancellationToken cancellationToken)
         {
             Stream stream = null;
@@ -714,6 +717,6 @@ namespace Tiny.RestClient
 
             return content;
         }
-        #endregion
+#endregion
     }
 }
