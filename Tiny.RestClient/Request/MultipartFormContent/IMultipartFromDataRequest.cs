@@ -40,7 +40,7 @@ namespace Tiny.RestClient
         /// <returns>The current request</returns>
         /// <exception cref="System.ArgumentNullException">thrown when content is null</exception>
         IMultiPartFromDataExecutableRequest AddContent<TContent>(TContent content, string name = null, string fileName = null, IFormatter serializer = null);
-
+#if !FILEINFO_NOT_SUPPORTED
         /// <summary>
         /// Adds the content.
         /// </summary>
@@ -60,5 +60,6 @@ namespace Tiny.RestClient
         /// <returns>The current request</returns>
         /// <exception cref="System.ArgumentNullException">thrown when content is null</exception>
         IMultiPartFromDataExecutableRequest AddFileContent(FileInfo content, string contentType);
+#endif
     }
 }

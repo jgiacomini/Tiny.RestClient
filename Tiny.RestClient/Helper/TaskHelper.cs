@@ -1,4 +1,4 @@
-﻿#if NETFX_45
+﻿#if COMPLETED_TASK_NOT_SUPPORTED
 using System.Threading.Tasks;
 
 namespace Tiny.RestClient
