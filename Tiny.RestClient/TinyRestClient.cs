@@ -209,7 +209,7 @@ namespace Tiny.RestClient
             IFormatter formatter,
             CancellationToken cancellationToken)
         {
-            using (var content = CreateContent(tinyRequest.Content))
+            using (var content = await CreateContentAsync(tinyRequest.Content, cancellationToken).ConfigureAwait(false))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
 
@@ -274,7 +274,7 @@ namespace Tiny.RestClient
             Request tinyRequest,
             CancellationToken cancellationToken)
         {
-            using (var content = CreateContent(tinyRequest.Content))
+            using (var content = await CreateContentAsync(tinyRequest.Content, cancellationToken).ConfigureAwait(false))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
                 using (HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false))
@@ -288,7 +288,7 @@ namespace Tiny.RestClient
            Request tinyRequest,
            CancellationToken cancellationToken)
         {
-            using (var content = CreateContent(tinyRequest.Content))
+            using (var content = await CreateContentAsync(tinyRequest.Content, cancellationToken).ConfigureAwait(false))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
                 using (HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false))
@@ -302,7 +302,7 @@ namespace Tiny.RestClient
 
                         using (var ms = new MemoryStream())
                         {
-                            // 81920  = default value
+                            stream.Position = 0;
                             await stream.CopyToAsync(ms, BufferSize, cancellationToken).ConfigureAwait(false);
                             return ms.ToArray();
                         }
@@ -315,7 +315,7 @@ namespace Tiny.RestClient
            Request tinyRequest,
            CancellationToken cancellationToken)
         {
-            using (var content = CreateContent(tinyRequest.Content))
+            using (var content = await CreateContentAsync(tinyRequest.Content, cancellationToken).ConfigureAwait(false))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
                 var response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false);
@@ -333,7 +333,7 @@ namespace Tiny.RestClient
            Request tinyRequest,
            CancellationToken cancellationToken)
         {
-            using (var content = CreateContent(tinyRequest.Content))
+            using (var content = await CreateContentAsync(tinyRequest.Content, cancellationToken).ConfigureAwait(false))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
                 using (var response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false))
@@ -360,14 +360,14 @@ namespace Tiny.RestClient
            Request tinyRequest,
            CancellationToken cancellationToken)
         {
-            using (var content = CreateContent(tinyRequest.Content))
+            using (var content = await CreateContentAsync(tinyRequest.Content, cancellationToken).ConfigureAwait(false))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
                 return await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false);
             }
         }
 
-        private HttpContent CreateContent(IContent content)
+        private async Task<HttpContent> CreateContentAsync(IContent content, CancellationToken cancellationToken)
         {
             if (content == null)
             {
