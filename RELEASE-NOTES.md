@@ -3,6 +3,8 @@
 ## 1.4.3
 * Fix a bug on headers reading
 * Fix a small bug on postman of generation of postman file
+* Fix a bug when response is a byte array
+* Fix a bug on Multipart which didn't took the serializer specified on the request
 * Add support of Basic authentication
 * Add support of OAuth 2.0 authentication
 * Add support of .NET Framework 4.5, 4.6, 4.7
