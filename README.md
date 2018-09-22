@@ -468,4 +468,5 @@ compression.AddAcceptEncodingHeader = true;
 You can add your own compression / decompression algorithm :
 ```cs
 client.Settings.Add(new CustomCompression());
-```You class must implement the interface ICompression.
+```
+You class must implement the interface ICompression.
