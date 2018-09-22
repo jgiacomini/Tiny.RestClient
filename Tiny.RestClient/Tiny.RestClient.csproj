@@ -44,6 +44,8 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
+  
+  <!--NET Standard 1.1-->
   <ItemGroup Condition=" $(TargetFramework) =='netstandard1.1' ">
     <PackageReference Include="System.Xml.XmlSerializer" Version=" 4.3.0" />
   </ItemGroup>
@@ -52,6 +54,7 @@
     <DefineConstants>$(DefineConstants);FILEINFO_NOT_SUPPORTED;COMPLETED_TASK_NOT_SUPPORTED</DefineConstants>
   </PropertyGroup>
 
+  <!--NET Standard 1.2-->
   <ItemGroup Condition=" $(TargetFramework) =='netstandard1.2' ">
     <PackageReference Include="System.Xml.XmlSerializer" Version=" 4.3.0" />
   </ItemGroup>
@@ -59,11 +62,13 @@
   <PropertyGroup Condition=" $(TargetFramework) =='netstandard1.2' ">
     <DefineConstants>$(DefineConstants);FILEINFO_NOT_SUPPORTED;COMPLETED_TASK_NOT_SUPPORTED</DefineConstants>
   </PropertyGroup>
-  
+
+  <!--NET Standard 1.3-->
   <ItemGroup Condition=" $(TargetFramework) =='netstandard1.3' ">
     <PackageReference Include="System.Xml.XmlSerializer" Version=" 4.3.0" />
   </ItemGroup>
 
+  <!--NET Framework 4.5-->
   <ItemGroup Condition=" $(TargetFramework.StartsWith('net45')) ">
     <Reference Include="System.Net.Http" />
   </ItemGroup>
@@ -74,11 +79,13 @@
   <ItemGroup Condition=" $(TargetFramework.StartsWith('net45')) ">
     <Reference Include="System.Net.Http" />
   </ItemGroup>
-  
+
+  <!--NET Framework 4.6-->
   <ItemGroup Condition=" $(TargetFramework.StartsWith('net46')) ">
     <Reference Include="System.Net.Http" />
   </ItemGroup>
 
+  <!--NET Framework 4.7-->
   <ItemGroup Condition=" $(TargetFramework.StartsWith('net47')) ">
     <Reference Include="System.Net.Http" />
   </ItemGroup>
