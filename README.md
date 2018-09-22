@@ -454,3 +454,18 @@ You can also create you own listener by implementing IListener.
 IListener myCustomListerner = ..
 client.Settings.Listeners.Add(myCustomListerner);
 ```
+
+## Compression
+By default, the client support the decompression of Gzip.
+If the server respond with the header ContentEncoding "Gzip" the client will decompress it automaticly.
+
+You can tell to your server your client accept GZIP like below :
+```cs
+var compression = client.Settings.Compressions["gzip"];
+compression.AddAcceptEncodingHeader = true;
+```
+
+You can add your own compression / decompression algorithm :
+```cs
+client.Settings.Add(new CustomCompression());
+```You class must implement the interface ICompression.
