@@ -12,6 +12,8 @@ It hides all the complexity of communication, deserialisation ...
 ## Platform Support
 |Platform|Supported|Version|Dependencies|
 | ------------------- | :-----------: | :------------------: | :------------------: |
+|.NET Standard|Yes|1.1|Use System.Xml.XmlSerializer and Newtonsoft.Json|
+|.NET Standard|Yes|1.2|Use System.Xml.XmlSerializer and Newtonsoft.Json|
 |.NET Standard|Yes|1.3|Use System.Xml.XmlSerializer and Newtonsoft.Json|
 |.NET Standard|Yes|2.0|Use Newtonsoft.Json|
 |.NET Framework|Yes|4.5+|Use Newtonsoft.Json|
