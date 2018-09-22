@@ -10,19 +10,23 @@ It hides all the complexity of communication, deserialisation ...
 
 
 ## Platform Support
-|Platform|Supported|Version|Dependencies|
-| ------------------- | :-----------: | :------------------: | :------------------: |
-|.NET Standard|Yes|1.3|Use System.Xml.XmlSerializer and Newtonsoft.Json|
-|.NET Standard|Yes|2.0|Use Newtonsoft.Json|
-|.NET Framework|Yes|4.5+|Use Newtonsoft.Json|
-|.NET Framework|Yes|4.6+|Use Newtonsoft.Json|
-|.NET Framework|Yes|4.7+|Use Newtonsoft.Json|
+|Platform|Supported|Version|Dependencies|Feature not supported|
+| ------------------- | :-----------: | :------------------: | :------------------: |:------------------: |
+|.NET Standard|Yes|1.1|Use System.Xml.XmlSerializer and Newtonsoft.Json|Manipulate files|
+|.NET Standard|Yes|1.2|Use System.Xml.XmlSerializer and Newtonsoft.Json|Manipulate files|
+|.NET Standard|Yes|1.3|Use System.Xml.XmlSerializer and Newtonsoft.Json|-|
+|.NET Standard|Yes|2.0|Use Newtonsoft.Json|-|
+|.NET Framework|Yes|4.5+|Use Newtonsoft.Json|-|
+|.NET Framework|Yes|4.6+|Use Newtonsoft.Json|-|
+|.NET Framework|Yes|4.7+|Use Newtonsoft.Json|-|
 
-The support of .NET Standard 1.3 to 2.0 allow you to use it in :
+The support of .NET Standard 1.1 to 2.0 allow you to use it in :
 - .Net Framework 4.6+
 - Xamarin iOS et Android
 - .Net Core
 - UWP
+- Windows Phone 8.1
+- Windows 8.1
 
 ## Features
 * Modern async http client for REST API.

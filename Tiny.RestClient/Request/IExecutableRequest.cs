@@ -45,7 +45,7 @@ namespace Tiny.RestClient
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task of <see cref="HttpResponseMessage"/></returns>
         Task<HttpResponseMessage> ExecuteAsHttpResponseMessageAsync(CancellationToken cancellationToken = default);
-
+#if !FILEINFO_NOT_SUPPORTED
         /// <summary>
         /// Download file async
         /// </summary>
@@ -53,6 +53,7 @@ namespace Tiny.RestClient
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>return a file info</returns>
         Task<FileInfo> DownloadFileAsync(string path, CancellationToken cancellationToken = default);
+#endif
 
         /// <summary>
         /// Executes the request.
