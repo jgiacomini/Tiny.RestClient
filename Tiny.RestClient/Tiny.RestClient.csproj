@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.2;netstandard1.3;netstandard2.0;net45;net451;net452;net46;net47;</TargetFrameworks>
+    <TargetFrameworks>netstandard1.1;netstandard1.2;netstandard1.3;netstandard2.0;net45;net451;net452;net46;net47;</TargetFrameworks>
     <Version>1.4.3</Version>
     <Copyright>Copyright © Jérôme Giacomini 2018</Copyright>
     <NeutralLanguage>en</NeutralLanguage>
@@ -44,6 +44,13 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
+  <ItemGroup Condition=" $(TargetFramework) =='netstandard1.1' ">
+    <PackageReference Include="System.Xml.XmlSerializer" Version=" 4.3.0" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" $(TargetFramework) =='netstandard1.1' ">
+    <DefineConstants>$(DefineConstants);FILEINFO_NOT_SUPPORTED;COMPLETED_TASK_NOT_SUPPORTED</DefineConstants>
+  </PropertyGroup>
 
   <ItemGroup Condition=" $(TargetFramework) =='netstandard1.2' ">
     <PackageReference Include="System.Xml.XmlSerializer" Version=" 4.3.0" />
