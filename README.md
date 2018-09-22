@@ -25,6 +25,8 @@ The support of .NET Standard 1.1 to 2.0 allow you to use it in :
 - Xamarin iOS et Android
 - .Net Core
 - UWP
+- Windows Phone 8.1
+- Windows 8.1
 
 ## Features
 * Modern async http client for REST API.
