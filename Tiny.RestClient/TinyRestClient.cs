@@ -395,7 +395,7 @@ namespace Tiny.RestClient
 
             if (content is IToSerializeContent toSerializeContent)
             {
-                return GetSerializedContent(toSerializeContent);
+                return await GetSerializedContentAsync(toSerializeContent, cancellationToken).ConfigureAwait(false);
             }
             #if !FILEINFO_NOT_SUPPORTED
             if (content is FileContent fileContent)
@@ -435,7 +435,7 @@ namespace Tiny.RestClient
                     }
                     else if (currentPart is IToSerializeContent toSerializeMultiContent)
                     {
-                        var stringContent = GetSerializedContent(toSerializeMultiContent);
+                        var stringContent = await GetSerializedContentAsync(toSerializeMultiContent, cancellationToken).ConfigureAwait(false);
                         AddMulitPartContent(currentPart, stringContent, multiPartContent);
                     }
                     #if !FILEINFO_NOT_SUPPORTED
@@ -458,7 +458,7 @@ namespace Tiny.RestClient
             throw new NotImplementedException($"GetContent for '{content.GetType().Name}' not implemented");
         }
 
-        private StringContent GetSerializedContent(IToSerializeContent content)
+        private async Task<HttpContent> GetSerializedContentAsync(IToSerializeContent content, CancellationToken cancellationToken)
         {
             IFormatter serializer = Settings.Formatters.Default;
 
@@ -482,9 +482,36 @@ namespace Tiny.RestClient
                 return null;
             }
 
+            if (content.Compression != null)
+            {
+                using (var stream = await GenerateStreamFromStringAsync(serializedString, cancellationToken).ConfigureAwait(false))
+                {
+                    var compressedStream = await content.Compression.CompressAsync(stream, BufferSize, cancellationToken).ConfigureAwait(false);
+                    var streamContent = new HttpStreamContent(compressedStream);
+                    streamContent.Headers.ContentType = new MediaTypeHeaderValue(serializer.DefaultMediaType);
+                    streamContent.Headers.ContentEncoding.Add(content.Compression.ContentEncoding);
+
+                    return streamContent;
+                }
+            }
+
             var stringContent = new StringContent(serializedString, Settings.Encoding);
             stringContent.Headers.ContentType = new MediaTypeHeaderValue(serializer.DefaultMediaType);
             return stringContent;
+        }
+
+        private async Task<Stream> GenerateStreamFromStringAsync(string content, CancellationToken cancellationToken)
+        {
+            var stream = new MemoryStream();
+            using (var writer = new StreamWriter(stream))
+            {
+                await writer.WriteAsync(content).ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
+                await writer.FlushAsync();
+                cancellationToken.ThrowIfCancellationRequested();
+            }
+
+            return stream;
         }
 
         private void AddMulitPartContent(MultipartData currentContent, HttpContent content, MultipartFormDataContent multipartFormDataContent)
