@@ -490,19 +490,12 @@ namespace Tiny.RestClient
                 using (var stream = new MemoryStream(Settings.Encoding.GetBytes(serializedString)))
                 {
                     var compressedStream = await compression.CompressAsync(stream, BufferSize, cancellationToken).ConfigureAwait(false);
-                    var streamContent = new HttpStreamContent(compressedStream);
+                    compressedStream.Position = 0;
 
-                    if (!string.IsNullOrEmpty(serializer.DefaultMediaType))
-                    {
-                        streamContent.Headers.ContentType = new MediaTypeHeaderValue(serializer.DefaultMediaType);
-                    }
-
-                    if (!string.IsNullOrEmpty(compression.ContentEncoding))
-                    {
-                        streamContent.Headers.ContentEncoding.Add(compression.ContentEncoding);
-                    }
-
-                    return streamContent;
+                    var compressedContent = new HttpStreamContent(compressedStream);
+                    compressedContent.Headers.ContentType = new MediaTypeHeaderValue(serializer.DefaultMediaType);
+                    compressedContent.Headers.ContentEncoding.Add(compression.ContentEncoding);
+                    return compressedContent;
                 }
             }
 
@@ -617,7 +610,7 @@ namespace Tiny.RestClient
                     await Settings.Listeners.OnSendingRequestAsync(uri, httpMethod, request, cancellationToken).ConfigureAwait(false);
                     cancellationToken.ThrowIfCancellationRequested();
                     stopwatch?.Start();
-                    using (var cts = GetCancellationTokenSourceForTimeout(request, localTimeout ?? Settings.DefaultTimeout, cancellationToken))
+                    using (var cts = GetCancellationTokenSourceForTimeout(localTimeout ?? Settings.DefaultTimeout, cancellationToken))
                     {
                         try
                         {
@@ -667,7 +660,6 @@ namespace Tiny.RestClient
 
         // Inspired by this blog post https://www.thomaslevesque.com/2018/02/25/better-timeout-handling-with-httpclient/
         private CancellationTokenSource GetCancellationTokenSourceForTimeout(
-            HttpRequestMessage request,
             TimeSpan timeout,
             CancellationToken cancellationToken)
         {

@@ -9,6 +9,24 @@ namespace Tiny.RestClient.Tests
     public class GzipTests : BaseTest
     {
         [TestMethod]
+        public async Task GzipContent()
+        {
+            var postRequest = new Request
+            {
+                Id = 42,
+                Data = "DATA"
+            };
+
+            var client = GetClient();
+            var response = await client.
+                PostRequest("Gzip/complex", postRequest, compression: client.Settings.Compressions["gzip"]).
+                ExecuteAsync<Response>();
+
+            Assert.AreEqual(postRequest.Id, response.Id);
+            Assert.AreEqual(postRequest.Data, response.ResponseData);
+        }
+
+        [TestMethod]
         public async Task GzipResponse()
         {
             var client = GetClient();
@@ -20,24 +38,6 @@ namespace Tiny.RestClient.Tests
             Assert.AreEqual(data.Length, 2);
             Assert.AreEqual(data[0], "value1");
             Assert.AreEqual(data[1], "value2");
-        }
-
-        [TestMethod]
-        public async Task GzipContent()
-        {
-            var postRequest = new Request
-            {
-                Id = 42,
-                Data = "DATA"
-            };
-
-            var client = GetClient();
-            var response = await client.
-                PostRequest("PostTest/complex", postRequest, compression: client.Settings.Compressions["gzip"]).
-                ExecuteAsync<Response>();
-
-            Assert.AreEqual(postRequest.Id, response.Id);
-            Assert.AreEqual(postRequest.Data, response.ResponseData);
         }
 
         [TestMethod]
