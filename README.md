@@ -35,6 +35,7 @@ The support of .NET Standard 1.1 to 2.0 allow you to use it in :
 * Automatic XML and JSON serialization / deserialization
 * Support of custom serialisation / deserialisation
 * Support of multi-part form data
+* Support of GZIP (compression && decompression)
 * Download file
 * Upload file
 * Optimized http calls
