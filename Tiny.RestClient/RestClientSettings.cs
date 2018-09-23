@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace Tiny.RestClient
@@ -13,9 +12,11 @@ namespace Tiny.RestClient
 
         internal RestClientSettings()
         {
-            DefaultHeaders = new Dictionary<string, string>();
+            DefaultHeaders = new Headers();
             Listeners = new Listeners();
             Formatters = new Formatters();
+            Compressions = new Compressions();
+            Compressions.Add(new GzipCompression());
             _encoding = Encoding.UTF8;
             DefaultTimeout = TimeSpan.FromSeconds(100);
         }
@@ -46,7 +47,7 @@ namespace Tiny.RestClient
         /// <value>
         /// The default headers.
         /// </value>
-        public Dictionary<string, string> DefaultHeaders
+        public Headers DefaultHeaders
         {
             get; private set;
         }
@@ -65,5 +66,10 @@ namespace Tiny.RestClient
         /// Gets the list of formatter used to serialize and deserialize data
         /// </summary>
         public Formatters Formatters { get; private set; }
+
+        /// <summary>
+        /// Compression / decompression system enabled
+        /// </summary>
+        public Compressions Compressions { get; private set; }
     }
 }

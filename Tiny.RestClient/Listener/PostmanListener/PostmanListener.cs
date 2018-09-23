@@ -38,7 +38,7 @@ namespace Tiny.RestClient
                     Name = name,
                     Schema = "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
                 },
-                Items = new List<Folder>()
+                Items = new List<IItem>()
             };
         }
 
@@ -47,6 +47,7 @@ namespace Tiny.RestClient
         /// <inheritdoc/>
         public bool MeasureTime => false;
 
+#if !FILEINFO_NOT_SUPPORTED
         /// <summary>
         /// Save PostManCollection to file
         /// </summary>
@@ -65,6 +66,7 @@ namespace Tiny.RestClient
                 await fileStream.WriteAsync(encodedText, 0, encodedText.Length);
             }
         }
+#endif
 
         /// <summary>
         /// Get postman collection json data
@@ -94,13 +96,21 @@ namespace Tiny.RestClient
         /// <inheritdoc/>
         public Task OnFailedToReceiveResponseAsync(Uri uri, HttpMethod httpMethod, Exception exception, TimeSpan? elapsedTime, CancellationToken cancellationToken)
         {
+#if COMPLETED_TASK_NOT_SUPPORTED
+            return TaskHelper.CompletedTask;
+#else
             return Task.CompletedTask;
+#endif
         }
 
         /// <inheritdoc/>
         public Task OnReceivedResponseAsync(Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan? elapsedTime, CancellationToken cancellationToken)
         {
+#if COMPLETED_TASK_NOT_SUPPORTED
+            return TaskHelper.CompletedTask;
+#else
             return Task.CompletedTask;
+#endif
         }
 
         /// <inheritdoc/>
@@ -116,21 +126,28 @@ namespace Tiny.RestClient
             var segmentsForFolder = string.Join("_", SegmentsWithoutSlashAndLastSegment(uri));
             lock (_toLock)
             {
-                var folder = Collection.Items.FirstOrDefault(f => f.Name == segmentsForFolder);
-
-                if (folder != null)
+                if (string.IsNullOrEmpty(segmentsForFolder))
                 {
-                    folder.Items.Add(item);
+                    Collection.Items.Add(item);
                 }
                 else
                 {
-                    folder = new Folder
+                    var folder = Collection.Items.OfType<Folder>().FirstOrDefault(f => f.Name == segmentsForFolder);
+
+                    if (folder != null)
                     {
-                        Name = segmentsForFolder,
-                        Items = new List<Item>()
-                    };
-                    folder.Items.Add(item);
-                    Collection.Items.Add(folder);
+                        folder.Items.Add(item);
+                    }
+                    else
+                    {
+                        folder = new Folder
+                        {
+                            Name = segmentsForFolder,
+                            Items = new List<Item>()
+                        };
+                        folder.Items.Add(item);
+                        Collection.Items.Add(folder);
+                    }
                 }
             }
         }
@@ -198,6 +215,13 @@ namespace Tiny.RestClient
                 Port = uri.Port.ToString(),
                 QueryParameters = GetQuery(uri)
             };
+            if (uri.Scheme?.ToLower() == "http")
+            {
+                if (uri.Port == 80)
+                {
+                    url.Port = null;
+                }
+            }
 
             return url;
         }

@@ -37,10 +37,11 @@ namespace Tiny.RestClient
         /// <param name="name">The name of the item</param>
         /// <param name="fileName">The name of the file</param>
         /// <param name="serializer">Override the default serializer setted on the client. If null use default serializer</param>
+        /// <param name="compression">Add compresion system use ton compress content</param>
         /// <returns>The current request</returns>
         /// <exception cref="System.ArgumentNullException">thrown when content is null</exception>
-        IMultiPartFromDataExecutableRequest AddContent<TContent>(TContent content, string name = null, string fileName = null, IFormatter serializer = null);
-
+        IMultiPartFromDataExecutableRequest AddContent<TContent>(TContent content, string name = null, string fileName = null, IFormatter serializer = null, ICompression compression = null);
+#if !FILEINFO_NOT_SUPPORTED
         /// <summary>
         /// Adds the content.
         /// </summary>
@@ -60,5 +61,6 @@ namespace Tiny.RestClient
         /// <returns>The current request</returns>
         /// <exception cref="System.ArgumentNullException">thrown when content is null</exception>
         IMultiPartFromDataExecutableRequest AddFileContent(FileInfo content, string contentType);
+#endif
     }
 }

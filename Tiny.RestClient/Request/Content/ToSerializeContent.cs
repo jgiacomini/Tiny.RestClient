@@ -1,15 +1,15 @@
 ﻿using System;
-using System.IO;
 using System.Text;
 
 namespace Tiny.RestClient
 {
     internal class ToSerializeContent<T> : BaseContent<T>, IToSerializeContent
     {
-        public ToSerializeContent(T data, IFormatter serializer)
+        public ToSerializeContent(T data, IFormatter serializer, ICompression compression)
             : base(data, null)
         {
             Serializer = serializer;
+            Compression = compression;
         }
 
         public Type TypeToSerialize => typeof(T);
@@ -27,5 +27,7 @@ namespace Tiny.RestClient
         }
 
         public IFormatter Serializer { get; private set; }
+
+        public ICompression Compression { get; private set; }
     }
 }

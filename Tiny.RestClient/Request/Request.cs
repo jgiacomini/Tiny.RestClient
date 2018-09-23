@@ -21,7 +21,7 @@ namespace Tiny.RestClient
         private readonly HttpMethod _httpMethod;
         private readonly TinyRestClient _client;
         private readonly string _route;
-        private Dictionary<string, string> _headers;
+        private Headers _headers;
         private Dictionary<string, string> _queryParameters;
         private IContent _content;
         private List<KeyValuePair<string, string>> _formParameters;
@@ -34,7 +34,7 @@ namespace Tiny.RestClient
         internal string Route { get => _route; }
         internal IContent Content { get => _content; }
         internal Headers ReponseHeaders { get => _reponseHeaders; }
-        internal Dictionary<string, string> Headers { get => _headers; }
+        internal Headers Headers { get => _headers; }
         internal TimeSpan? Timeout { get => _timeout; }
 
         static Request()
@@ -53,9 +53,9 @@ namespace Tiny.RestClient
         }
 
         #region Content
-        public IParameterRequest AddContent<TContent>(TContent content, IFormatter serializer)
+        public IParameterRequest AddContent<TContent>(TContent content, IFormatter serializer, ICompression compression)
         {
-            _content = new ToSerializeContent<TContent>(content, serializer);
+            _content = new ToSerializeContent<TContent>(content, serializer, compression);
             return this;
         }
 
@@ -70,7 +70,7 @@ namespace Tiny.RestClient
             _content = new StreamContent(stream, contentType);
             return this;
         }
-
+        #if !FILEINFO_NOT_SUPPORTED
         public IParameterRequest AddFileContent(FileInfo content, string contentType)
         {
             if (content == null)
@@ -86,8 +86,9 @@ namespace Tiny.RestClient
             _content = new FileContent(content, contentType);
             return this;
         }
+        #endif
 
-        #endregion
+#endregion
 
         #region Forms Parameters
 
@@ -131,10 +132,34 @@ namespace Tiny.RestClient
         {
             if (_headers == null)
             {
-                _headers = new Dictionary<string, string>();
+                _headers = new Headers();
             }
 
             _headers.Add(key, value);
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public IRequest WithBasicAuthentication(string username, string password)
+        {
+            if (_headers == null)
+            {
+                _headers = new Headers();
+            }
+
+            _headers.AddBasicAuthentication(username, password);
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public IRequest WithOAuthBearer(string token)
+        {
+            if (_headers == null)
+            {
+                _headers = new Headers();
+            }
+
+            _headers.AddBearer(token);
             return this;
         }
         #endregion
@@ -339,6 +364,7 @@ namespace Tiny.RestClient
             return _client.ExecuteAsHttpResponseMessageResultAsync(this, cancellationToken);
         }
 
+        #if !FILEINFO_NOT_SUPPORTED
         /// <inheritdoc/>
         public async Task<FileInfo> DownloadFileAsync(string fileName, CancellationToken cancellationToken)
         {
@@ -366,8 +392,9 @@ namespace Tiny.RestClient
 
             return new FileInfo(fileName);
         }
+        #endif
 
-        #region MultiPart
+#region MultiPart
 
         /// <inheritdoc/>
         public IMultipartFromDataRequest AsMultiPartFromDataRequest(string contentType)
@@ -404,18 +431,18 @@ namespace Tiny.RestClient
         }
 
         /// <inheritdoc/>
-        IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddContent<TContent>(TContent content, string name, string fileName, IFormatter serializer)
+        IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddContent<TContent>(TContent content, string name, string fileName, IFormatter serializer, ICompression compression)
         {
             if (content == default)
             {
                 throw new ArgumentNullException(nameof(content));
             }
 
-            _multiPartFormData.Add(new ToSerializeMultipartData<TContent>(content, name, fileName, serializer));
+            _multiPartFormData.Add(new ToSerializeMultipartData<TContent>(content, name, fileName, serializer, compression));
 
             return this;
         }
-
+        #if !FILEINFO_NOT_SUPPORTED
         IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddFileContent(FileInfo content, string contentType)
         {
             IMultipartFromDataRequest me = this;
@@ -448,6 +475,7 @@ namespace Tiny.RestClient
 
             return this;
         }
-        #endregion
+        #endif
+#endregion
     }
 }

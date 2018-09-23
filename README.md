@@ -10,11 +10,22 @@ It hides all the complexity of communication, deserialisation ...
 
 
 ## Platform Support
-|Platform|Supported|Version|Dependencies|
-| ------------------- | :-----------: | :------------------: | :------------------: |
-|.Net Standard|Yes|1.3|Use System.Xml.XmlSerializer and Newtonsoft.Json|
-|.Net Standard|Yes|2.0|Use Newtonsoft.Json|
+|Platform|Supported|Version|Dependencies|Feature not supported|
+| ------------------- | :-----------: | :------------------: | :------------------: |:------------------: |
+|.NET Standard|Yes|1.1 && 1.2|Use System.Xml.XmlSerializer and Newtonsoft.Json|Manipulate files|
+|.NET Standard|Yes|1.3|Use System.Xml.XmlSerializer and Newtonsoft.Json|-|
+|.NET Standard|Yes|2.0|Use Newtonsoft.Json|-|
+|.NET Framework|Yes|4.5+|Use Newtonsoft.Json|-|
+|.NET Framework|Yes|4.6+|Use Newtonsoft.Json|-|
+|.NET Framework|Yes|4.7+|Use Newtonsoft.Json|-|
 
+The support of .NET Standard 1.1 to 2.0 allow you to use it in :
+- .Net Framework 4.6+
+- Xamarin iOS et Android
+- .Net Core
+- UWP
+- Windows Phone 8.1
+- Windows 8.1
 
 ## Features
 * Modern async http client for REST API.
@@ -26,12 +37,16 @@ It hides all the complexity of communication, deserialisation ...
 * Support of multi-part form data
 * Download file
 * Upload file
+* Support of GZIP (compression and decompression)
 * Optimized http calls
 * Typed exceptions which are easier to interpret
 * Define timeout globally or by request
 * Timeout exception throwed if the request is in timeout (by default HttpClient send OperationCancelledException, so we can't make difference between a user annulation and timeout)
 * Provide an easy way to log : all sending of request, failed to get response, and the time get response.
 * Support of export requests to postman collection
+* Support of Basic Authentification
+* Support of OAuth2 Authentification
+
 
 ## Basic usage
 
@@ -50,15 +65,39 @@ var client = new TinyRestClient("http://MyAPI.com/api", new HttpClient());
 
 ```cs
 // Add default header for each calls
-client.Settings.DefaultHeaders.Add("Token", "MYTOKEN");
+client.Settings.DefaultHeaders.Add("CustomHeader", "Header");
+```
+
+
+```cs
+// Add Auth2.0 token
+client.Settings.DefaultHeaders.void AddBearer("token");
+```
+
+```cs
+// Add default basic authentication header
+client.Settings.DefaultHeaders.AddBasicAuthentication("username", "password");
 ```
 #### Add header for current request
-
 
 ```cs
 // Add header for this request only
 client.GetRequest("City/All").
-      AddHeader("Token", "MYTOKEN").
+      AddHeader("CustomHeader", "Header").
+      ExecuteAsync();
+```
+
+```cs
+// Add header for this request only
+client.GetRequest("City/All").
+      WithOAuthBearer("MYTOKEN").
+      ExecuteAsync();
+```
+
+```cs
+// Add basic authentication for this request only
+client.GetRequest("City/All").
+      WithBasicAuthentication("username", "password").
       ExecuteAsync();
 ```
 
@@ -419,3 +458,31 @@ You can also create you own listener by implementing IListener.
 IListener myCustomListerner = ..
 client.Settings.Listeners.Add(myCustomListerner);
 ```
+
+## Compression && Decompression
+By default, the client support the decompression of Gzip.
+If the server respond with the header ContentEncoding "Gzip" the client will decompress it automaticly.
+
+### Compression
+For each request which post a content you can specified the compression algorithm like below
+```cs
+var response = await client.
+                PostRequest("Gzip/complex", postRequest, compression: client.Settings.Compressions["gzip"]).
+                ExecuteAsync<Response>();
+```
+Warning : the server must be able to decompress your content.
+
+### Decompression
+You can tell to your server your client accept GZIP like below :
+```cs
+var compression = client.Settings.Compressions["gzip"];
+compression.AddAcceptEncodingHeader = true;
+```
+If the server can compress response, it will respond with compressed content.
+
+### Custom ICompression
+You can add your own compression / decompression algorithm :
+```cs
+client.Settings.Add(new CustomCompression());
+```
+You class must implement the interface ICompression.

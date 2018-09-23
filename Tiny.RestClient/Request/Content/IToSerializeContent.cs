@@ -7,6 +7,7 @@ namespace Tiny.RestClient
     {
         Type TypeToSerialize { get; }
         IFormatter Serializer { get; }
+        ICompression Compression { get; }
         string GetSerializedString(IFormatter serializer, Encoding encoding);
     }
 }
