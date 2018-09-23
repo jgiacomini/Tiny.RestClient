@@ -105,7 +105,7 @@ namespace Tiny.RestClient.Tests
                 AddByteArrayContent(GetByteArray(size)).
                 ExecuteAsByteArrayAsync();
             Assert.IsNotNull(response);
-            Assert.IsTrue(response.Length == size);
+            Assert.AreEqual(size, (uint)response.Length);
 
             for (int i = 0; i < byteArray.Length; i++)
             {

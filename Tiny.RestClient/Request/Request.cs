@@ -53,9 +53,9 @@ namespace Tiny.RestClient
         }
 
         #region Content
-        public IParameterRequest AddContent<TContent>(TContent content, IFormatter serializer)
+        public IParameterRequest AddContent<TContent>(TContent content, IFormatter serializer, ICompression compression)
         {
-            _content = new ToSerializeContent<TContent>(content, serializer);
+            _content = new ToSerializeContent<TContent>(content, serializer, compression);
             return this;
         }
 
@@ -431,14 +431,14 @@ namespace Tiny.RestClient
         }
 
         /// <inheritdoc/>
-        IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddContent<TContent>(TContent content, string name, string fileName, IFormatter serializer)
+        IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddContent<TContent>(TContent content, string name, string fileName, IFormatter serializer, ICompression compression)
         {
             if (content == default)
             {
                 throw new ArgumentNullException(nameof(content));
             }
 
-            _multiPartFormData.Add(new ToSerializeMultipartData<TContent>(content, name, fileName, serializer));
+            _multiPartFormData.Add(new ToSerializeMultipartData<TContent>(content, name, fileName, serializer, compression));
 
             return this;
         }
