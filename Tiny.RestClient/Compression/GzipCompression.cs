@@ -26,9 +26,10 @@ namespace Tiny.RestClient
             try
             {
                 var compressedStream = new MemoryStream();
-                using (var decompressionStream = new GZipStream(stream, CompressionMode.Compress))
+
+                using (var compressionStream = new GZipStream(compressedStream, CompressionMode.Compress, true))
                 {
-                    await decompressionStream.CopyToAsync(compressedStream, bufferSize, cancellationToken).ConfigureAwait(false);
+                    await stream.CopyToAsync(compressionStream).ConfigureAwait(false);
                 }
 
                 return compressedStream;
@@ -46,6 +47,7 @@ namespace Tiny.RestClient
             using (var decompressionStream = new GZipStream(stream, CompressionMode.Decompress))
             {
                 await decompressionStream.CopyToAsync(decompressedStream, bufferSize, cancellationToken).ConfigureAwait(false);
+                await decompressionStream.FlushAsync();
             }
 
             return decompressedStream;

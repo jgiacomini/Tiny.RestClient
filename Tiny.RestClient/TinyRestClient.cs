@@ -397,6 +397,7 @@ namespace Tiny.RestClient
             {
                 return await GetSerializedContentAsync(toSerializeContent, cancellationToken).ConfigureAwait(false);
             }
+
             #if !FILEINFO_NOT_SUPPORTED
             if (content is FileContent fileContent)
             {
@@ -438,6 +439,7 @@ namespace Tiny.RestClient
                         var stringContent = await GetSerializedContentAsync(toSerializeMultiContent, cancellationToken).ConfigureAwait(false);
                         AddMulitPartContent(currentPart, stringContent, multiPartContent);
                     }
+
                     #if !FILEINFO_NOT_SUPPORTED
                     else if (currentPart is FileMultipartData currentFileMultipartData)
                     {
@@ -482,14 +484,23 @@ namespace Tiny.RestClient
                 return null;
             }
 
-            if (content.Compression != null)
+            var compression = content.Compression;
+            if (compression != null)
             {
-                using (var stream = await GenerateStreamFromStringAsync(serializedString, cancellationToken).ConfigureAwait(false))
+                using (var stream = new MemoryStream(Settings.Encoding.GetBytes(serializedString)))
                 {
-                    var compressedStream = await content.Compression.CompressAsync(stream, BufferSize, cancellationToken).ConfigureAwait(false);
+                    var compressedStream = await compression.CompressAsync(stream, BufferSize, cancellationToken).ConfigureAwait(false);
                     var streamContent = new HttpStreamContent(compressedStream);
-                    streamContent.Headers.ContentType = new MediaTypeHeaderValue(serializer.DefaultMediaType);
-                    streamContent.Headers.ContentEncoding.Add(content.Compression.ContentEncoding);
+
+                    if (!string.IsNullOrEmpty(serializer.DefaultMediaType))
+                    {
+                        streamContent.Headers.ContentType = new MediaTypeHeaderValue(serializer.DefaultMediaType);
+                    }
+
+                    if (!string.IsNullOrEmpty(compression.ContentEncoding))
+                    {
+                        streamContent.Headers.ContentEncoding.Add(compression.ContentEncoding);
+                    }
 
                     return streamContent;
                 }
@@ -498,20 +509,6 @@ namespace Tiny.RestClient
             var stringContent = new StringContent(serializedString, Settings.Encoding);
             stringContent.Headers.ContentType = new MediaTypeHeaderValue(serializer.DefaultMediaType);
             return stringContent;
-        }
-
-        private async Task<Stream> GenerateStreamFromStringAsync(string content, CancellationToken cancellationToken)
-        {
-            var stream = new MemoryStream();
-            using (var writer = new StreamWriter(stream))
-            {
-                await writer.WriteAsync(content).ConfigureAwait(false);
-                cancellationToken.ThrowIfCancellationRequested();
-                await writer.FlushAsync();
-                cancellationToken.ThrowIfCancellationRequested();
-            }
-
-            return stream;
         }
 
         private void AddMulitPartContent(MultipartData currentContent, HttpContent content, MultipartFormDataContent multipartFormDataContent)
@@ -687,7 +684,7 @@ namespace Tiny.RestClient
             }
         }
 
-#region Read response
+        #region Read response
         private async Task<Stream> ReadResponseAsync(HttpResponseMessage response, Headers headersToFill, CancellationToken cancellationToken)
         {
             await HandleResponseAsync(response, headersToFill, cancellationToken).ConfigureAwait(false);
@@ -757,6 +754,6 @@ namespace Tiny.RestClient
                 throw newEx;
             }
         }
-#endregion
+        #endregion
     }
 }
