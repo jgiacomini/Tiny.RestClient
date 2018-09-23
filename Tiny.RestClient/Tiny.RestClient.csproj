@@ -6,7 +6,8 @@
     <NeutralLanguage>en</NeutralLanguage>
     <Title>Tiny.RestClient</Title>
     <Authors>Jérôme Giacomini</Authors>
-    <Description>Tiny.RestClient facilitates the dialog between your API and your application. It hides all the complexity of communication, deserialisation ...
+    <Description>
+      Tiny.RestClient facilitates the dialog between your API and your application. It hides all the complexity of communication, deserialisation ...
 
       Features :
       * Modern async http client for REST API.
@@ -18,6 +19,7 @@
       * Support of multi-part form data
       * Download file
       * Upload file
+      * Support of GZIP (compression and decompression)
       * Optimized http calls
       * Typed exceptions which are easier to interpret
       * Define timeout globally or by request
