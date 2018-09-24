@@ -68,10 +68,9 @@ var client = new TinyRestClient("http://MyAPI.com/api", new HttpClient());
 client.Settings.DefaultHeaders.Add("CustomHeader", "Header");
 ```
 
-
 ```cs
 // Add Auth2.0 token
-client.Settings.DefaultHeaders.void AddBearer("token");
+client.Settings.DefaultHeaders.AddBearer("token");
 ```
 
 ```cs
@@ -193,7 +192,6 @@ FileInfo fileInfo = await client.
 ## Get raw HttpResponseMessage
 
 ```cs
-
 var response = await client.
                 PostRequest("City/Add").
                 AddFormParameter("country", "France").
@@ -205,7 +203,6 @@ var response = await client.
 ## Get raw string result
 
 ```cs
-
 string response = await client.
                 GetRequest("City/All").
                 ExecuteAsStringAsync();
