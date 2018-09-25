@@ -16,10 +16,14 @@ namespace Tiny.RestClient.ForTest.Api.Middleware
 
         public async Task InvokeAsync(HttpContext context)
         {
-            var content = context.Request.Headers["Accept-Encoding"];
+            var content = context.Request.Headers["Content-Encoding"];
             if (!string.IsNullOrWhiteSpace(content))
             {
-                if (content.Contains("br"))
+                if (content.Contains("gzip"))
+                {
+                    context.Request.Body = new GZipStream(context.Request.Body, CompressionMode.Decompress);
+                }
+                else if (content.Contains("br"))
                 {
                     context.Request.Body = new BrotliStream(context.Request.Body, CompressionMode.Decompress);
                 }

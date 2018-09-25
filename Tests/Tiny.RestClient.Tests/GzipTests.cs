@@ -19,7 +19,7 @@ namespace Tiny.RestClient.Tests
 
             var client = GetClient();
             var response = await client.
-                PostRequest("Gzip/complex", postRequest, compression: client.Settings.Compressions["gzip"]).
+                PostRequest("PostTest/complex", postRequest, compression: client.Settings.Compressions["gzip"]).
                 ExecuteAsync<Response>();
 
             Assert.AreEqual(postRequest.Id, response.Id);

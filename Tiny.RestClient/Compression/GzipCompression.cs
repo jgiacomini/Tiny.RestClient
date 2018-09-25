@@ -41,16 +41,9 @@ namespace Tiny.RestClient
         }
 
         /// <inheritdoc/>
-        public async Task<Stream> DecompressAsync(Stream stream, int bufferSize, CancellationToken cancellationToken)
+        public Task<Stream> DecompressAsync(Stream stream, int bufferSize, CancellationToken cancellationToken)
         {
-            var decompressedStream = new MemoryStream();
-            using (var decompressionStream = new GZipStream(stream, CompressionMode.Decompress))
-            {
-                await decompressionStream.CopyToAsync(decompressedStream, bufferSize, cancellationToken).ConfigureAwait(false);
-                await decompressionStream.FlushAsync();
-            }
-
-            return decompressedStream;
+            return Task.FromResult<Stream>(new GZipStream(stream, CompressionMode.Decompress));
         }
     }
 }
