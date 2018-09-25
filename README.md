@@ -460,8 +460,9 @@ client.Settings.Listeners.Add(myCustomListerner);
 ```
 
 ## Compression && Decompression
-By default, the client support the decompression of Gzip.
-If the server respond with the header ContentEncoding "Gzip" the client will decompress it automaticly.
+By default, the client support the decompression of Gzip and deflate.
+
+If the server respond with the header ContentEncoding "gzip" or "deflate" the client will decompress it automaticly.
 
 ### Compression
 For each request which post a content you can specified the compression algorithm like below
@@ -473,11 +474,18 @@ var response = await client.
 Warning : the server must be able to decompress your content.
 
 ### Decompression
-You can tell to your server your client accept GZIP like below :
+You can tell to your server your client accept gzip like below :
 ```cs
 var compression = client.Settings.Compressions["gzip"];
 compression.AddAcceptEncodingHeader = true;
 ```
+
+You can tell to your server your client accept deflate like below :
+```cs
+var compression = client.Settings.Compressions["deflate"];
+compression.AddAcceptEncodingHeader = true;
+```
+
 If the server can compress response, it will respond with compressed content.
 
 ### Custom ICompression
