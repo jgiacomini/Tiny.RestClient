@@ -37,7 +37,7 @@ The support of .NET Standard 1.1 to 2.0 allow you to use it in :
 * Support of multi-part form data
 * Download file
 * Upload file
-* Support of GZIP (compression and decompression)
+* Support of gzip/deflate (compression and decompression)
 * Optimized http calls
 * Typed exceptions which are easier to interpret
 * Define timeout globally or by request
