@@ -19,7 +19,7 @@
       * Support of multi-part form data
       * Download file
       * Upload file
-      * Support of GZIP (compression and decompression)
+      * Support of gzip and deflate (compression and decompression)
       * Optimized http calls
       * Typed exceptions which are easier to interpret
       * Define timeout globally or by request
