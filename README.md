@@ -37,7 +37,7 @@ The support of .NET Standard 1.1 to 2.0 allow you to use it in :
 * Support of multi-part form data
 * Download file
 * Upload file
-* Support of GZIP (compression and decompression)
+* Support of gzip/deflate (compression and decompression)
 * Optimized http calls
 * Typed exceptions which are easier to interpret
 * Define timeout globally or by request
@@ -456,9 +456,11 @@ IListener myCustomListerner = ..
 client.Settings.Listeners.Add(myCustomListerner);
 ```
 
-## Compression && Decompression
-By default, the client support the decompression of Gzip.
-If the server respond with the header ContentEncoding "Gzip" the client will decompress it automaticly.
+## Compression and Decompression
+By default, the client support the decompression of Gzip and deflate.
+
+
+If the server respond with the header ContentEncoding "gzip" or "deflate" the client will decompress it automaticly.
 
 ### Compression
 For each request which post a content you can specified the compression algorithm like below
@@ -470,11 +472,20 @@ var response = await client.
 Warning : the server must be able to decompress your content.
 
 ### Decompression
-You can tell to your server your client accept GZIP like below :
+Even if it's supported the client didn't send Accept-Encoding header automaticaly.
+
+You can add it for gzip all request like below :
 ```cs
 var compression = client.Settings.Compressions["gzip"];
 compression.AddAcceptEncodingHeader = true;
 ```
+
+You can add it for deflate all request like below :
+```cs
+var compression = client.Settings.Compressions["deflate"];
+compression.AddAcceptEncodingHeader = true;
+```
+
 If the server can compress response, it will respond with compressed content.
 
 ### Custom ICompression
