@@ -734,11 +734,10 @@ namespace Tiny.RestClient
             catch (Exception ex)
             {
                 var newEx = new HttpException(
-                    $"URL : {response.RequestMessage.RequestUri.ToString()}",
-                    response.RequestMessage.Headers,
-                    response.ReasonPhrase,
-                    response.RequestMessage.RequestUri.ToString(),
+                    response.RequestMessage.RequestUri,
                     response.RequestMessage.Method.ToString(),
+                    response.ReasonPhrase,
+                    response.RequestMessage.Headers,
                     content,
                     response.StatusCode,
                     ex);

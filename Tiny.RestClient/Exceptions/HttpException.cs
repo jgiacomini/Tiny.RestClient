@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
-using System.Text;
 
 namespace Tiny.RestClient
 {
@@ -15,56 +13,29 @@ namespace Tiny.RestClient
         /// <summary>
         /// Initializes a new instance of the <see cref="HttpException"/> class.
         /// </summary>
-        /// <param name="message">The message.</param>
-        /// <param name="headers">The headers of the request</param>
-        /// <param name="reasonPhrase">The reason phrase.</param>
-        /// <param name="url">The URL.</param>
+        /// <param name="uri">The URL.</param>
         /// <param name="verb">The verb.</param>
+        /// <param name="reasonPhrase">The reason phrase.</param>
+        /// <param name="headers">The headers of the request</param>
         /// <param name="content">The content.</param>
         /// <param name="statusCode">The status code.</param>
         /// <param name="ex">The ex.</param>
         public HttpException(
-            string message,
-            HttpRequestHeaders headers,
-            string reasonPhrase,
-            string url,
+            Uri uri,
             string verb,
+            string reasonPhrase,
+            HttpRequestHeaders headers,
             string content,
             HttpStatusCode statusCode,
             Exception ex)
-        : base($"URL : {url}, Headers {HeadersToString(headers)}, Verb : {verb}, StatusCode : {statusCode}, message : {message}, Response Content : {content}", ex)
+        : base($"Response status code does not indicate success. Url : {uri.ToString()}, Verb : {verb}, StatusCode : {statusCode}, ReasonPhrase : {reasonPhrase}", ex)
         {
             Verb = verb;
-            Url = url;
+            Uri = uri;
             Content = content;
             StatusCode = statusCode;
             ReasonPhrase = reasonPhrase;
-        }
-
-        private static string HeadersToString(HttpRequestHeaders headers)
-        {
-            var stringBuilder = new StringBuilder(headers.Count() * 50);
-            foreach (var header in headers)
-            {
-                stringBuilder.AppendLine($"Header key : {header.Key}");
-
-                var countValuesHeader = header.Value.Count();
-                if (countValuesHeader > 1)
-                {
-                    stringBuilder.AppendLine($"Header values ({countValuesHeader}) :");
-                }
-                else
-                {
-                    stringBuilder.AppendLine($"Header value :");
-                }
-
-                foreach (var value in header.Value)
-                {
-                    stringBuilder.AppendLine(value);
-                }
-            }
-
-            return stringBuilder.ToString();
+            Headers = headers;
         }
 
         /// <summary>
@@ -92,12 +63,12 @@ namespace Tiny.RestClient
         public string ReasonPhrase { get;  private set; }
 
         /// <summary>
-        /// Gets the URL.
+        /// Gets the Uri.
         /// </summary>
         /// <value>
         /// The URL.
         /// </value>
-        public string Url { get; private set; }
+        public Uri Uri { get; private set; }
 
         /// <summary>
         /// Gets the content.
