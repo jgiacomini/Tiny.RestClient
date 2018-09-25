@@ -29,7 +29,7 @@ namespace Tiny.RestClient.Tests
         [TestMethod]
         public async Task GzipResponse()
         {
-            var client = GetClient();
+            var client = GetNewClient();
             var compression = client.Settings.Compressions["gzip"];
             compression.AddAcceptEncodingHeader = true;
             var data = await client.

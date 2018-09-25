@@ -38,7 +38,7 @@ namespace Tiny.RestClient.Tests
         [TestMethod]
         public async Task DeflateResponse()
         {
-            var client = GetClient();
+            var client = GetNewClient();
             var compression = client.Settings.Compressions["deflate"];
             compression.AddAcceptEncodingHeader = true;
             var data = await client.
