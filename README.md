@@ -459,7 +459,7 @@ IListener myCustomListerner = ..
 client.Settings.Listeners.Add(myCustomListerner);
 ```
 
-## Compression && Decompression
+## Compression and Decompression
 By default, the client support the decompression of Gzip and deflate.
 
 If the server respond with the header ContentEncoding "gzip" or "deflate" the client will decompress it automaticly.
