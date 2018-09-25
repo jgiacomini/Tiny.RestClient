@@ -16,7 +16,7 @@ namespace Tiny.RestClient.ForTest.Api.CompressionProvider
         public bool SupportsFlush => true;
         public Stream CreateStream(Stream outputStream)
         {
-            return new BrotliStream(outputStream, CompressionMode.Compress);
+            return new DeflateStream(outputStream, _compressionLevel);
         }
     }
 }

@@ -15,8 +15,11 @@ namespace Tiny.RestClient
             DefaultHeaders = new Headers();
             Listeners = new Listeners();
             Formatters = new Formatters();
-            Compressions = new Compressions();
-            Compressions.Add(new GzipCompression());
+            Compressions = new Compressions
+            {
+                new GzipCompression(),
+                new DeflateCompression()
+            };
             _encoding = Encoding.UTF8;
             DefaultTimeout = TimeSpan.FromSeconds(100);
         }
