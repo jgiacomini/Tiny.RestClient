@@ -8,10 +8,10 @@ namespace Tiny.RestClient
     /// <summary>
     /// Gzip compression
     /// </summary>
-    public class GzipCompression : ICompression
+    public class DeflateCompression : ICompression
     {
         /// <inheritdoc/>
-        public string ContentEncoding => "gzip";
+        public string ContentEncoding => "deflate";
 
         /// <inheritdoc/>
         public bool AddAcceptEncodingHeader
@@ -27,7 +27,7 @@ namespace Tiny.RestClient
             {
                 var compressedStream = new MemoryStream();
 
-                using (var compressionStream = new GZipStream(compressedStream, CompressionMode.Compress, true))
+                using (var compressionStream = new DeflateStream(compressedStream, CompressionMode.Compress, true))
                 {
                     await stream.CopyToAsync(compressionStream).ConfigureAwait(false);
                 }
@@ -41,9 +41,16 @@ namespace Tiny.RestClient
         }
 
         /// <inheritdoc/>
-        public Task<Stream> DecompressAsync(Stream stream, int bufferSize, CancellationToken cancellationToken)
+        public async Task<Stream> DecompressAsync(Stream stream, int bufferSize, CancellationToken cancellationToken)
         {
-            return Task.FromResult<Stream>(new GZipStream(stream, CompressionMode.Decompress));
+            var decompressedStream = new MemoryStream();
+            using (var decompressionStream = new DeflateStream(stream, CompressionMode.Decompress))
+            {
+                await decompressionStream.CopyToAsync(decompressedStream, bufferSize, cancellationToken).ConfigureAwait(false);
+                await decompressionStream.FlushAsync();
+            }
+
+            return decompressedStream;
         }
     }
 }

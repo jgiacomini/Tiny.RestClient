@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Tiny.RestClient.ForTest.Api.CompressionProvider;
+using Tiny.RestClient.ForTest.Api.Middleware;
 
 namespace Tiny.RestClient.ForTest.Api
 {
@@ -21,7 +23,13 @@ namespace Tiny.RestClient.ForTest.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<GzipCompressionProviderOptions>(o => o.Level = System.IO.Compression.CompressionLevel.Optimal);
-            services.AddResponseCompression(o => o.EnableForHttps = true);
+
+            services.AddResponseCompression(o =>
+            {
+               o.Providers.Add(new BrotliCompressionProvider());
+               o.Providers.Add(new DeflateCompressionProvider());
+               o.EnableForHttps = true;
+            });
 
             services.AddMvc(options =>
             {
@@ -40,6 +48,7 @@ namespace Tiny.RestClient.ForTest.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseMiddleware<CompressionMiddleware>();
             app.UseResponseCompression();
             app.UseMvc();
         }
