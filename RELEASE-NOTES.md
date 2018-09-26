@@ -1,4 +1,7 @@
 # Release notes
+## 1.5.1
+* Add support of Defalte
+* Change the message of HttpException to be easier to understand
 
 ## 1.5.0
 * Fix a bug on headers reading
