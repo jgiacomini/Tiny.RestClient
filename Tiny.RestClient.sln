@@ -5,6 +5,7 @@ VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{BA692F65-6153-4BD7-8CE7-A3C478BB377E}"
 	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
 		Directory.Build.props = Directory.Build.props
 		ruleset.ruleset = ruleset.ruleset
 		stylecop.json = stylecop.json
