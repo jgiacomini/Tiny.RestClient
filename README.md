@@ -44,6 +44,7 @@ The support of .NET Standard 1.1 to 2.0 allow you to use it in :
 * Timeout exception throwed if the request is in timeout (by default HttpClient send OperationCancelledException, so we can't make difference between a user annulation and timeout)
 * Provide an easy way to log : all sending of request, failed to get response, and the time get response.
 * Support of export requests to postman collection
+* Support of display cURL request in debug output
 * Support of Basic Authentification
 * Support of OAuth2 Authentification
 
