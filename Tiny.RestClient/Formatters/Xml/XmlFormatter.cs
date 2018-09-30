@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace Tiny.RestClient
@@ -11,6 +12,17 @@ namespace Tiny.RestClient
     /// <seealso cref="IFormatter" />
     public class XmlFormatter : IFormatter
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="XmlFormatter"/>
+        /// </summary>
+        public XmlFormatter()
+        {
+            WriterSettings = new XmlWriterSettings
+            {
+                Indent = false
+            };
+        }
+
         /// <inheritdoc/>
         public string DefaultMediaType => "application/xml";
 
@@ -23,6 +35,11 @@ namespace Tiny.RestClient
                 yield return "text/xml";
             }
         }
+
+        /// <summary>
+        /// Gets the instance of WriterSettings
+        /// </summary>
+        public XmlWriterSettings WriterSettings { get; }
 
         /// <inheritdoc/>
         public T Deserialize<T>(Stream stream, Encoding encoding)
@@ -45,8 +62,11 @@ namespace Tiny.RestClient
             var serializer = new XmlSerializer(typeof(T));
             using (var stringWriter = new DynamicEncodingStringWriter(encoding))
             {
-                serializer.Serialize(stringWriter, data);
-                return stringWriter.ToString();
+                using (var writer = XmlWriter.Create(stringWriter, WriterSettings))
+                {
+                    serializer.Serialize(writer, data);
+                    return stringWriter.ToString();
+                }
             }
         }
     }

@@ -1,5 +1,18 @@
 # Release notes
 ## 1.5.2
+* Add new listener to print cURL request in debug output.
+ To enable it :
+
+```cs
+client.Settings.Listeners.AddCurl();
+```
+
+It produce this type of output in debug window for each ExecuteAsync called :
+```cs
+curl -X POST "http://localhost:4242/api/PostTest/complex"-H "Accept: application/json" -H "Content-Type: application/json" -d "{\"Id\":42,\"Data\":\"DATA\"}"
+```
+* The XmlFormatter now produce not indented xml (lighter than previous)
+* The XmlFormatter have ne property WriterSettings which allow to configure the way to write XML streams
 * Add support of CamelCase (PropertyName => propertyName) for JsonFormatter
 * Add support of SnakeCase (PropertyName => property_name) for JsonFormatter
 * Add support of KebabCase also known as SpinalCase (PropertyName => property-name) for JsonFormatter

@@ -1,7 +1,7 @@
 ﻿namespace Tiny.RestClient
 {
     /// <summary>
-    /// Extension to add easily debug listener
+    /// Extension to add easily postman listener
     /// </summary>
     public static class PostmanListenerExtension
     {

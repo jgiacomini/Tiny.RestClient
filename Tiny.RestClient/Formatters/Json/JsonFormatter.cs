@@ -23,7 +23,7 @@ namespace Tiny.RestClient
         }
 
         /// <summary>
-        /// Get the instance of JsonSerializer
+        /// Gets the instance of JsonSerializer
         /// </summary>
         public JsonSerializer JsonSerializer { get; }
 

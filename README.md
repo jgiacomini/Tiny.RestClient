@@ -45,6 +45,7 @@ The support of .NET Standard 1.1 to 2.0 allow you to use it in :
 * Timeout exception throwed if the request is in timeout (by default HttpClient send OperationCancelledException, so we can't make difference between a user annulation and timeout)
 * Provide an easy way to log : all sending of request, failed to get response, and the time get response.
 * Support of export requests to postman collection
+* Support of display cURL request in debug output
 * Support of Basic Authentification
 * Support of OAuth2 Authentification
 
@@ -57,7 +58,7 @@ Define a global timeout for all client. (By default it's setted to 100 secondes)
 ```cs
 using Tiny.RestClient;
 
-var client = new TinyRestClient("http://MyAPI.com/api", new HttpClient());
+var client = new TinyRestClient(new HttpClient(), "http://MyAPI.com/api");
 ```
 
 ### Headers
@@ -454,16 +455,27 @@ To add Debug listener you have to call AddDebug on Listeners property
 client.Settings.Listeners.AddDebug();
 ```
 
+### cURL Listener
+To add cURL listener you have to call AddCurl on Listeners property
+
+```cs
+client.Settings.Listeners.AddCurl();
+```
+
+It produce this type of output in debug window for each ExecuteAsync called :
+```cs
+curl -X POST "http://localhost:4242/api/PostTest/complex"-H "Accept: application/json" -H "Content-Type: application/json" -d "{\"Id\":42,\"Data\":\"DATA\"}"
+```
 
 ### Postman Listener
 To add postman listener you have to call AddPostman on Listeners property
 ```cs
-PostmanListerner listener = client.Settings.Listeners.AddPostman("nameOfCollection");
+PostmanListerner postmanListener = client.Settings.Listeners.AddPostman("nameOfCollection");
 ```
 
 When you want to save the postman collection you have to call SaveAsync
 ```cs
-await listener.SaveAsync(new FileInfo("postmanCollection.json");
+await postmanListener.SaveAsync(new FileInfo("postmanCollection.json");
 ```
 
 
