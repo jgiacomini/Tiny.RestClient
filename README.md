@@ -34,6 +34,7 @@ The support of .NET Standard 1.1 to 2.0 allow you to use it in :
 * Support of cancellation token on each requests
 * Automatic XML and JSON serialization / deserialization
 * Support of custom serialisation / deserialisation
+* Support of camelCase, snakeCase kebabCase for json serialization
 * Support of multi-part form data
 * Download file
 * Upload file
