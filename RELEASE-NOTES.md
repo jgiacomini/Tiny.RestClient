@@ -1,4 +1,15 @@
 # Release notes
+## 1.5.2
+* Add new listener to print cURL request in debug output.
+ To enable it :
+
+```cs
+client.Settings.AddCurlListener();
+```
+* The XmlFormatter now produce not indented xml (lighter than previous)
+* The XmlFormatter have ne property WriterSettings which allow to configure the way to write XML streams
+
+
 ## 1.5.1
 * Add support of Defalte
 * Change the message of HttpException to be easier to understand
