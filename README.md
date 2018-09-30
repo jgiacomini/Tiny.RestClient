@@ -434,7 +434,7 @@ client.Settings.Listeners.AddDebug();
 To add cURL listener you have to call AddCurl on Listeners property
 
 ```cs
-client.Settings.AddCurl();
+client.Settings.Listeners.AddCurl();
 ```
 
 It produce this type of output in debug window for each ExecuteAsync called :
@@ -442,16 +442,15 @@ It produce this type of output in debug window for each ExecuteAsync called :
 curl -X POST "http://localhost:4242/api/PostTest/complex"-H "Accept: application/json" -H "Content-Type: application/json" -d "{\"Id\":42,\"Data\":\"DATA\"}"
 ```
 
-
 ### Postman Listener
 To add postman listener you have to call AddPostman on Listeners property
 ```cs
-PostmanListerner listener = client.Settings.Listeners.AddPostman("nameOfCollection");
+PostmanListerner postmanListener = client.Settings.Listeners.AddPostman("nameOfCollection");
 ```
 
 When you want to save the postman collection you have to call SaveAsync
 ```cs
-await listener.SaveAsync(new FileInfo("postmanCollection.json");
+await postmanListener.SaveAsync(new FileInfo("postmanCollection.json");
 ```
 
 
