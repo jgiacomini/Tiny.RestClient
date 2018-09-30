@@ -430,6 +430,18 @@ To add Debug listener you have to call AddDebug on Listeners property
 client.Settings.Listeners.AddDebug();
 ```
 
+### cURL Listener
+To add cURL listener you have to call AddCurl on Listeners property
+
+```cs
+client.Settings.AddCurl();
+```
+
+It produce this type of output in debug window for each ExecuteAsync called :
+```cs
+curl -X POST "http://localhost:4242/api/PostTest/complex"-H "Accept: application/json" -H "Content-Type: application/json" -d "{\"Id\":42,\"Data\":\"DATA\"}"
+```
+
 
 ### Postman Listener
 To add postman listener you have to call AddPostman on Listeners property
