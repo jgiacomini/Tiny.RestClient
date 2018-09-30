@@ -350,6 +350,29 @@ var lastFormatter = client.Settings.Formatters.Where( f=> f is XmlSerializer>).F
 client.Remove(lastFormatter);
 ```
 
+### Json custom formatting
+
+You can enable 3 types of formatting on JsonFormatter :
+- CamelCase (PropertyName => propertyName)
+- SnakeCase (PropertyName => property_name)
+- KebabCase (aslo known as SpinalCase) (PropertyName => property-name).
+
+```cs
+// Enable KebabCase
+  client.Settings.Formatters.OfType<JsonFormatter>().First().UseKebabCase();
+```
+
+
+```cs
+// Enable CamelCase
+  client.Settings.Formatters.OfType<JsonFormatter>().First().UseCamelCase();
+```
+
+```cs
+// Enable SnakeCase
+  client.Settings.Formatters.OfType<JsonFormatter>().First().UseSkakeCase();
+```
+
 ### Define a specific serialize for one request
 ```cs
 IFormatter serializer = new XmlFormatter();
