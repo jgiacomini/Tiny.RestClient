@@ -56,7 +56,7 @@ Define a global timeout for all client. (By default it's setted to 100 secondes)
 ```cs
 using Tiny.RestClient;
 
-var client = new TinyRestClient("http://MyAPI.com/api", new HttpClient());
+var client = new TinyRestClient(new HttpClient(), "http://MyAPI.com/api");
 ```
 
 ### Headers
