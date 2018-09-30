@@ -4,13 +4,13 @@
  To enable it :
 
 ```cs
-client.Settings.AddCurlListener();
+client.Settings.Listeners.AddCurl();
 ```
-It produce this type of request in debug output :
+
+It produce this type of output in debug window for each ExecuteAsync called :
 ```cs
 curl -X POST "http://localhost:4242/api/PostTest/complex"-H "Accept: application/json" -H "Content-Type: application/json" -d "{\"Id\":42,\"Data\":\"DATA\"}"
 ```
-
 * The XmlFormatter now produce not indented xml (lighter than previous)
 * The XmlFormatter have ne property WriterSettings which allow to configure the way to write XML streams
 
