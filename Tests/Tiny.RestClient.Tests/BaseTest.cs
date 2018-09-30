@@ -21,6 +21,7 @@ namespace Tiny.RestClient.Tests
                 {
                     _client = new TinyRestClient(Program.Client, _serverUrl);
                     _client.Settings.Listeners.AddPostman("tests");
+                    _client.Settings.Listeners.AddCurl();
                 }
             }
 
