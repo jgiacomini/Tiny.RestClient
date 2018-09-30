@@ -1,4 +1,10 @@
 # Release notes
+## 1.5.2
+* Add support of CamelCase (PropertyName => propertyName) for JsonFormatter
+* Add support of SnakeCase (PropertyName => property_name) for JsonFormatter
+* Add support of KebabCase also known as SpinalCase (PropertyName => property-name) for JsonFormatter
+
+
 ## 1.5.1
 * Add support of Defalte
 * Change the message of HttpException to be easier to understand
