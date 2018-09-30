@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using Tiny.RestClient.Json;
 
 namespace Tiny.RestClient
 {
@@ -21,9 +23,33 @@ namespace Tiny.RestClient
         }
 
         /// <summary>
-        /// Get the instance of JsonSerializer
+        /// Gets the instance of JsonSerializer
         /// </summary>
         public JsonSerializer JsonSerializer { get; }
+
+        /// <summary>
+        /// Enable snake case for properties mapping. A property "PropertyName" will become "property_name"
+        /// </summary>
+        public void UseSnakeCase()
+        {
+            JsonSerializer.ContractResolver = new SnakeCasePropertyNamesContractResolver();
+        }
+
+        /// <summary>
+        /// Enable camel case for properties mapping. A property "PropertyName" will become "propertyName"
+        /// </summary>
+        public void UseCamelCase()
+        {
+            JsonSerializer.ContractResolver = new CamelCasePropertyNamesContractResolver();
+        }
+
+        /// <summary>
+        /// Enable kebab case (also named spinal case) for properties mapping. A property "PropertyName" will become "property-name"
+        /// </summary>
+        public void UseKebabCase()
+        {
+            JsonSerializer.ContractResolver = new KebabCasePropertyNamesContractResolver();
+        }
 
         /// <inheritdoc/>
         public string DefaultMediaType => "application/json";

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard1.1;netstandard1.2;netstandard1.3;netstandard2.0;net45;net46;net47;</TargetFrameworks>
-    <Version>1.5.1</Version>
+    <Version>1.5.2</Version>
     <Copyright>Copyright © Jérôme Giacomini 2018</Copyright>
     <NeutralLanguage>en</NeutralLanguage>
     <Title>Tiny.RestClient</Title>
@@ -16,6 +16,7 @@
       * Support of cancellation token on each requests
       * Automatic XML and JSON serialization / deserialization
       * Support of custom serialisation / deserialisation
+      * Support of camelCase, snakeCase kebabCase for json serialization
       * Support of multi-part form data
       * Download file
       * Upload file
@@ -26,6 +27,7 @@
       * Timeout exception throwed if the request is in timeout (by default HttpClient send OperationCancelledException, so we can't make difference between a user annulation and timeout)
       * Provide an easy way to log : all sending of request, failed to get response,  and the time get response.
       * Support of export requests to postman collection
+      * Support of display cURL request in debug output
       * Support of Basic Authentification
       * Support of OAuth2 Authentification</Description>
     <PackageLicenseUrl>https://github.com/jgiacomini/Tiny.RestClient/blob/master/LICENSE</PackageLicenseUrl>
@@ -35,7 +37,7 @@
     <RepositoryUrl>https://github.com/jgiacomini/Tiny.RestClient.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <MinClientVersion>3.0.3</MinClientVersion>
-    <PackageReleaseNotes>See release notes at https://github.com/jgiacomini/Tiny.RestClient/blob/1.5.1/RELEASE-NOTES.md</PackageReleaseNotes>
+    <PackageReleaseNotes>See release notes at https://github.com/jgiacomini/Tiny.RestClient/blob/1.5.2/RELEASE-NOTES.md</PackageReleaseNotes>
   </PropertyGroup>
   <PropertyGroup>
     <LangVersion>latest</LangVersion>

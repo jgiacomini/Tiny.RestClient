@@ -3,7 +3,7 @@
 [![NuGet](https://img.shields.io/nuget/v/Tiny.RestClient.svg?label=NuGet)](https://www.nuget.org/packages/Tiny.RestClient/)
 [![Build status](https://ci.appveyor.com/api/projects/status/08prv6a3pon8vx86?svg=true)](https://ci.appveyor.com/project/jgiacomini/tinyhttp)
 [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/Tiny-RestClient/Lobby)
-
+[![StackOverflow](https://img.shields.io/badge/questions-on%20StackOverflow-orange.svg?style=flat)](http://stackoverflow.com/questions/tagged/tiny.restclient)
 
 Tiny.RestClient facilitates the dialog between your API and your application.
 It hides all the complexity of communication, deserialisation ...
@@ -34,6 +34,7 @@ The support of .NET Standard 1.1 to 2.0 allow you to use it in :
 * Support of cancellation token on each requests
 * Automatic XML and JSON serialization / deserialization
 * Support of custom serialisation / deserialisation
+* Support of camelCase, snakeCase kebabCase for json serialization
 * Support of multi-part form data
 * Download file
 * Upload file
@@ -44,6 +45,7 @@ The support of .NET Standard 1.1 to 2.0 allow you to use it in :
 * Timeout exception throwed if the request is in timeout (by default HttpClient send OperationCancelledException, so we can't make difference between a user annulation and timeout)
 * Provide an easy way to log : all sending of request, failed to get response, and the time get response.
 * Support of export requests to postman collection
+* Support of display cURL request in debug output
 * Support of Basic Authentification
 * Support of OAuth2 Authentification
 
@@ -350,6 +352,29 @@ var lastFormatter = client.Settings.Formatters.Where( f=> f is XmlSerializer>).F
 client.Remove(lastFormatter);
 ```
 
+### Json custom formatting
+
+You can enable 3 types of formatting on JsonFormatter :
+- CamelCase (PropertyName => propertyName)
+- SnakeCase (PropertyName => property_name)
+- KebabCase (aslo known as SpinalCase) (PropertyName => property-name).
+
+```cs
+// Enable KebabCase
+  client.Settings.Formatters.OfType<JsonFormatter>().First().UseKebabCase();
+```
+
+
+```cs
+// Enable CamelCase
+  client.Settings.Formatters.OfType<JsonFormatter>().First().UseCamelCase();
+```
+
+```cs
+// Enable SnakeCase
+  client.Settings.Formatters.OfType<JsonFormatter>().First().UseSkakeCase();
+```
+
 ### Define a specific serialize for one request
 ```cs
 IFormatter serializer = new XmlFormatter();
@@ -430,16 +455,27 @@ To add Debug listener you have to call AddDebug on Listeners property
 client.Settings.Listeners.AddDebug();
 ```
 
+### cURL Listener
+To add cURL listener you have to call AddCurl on Listeners property
+
+```cs
+client.Settings.Listeners.AddCurl();
+```
+
+It produce this type of output in debug window for each ExecuteAsync called :
+```cs
+curl -X POST "http://localhost:4242/api/PostTest/complex"-H "Accept: application/json" -H "Content-Type: application/json" -d "{\"Id\":42,\"Data\":\"DATA\"}"
+```
 
 ### Postman Listener
 To add postman listener you have to call AddPostman on Listeners property
 ```cs
-PostmanListerner listener = client.Settings.Listeners.AddPostman("nameOfCollection");
+PostmanListerner postmanListener = client.Settings.Listeners.AddPostman("nameOfCollection");
 ```
 
 When you want to save the postman collection you have to call SaveAsync
 ```cs
-await listener.SaveAsync(new FileInfo("postmanCollection.json");
+await postmanListener.SaveAsync(new FileInfo("postmanCollection.json");
 ```
 
 
