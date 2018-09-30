@@ -59,7 +59,7 @@ namespace Tiny.RestClient
                 return null;
             }
 
-            var serializer = new XmlSerializer(data.GetType());
+            var serializer = new XmlSerializer(typeof(T));
             using (var stringWriter = new DynamicEncodingStringWriter(encoding))
             {
                 using (var writer = XmlWriter.Create(stringWriter, WriterSettings))

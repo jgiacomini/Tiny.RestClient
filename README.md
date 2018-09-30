@@ -34,6 +34,7 @@ The support of .NET Standard 1.1 to 2.0 allow you to use it in :
 * Support of cancellation token on each requests
 * Automatic XML and JSON serialization / deserialization
 * Support of custom serialisation / deserialisation
+* Support of camelCase, snakeCase kebabCase for json serialization
 * Support of multi-part form data
 * Download file
 * Upload file
@@ -349,6 +350,29 @@ client.Settings.Formatters.Add(customFormatter, isDefaultFormatter);
 ```cs
 var lastFormatter = client.Settings.Formatters.Where( f=> f is XmlSerializer>).First();
 client.Remove(lastFormatter);
+```
+
+### Json custom formatting
+
+You can enable 3 types of formatting on JsonFormatter :
+- CamelCase (PropertyName => propertyName)
+- SnakeCase (PropertyName => property_name)
+- KebabCase (aslo known as SpinalCase) (PropertyName => property-name).
+
+```cs
+// Enable KebabCase
+  client.Settings.Formatters.OfType<JsonFormatter>().First().UseKebabCase();
+```
+
+
+```cs
+// Enable CamelCase
+  client.Settings.Formatters.OfType<JsonFormatter>().First().UseCamelCase();
+```
+
+```cs
+// Enable SnakeCase
+  client.Settings.Formatters.OfType<JsonFormatter>().First().UseSkakeCase();
 ```
 
 ### Define a specific serialize for one request

@@ -13,6 +13,9 @@ curl -X POST "http://localhost:4242/api/PostTest/complex"-H "Accept: application
 ```
 * The XmlFormatter now produce not indented xml (lighter than previous)
 * The XmlFormatter have ne property WriterSettings which allow to configure the way to write XML streams
+* Add support of CamelCase (PropertyName => propertyName) for JsonFormatter
+* Add support of SnakeCase (PropertyName => property_name) for JsonFormatter
+* Add support of KebabCase also known as SpinalCase (PropertyName => property-name) for JsonFormatter
 
 
 ## 1.5.1
