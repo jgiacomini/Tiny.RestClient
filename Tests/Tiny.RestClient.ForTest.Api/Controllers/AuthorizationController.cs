@@ -10,7 +10,7 @@ namespace Tiny.RestClient.ForTest.Api.Controllers
     public class AuthorizationController : ControllerBase
     {
         [HttpGet("BasicAuthentication")]
-        [BasicAuthorizationAttribute]
+        [BasicAuthorization]
         public Task BasicAuthentication()
         {
             return Task.Delay(0);
