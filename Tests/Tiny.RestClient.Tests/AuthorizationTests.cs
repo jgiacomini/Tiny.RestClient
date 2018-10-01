@@ -81,6 +81,7 @@ namespace Tiny.RestClient.Tests
         {
             var client = GetNewClient();
             client.Settings.DefaultHeaders.AddBearer(Guid.Empty.ToString());
+
             await client.
                 GetRequest("Authorization/BearerAuthentication").
                 ExecuteAsync();

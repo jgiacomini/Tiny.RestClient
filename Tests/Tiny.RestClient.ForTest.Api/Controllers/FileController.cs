@@ -21,21 +21,9 @@ namespace Tiny.RestClient.ForTest.Api.Controllers
         }
 
         [HttpGet("GetPdf")]
-        public async Task<IActionResult> Download()
+        public IActionResult Download()
         {
-            var path = Path.Combine(
-                           Directory.GetCurrentDirectory(),
-                           "wwwroot",
-                           "pdf-sample.pdf");
-
-            var memory = new MemoryStream();
-            using (var stream = new FileStream(path, FileMode.Open))
-            {
-                await stream.CopyToAsync(memory);
-            }
-
-            memory.Position = 0;
-            return File(memory, "application/pdf", Path.GetFileName(path));
+            return File("pdf-sample.pdf", "application/pdf", "pdf-sample");
         }
 
         [HttpGet("NoResult")]

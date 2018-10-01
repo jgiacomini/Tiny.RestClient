@@ -51,6 +51,10 @@ namespace Tiny.RestClient
                 list = new List<string>();
                 _headers.Add(name, list);
             }
+            else
+            {
+                list = _headers[name] as List<string>;
+            }
 
             list.Add(value);
         }
