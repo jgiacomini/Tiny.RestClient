@@ -1,4 +1,7 @@
 # Release notes
+## 1.5.3
+* Fix null reference exception when adding 2 times te same header
+
 ## 1.5.2
 * Add new listener to print cURL request in debug output.
  To enable it :
