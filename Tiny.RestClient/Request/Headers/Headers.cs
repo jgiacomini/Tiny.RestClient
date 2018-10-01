@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Tiny.RestClient
 {
@@ -12,6 +13,9 @@ namespace Tiny.RestClient
     public class Headers : IEnumerable<KeyValuePair<string, IEnumerable<string>>>
     {
         private Dictionary<string, IEnumerable<string>> _headers;
+
+        private Func<Task<string>> _bearerFunc;
+        private Func<Task<Tuple<string, string>>> _basicAuthenticationFunc;
 
         internal Headers()
         {
@@ -28,6 +32,15 @@ namespace Tiny.RestClient
         }
 
         /// <summary>
+        /// Add OAuth 2.0 token
+        /// </summary>
+        /// <param name="bearerFunc">a delegate</param>
+        public void AddBearer(Func<Task<string>> bearerFunc)
+        {
+            _bearerFunc = bearerFunc;
+        }
+
+        /// <summary>
         /// Add basic authentication
         /// </summary>
         /// <param name="username">the username</param>
@@ -36,6 +49,15 @@ namespace Tiny.RestClient
         {
             var encodedCreds = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
             Add("Authorization", $"Basic {encodedCreds}");
+        }
+
+        /// <summary>
+        /// Add basic authentication
+        /// </summary>
+        /// <param name="basicAuthenticationFunc">a delegate</param>
+        public void AddBasicAuthentication(Func<Task<Tuple<string, string>>> basicAuthenticationFunc)
+        {
+            _basicAuthenticationFunc = basicAuthenticationFunc;
         }
 
         /// <summary>
@@ -83,6 +105,20 @@ namespace Tiny.RestClient
             foreach (var item in range)
             {
                 Add(item.Key, item.Value);
+            }
+        }
+
+        internal async Task ExecuteDynamicHeaders()
+        {
+            if (_bearerFunc != null)
+            {
+                AddBearer(await _bearerFunc.Invoke());
+            }
+
+            if (_basicAuthenticationFunc != null)
+            {
+                var basicAuthentication = await _basicAuthenticationFunc.Invoke();
+                AddBasicAuthentication(basicAuthentication.Item1, basicAuthentication.Item2);
             }
         }
 

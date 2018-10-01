@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Tiny.RestClient
 {
@@ -19,11 +20,27 @@ namespace Tiny.RestClient
         IRequest WithBasicAuthentication(string username, string password);
 
         /// <summary>
+        /// Add a basic authentication credentials
+        /// The delegate will be executed right before ExecuteAsync()
+        /// </summary>
+        /// <param name="basicAuthenticationFunc">a delegate</param>
+        /// <returns>The current request</returns>
+        IRequest WithBasicAuthentication(Func<Task<Tuple<string, string>>> basicAuthenticationFunc);
+
+        /// <summary>
         /// Add a bearer token in the request headers
         /// </summary>
         /// <param name="token">token value</param>
         /// <returns>The current request</returns>
         IRequest WithOAuthBearer(string token);
+
+        /// <summary>
+        /// Add a bearer token in the request headers
+        /// The delegate will be executed right before ExecuteAsync()
+        /// </summary>
+        /// <param name="oAuthFunc">a delegate</param>
+        /// <returns>The current request</returns>
+        IRequest WithOAuthBearer(Func<Task<string>> oAuthFunc);
 
         /// <summary>
         /// With timeout for current request

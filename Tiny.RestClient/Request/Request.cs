@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq.Expressions;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -70,7 +71,7 @@ namespace Tiny.RestClient
             _content = new StreamContent(stream, contentType);
             return this;
         }
-        #if !FILEINFO_NOT_SUPPORTED
+#if !FILEINFO_NOT_SUPPORTED
         public IParameterRequest AddFileContent(FileInfo content, string contentType)
         {
             if (content == null)
@@ -86,9 +87,9 @@ namespace Tiny.RestClient
             _content = new FileContent(content, contentType);
             return this;
         }
-        #endif
+#endif
 
-#endregion
+        #endregion
 
         #region Forms Parameters
 
@@ -152,6 +153,18 @@ namespace Tiny.RestClient
         }
 
         /// <inheritdoc/>
+        public IRequest WithBasicAuthentication(Func<Task<Tuple<string, string>>> func)
+        {
+            if (_headers == null)
+            {
+                _headers = new Headers();
+            }
+
+            _headers.AddBasicAuthentication(func);
+            return this;
+        }
+
+        /// <inheritdoc/>
         public IRequest WithOAuthBearer(string token)
         {
             if (_headers == null)
@@ -160,6 +173,18 @@ namespace Tiny.RestClient
             }
 
             _headers.AddBearer(token);
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public IRequest WithOAuthBearer(Func<Task<string>> func)
+        {
+            if (_headers == null)
+            {
+                _headers = new Headers();
+            }
+
+            _headers.AddBearer(func);
             return this;
         }
         #endregion
@@ -364,7 +389,7 @@ namespace Tiny.RestClient
             return _client.ExecuteAsHttpResponseMessageResultAsync(this, cancellationToken);
         }
 
-        #if !FILEINFO_NOT_SUPPORTED
+#if !FILEINFO_NOT_SUPPORTED
         /// <inheritdoc/>
         public async Task<FileInfo> DownloadFileAsync(string fileName, CancellationToken cancellationToken)
         {
@@ -392,9 +417,9 @@ namespace Tiny.RestClient
 
             return new FileInfo(fileName);
         }
-        #endif
+#endif
 
-#region MultiPart
+        #region MultiPart
 
         /// <inheritdoc/>
         public IMultipartFromDataRequest AsMultiPartFromDataRequest(string contentType)
@@ -442,7 +467,7 @@ namespace Tiny.RestClient
 
             return this;
         }
-        #if !FILEINFO_NOT_SUPPORTED
+#if !FILEINFO_NOT_SUPPORTED
         IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddFileContent(FileInfo content, string contentType)
         {
             IMultipartFromDataRequest me = this;
@@ -475,7 +500,7 @@ namespace Tiny.RestClient
 
             return this;
         }
-        #endif
-#endregion
+#endif
+        #endregion
     }
 }

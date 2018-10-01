@@ -38,10 +38,30 @@ namespace Tiny.RestClient.Tests
         }
 
         [TestMethod]
+        public async Task DynamicBasicAuthorizationTestAsync()
+        {
+            var client = GetClient();
+            await client.
+                GetRequest("Authorization/BasicAuthentication").
+                WithBasicAuthentication(() => Task.FromResult(new Tuple<string, string>("username", "42"))).
+                ExecuteAsync();
+        }
+
+        [TestMethod]
         public async Task BasicAuthorizationWithDefaultHeadersTestAsync()
         {
             var client = GetNewClient();
             client.Settings.DefaultHeaders.AddBasicAuthentication("username", "42");
+            await client.
+                GetRequest("Authorization/BasicAuthentication").
+                ExecuteAsync();
+        }
+
+        [TestMethod]
+        public async Task DynamicBasicAuthorizationWithDefaultHeadersTestAsync()
+        {
+            var client = GetNewClient();
+            client.Settings.DefaultHeaders.AddBasicAuthentication(() => Task.FromResult(new Tuple<string, string>("username", "42")));
             await client.
                 GetRequest("Authorization/BasicAuthentication").
                 ExecuteAsync();
@@ -77,10 +97,30 @@ namespace Tiny.RestClient.Tests
         }
 
         [TestMethod]
+        public async Task DynamicBearerAuthorizationTestAsync()
+        {
+            var client = GetClient();
+            await client.
+                GetRequest("Authorization/BearerAuthentication").
+                WithOAuthBearer(() => Task.FromResult(Guid.Empty.ToString())).
+                ExecuteAsync();
+        }
+
+        [TestMethod]
         public async Task BearerAuthorizationWithDefaultHeadersTestAsync()
         {
             var client = GetNewClient();
             client.Settings.DefaultHeaders.AddBearer(Guid.Empty.ToString());
+            await client.
+                GetRequest("Authorization/BearerAuthentication").
+                ExecuteAsync();
+        }
+
+        [TestMethod]
+        public async Task DynamicBearerAuthorizationWithDefaultHeadersTestAsync()
+        {
+            var client = GetNewClient();
+            client.Settings.DefaultHeaders.AddBearer(() => Task.FromResult(Guid.Empty.ToString()));
             await client.
                 GetRequest("Authorization/BearerAuthentication").
                 ExecuteAsync();

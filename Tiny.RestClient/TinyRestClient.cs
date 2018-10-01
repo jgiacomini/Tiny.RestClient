@@ -204,6 +204,14 @@ namespace Tiny.RestClient
 
         #endregion
 
+        private async Task ExecuteDynamicHeadersAsync(Request request)
+        {
+            if (request.Headers != null)
+            {
+                await request.Headers?.ExecuteDynamicHeaders();
+            }
+        }
+
         internal async Task<TResult> ExecuteAsync<TResult>(
             Request tinyRequest,
             IFormatter formatter,
@@ -274,12 +282,17 @@ namespace Tiny.RestClient
             Request tinyRequest,
             CancellationToken cancellationToken)
         {
-            using (var content = await CreateContentAsync(tinyRequest.Content, cancellationToken).ConfigureAwait(false))
+            await ExecuteDynamicHeadersAsync(tinyRequest);
+
+            using (var content =
+                    await CreateContentAsync(tinyRequest.Content, cancellationToken).ConfigureAwait(false))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                using (HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false))
+                using (HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, tinyRequest.Timeout, cancellationToken)
+                    .ConfigureAwait(false))
                 {
-                    await HandleResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false);
+                    await HandleResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken)
+                        .ConfigureAwait(false);
                 }
             }
         }
@@ -288,6 +301,8 @@ namespace Tiny.RestClient
            Request tinyRequest,
            CancellationToken cancellationToken)
         {
+            await ExecuteDynamicHeadersAsync(tinyRequest);
+
             using (var content = await CreateContentAsync(tinyRequest.Content, cancellationToken).ConfigureAwait(false))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
@@ -315,6 +330,8 @@ namespace Tiny.RestClient
            Request tinyRequest,
            CancellationToken cancellationToken)
         {
+            await ExecuteDynamicHeadersAsync(tinyRequest);
+
             using (var content = await CreateContentAsync(tinyRequest.Content, cancellationToken).ConfigureAwait(false))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
@@ -333,6 +350,8 @@ namespace Tiny.RestClient
            Request tinyRequest,
            CancellationToken cancellationToken)
         {
+            await ExecuteDynamicHeadersAsync(tinyRequest);
+
             using (var content = await CreateContentAsync(tinyRequest.Content, cancellationToken).ConfigureAwait(false))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
@@ -360,6 +379,8 @@ namespace Tiny.RestClient
            Request tinyRequest,
            CancellationToken cancellationToken)
         {
+            await ExecuteDynamicHeadersAsync(tinyRequest);
+
             using (var content = await CreateContentAsync(tinyRequest.Content, cancellationToken).ConfigureAwait(false))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
@@ -398,14 +419,14 @@ namespace Tiny.RestClient
                 return await GetSerializedContentAsync(toSerializeContent, cancellationToken).ConfigureAwait(false);
             }
 
-            #if !FILEINFO_NOT_SUPPORTED
+#if !FILEINFO_NOT_SUPPORTED
             if (content is FileContent fileContent)
             {
                 var currentFileContent = new HttpStreamContent(fileContent.Data.OpenRead());
                 SetContentType(fileContent.ContentType, currentFileContent);
                 return currentFileContent;
             }
-            #endif
+#endif
 
             if (content is MultipartContent multiParts)
             {
@@ -440,14 +461,14 @@ namespace Tiny.RestClient
                         AddMulitPartContent(currentPart, stringContent, multiPartContent);
                     }
 
-                    #if !FILEINFO_NOT_SUPPORTED
+#if !FILEINFO_NOT_SUPPORTED
                     else if (currentPart is FileMultipartData currentFileMultipartData)
                     {
                         var currentStreamContent = new HttpStreamContent(currentFileMultipartData.Data.OpenRead());
                         SetContentType(currentFileMultipartData.ContentType, currentStreamContent);
                         AddMulitPartContent(currentPart, currentStreamContent, multiPartContent);
                     }
-                    #endif
+#endif
                     else
                     {
                         throw new NotImplementedException($"GetContent multipart for '{currentPart.GetType().Name}' not implemented");
@@ -580,6 +601,7 @@ namespace Tiny.RestClient
                     request.Headers.AcceptLanguage.Add(new StringWithQualityHeaderValue(CultureInfo.CurrentCulture.TwoLetterISOLanguageName));
                 }
 
+                await Settings.DefaultHeaders.ExecuteDynamicHeaders();
                 foreach (var item in Settings.DefaultHeaders)
                 {
                     request.Headers.Add(item.Key, item.Value);
