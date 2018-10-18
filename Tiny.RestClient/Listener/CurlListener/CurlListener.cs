@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define DEBUG
+// We define debug symbol to be able to log in debug even if we are compiled in release mode
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
