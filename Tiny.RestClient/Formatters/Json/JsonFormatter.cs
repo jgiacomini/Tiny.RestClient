@@ -60,6 +60,8 @@ namespace Tiny.RestClient
             get
             {
                 yield return "application/json";
+                yield return "application/json-patch+json";
+                yield return "application/*+json";
                 yield return "text/json";
                 yield return "text/x-json";
                 yield return "text/javascript";

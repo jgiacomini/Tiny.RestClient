@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define DEBUG
+// We define debug symbol to be able to log in debug even if we are compiled in release mode
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
@@ -50,7 +52,7 @@ namespace Tiny.RestClient
             var body = await GetBodyAsync(httpRequestMessage);
 
             var bodyLenght = body == null ? 0 : body.Length;
-            var stringBuilder = new StringBuilder(uri.OriginalString.Length + (headers.Count * 20) + body.Length);
+            var stringBuilder = new StringBuilder(uri.OriginalString.Length + (headers.Count * 20) + bodyLenght);
             stringBuilder.Append($"curl -X {httpMethod.Method} \"{uri.OriginalString}\"");
 
             foreach (var item in headers)

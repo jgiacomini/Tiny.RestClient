@@ -1,4 +1,12 @@
 # Release notes
+## 1.5.5
+* Fix a bug on cURL listener (when body was null) the cURL request wasn't displayed
+
+## 1.5.4
+* Fix a bug on cURL listener
+* Add the possibility to debug the lib with source link (https://www.hanselman.com/blog/ExploringNETCoresSourceLinkSteppingIntoTheSourceCodeOfNuGetPackagesYouDontOwn.aspx)
+* Add 2 new supported media tye for json : "application/json-patch+json", "application/*+json"
+
 ## 1.5.3
 * Fix null reference exception when adding 2 times te same header
 
