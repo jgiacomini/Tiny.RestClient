@@ -49,6 +49,7 @@ namespace Tiny.RestClient.ForTest.Api
             }
 
             app.UseMiddleware<CompressionMiddleware>();
+            app.UseMiddleware<ETagMiddleware>();
             app.UseResponseCompression();
             app.UseMvc();
         }

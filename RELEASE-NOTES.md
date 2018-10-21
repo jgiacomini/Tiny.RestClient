@@ -1,4 +1,7 @@
 # Release notes
+## 1.6.0
+* Add support of Etag
+
 ## 1.5.5
 * Fix a bug on cURL listener (when body was null) the cURL request wasn't displayed
 

@@ -33,6 +33,13 @@ namespace Tiny.RestClient
         IRequest WithTimeout(TimeSpan timeout);
 
         /// <summary>
+        /// With a specific etag container
+        /// </summary>
+        /// <param name="eTagContainer">the eTag container</param>
+        /// <returns></returns>
+        IRequest WithETagContainer(IETagContainer eTagContainer);
+
+        /// <summary>
         /// Adds the content.
         /// </summary>
         /// <typeparam name="TContent">The type of the t content.</typeparam>

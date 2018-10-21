@@ -41,13 +41,15 @@ namespace Tiny.RestClient.Tests
                 FillResponseHeaders(out Headers headersOfResponse).
                 ExecuteAsync();
 
-            Assert.IsTrue(headersOfResponse.Count() == 3);
+            // 3 custom headers  + ETag
+            var headerFiltered = headersOfResponse.Where(h => h.Key != "ETag");
 
-            for (int i = 0; i < headersOfResponse.Count(); i++)
+            Assert.IsTrue(headerFiltered.Count() == 3, "3 headers expected");
+
+            for (int i = 0; i < headerFiltered.Count() - 1; i++)
             {
-                var current = headersOfResponse.ElementAt(i);
-
-                Assert.IsTrue(current.Key == $"custom{i + 1}");
+                var current = headerFiltered.ElementAt(i);
+                Assert.IsTrue(current.Key == $"custom{i + 1}", $"custom{i + 1} expected");
             }
         }
 

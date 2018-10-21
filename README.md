@@ -10,16 +10,9 @@ It hides all the complexity of communication, deserialisation ...
 
 
 ## Platform Support
-|Platform|Supported|Version|Dependencies|Feature not supported|
-| ------------------- | :-----------: | :------------------: | :------------------: |:------------------: |
-|.NET Standard|Yes|1.1 && 1.2|Use System.Xml.XmlSerializer and Newtonsoft.Json|Manipulate files|
-|.NET Standard|Yes|1.3|Use System.Xml.XmlSerializer and Newtonsoft.Json|-|
-|.NET Standard|Yes|2.0|Use Newtonsoft.Json|-|
-|.NET Framework|Yes|4.5+|Use Newtonsoft.Json|-|
-|.NET Framework|Yes|4.6+|Use Newtonsoft.Json|-|
-|.NET Framework|Yes|4.7+|Use Newtonsoft.Json|-|
+The lib support **.NET Standard 1.1 to 2.0**, and **.NET Framework 4.5 to 4.7.**
 
-The support of .NET Standard 1.1 to 2.0 allow you to use it in :
+The support of **.NET Standard 1.1 to 2.0** allow you to use it in :
 - .Net Framework 4.6+
 - Xamarin iOS et Android
 - .Net Core
@@ -32,6 +25,7 @@ The support of .NET Standard 1.1 to 2.0 allow you to use it in :
 * Support of verbs : GET, POST , PUT, DELETE, PATCH
 * Support of custom http verbs
 * Support of cancellation token on each requests
+* Support of ETag
 * Automatic XML and JSON serialization / deserialization
 * Support of custom serialisation / deserialisation
 * Support of camelCase, snakeCase kebabCase for json serialization
@@ -211,7 +205,7 @@ string response = await client.
 // GET http://MyAPI.com/api/City/All with from url encoded content
 ```
 
-## multi-part form data
+## Multi-part form data
 
 ```cs
 // With 2 json content
@@ -326,6 +320,22 @@ catch (HttpException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Intern
 {
    throw new ServerErrorException($"{ex.Message} {ex.ReasonPhrase}");
 }
+```
+## ETag
+The lib support the Entity tag but it's not enabled by default.
+
+### Define an ETagContainer globally
+An implementation of IETagContainer is provided. It stores all data in multiples files.
+
+To enable it :
+```cs
+client.Settings.ETagContainer = new ETagFileContainer(@"C:\ETagFolder");
+```
+
+### Define an ETagContainer for one request
+You can also define the ETagContainer only on specifice request.
+```cs
+request.WithETagContainer(eTagContainer);
 ```
 
 ## Formatters 

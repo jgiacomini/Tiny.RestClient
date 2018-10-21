@@ -21,7 +21,7 @@ namespace Tiny.RestClient.ForTest.Api.Controllers
         }
 
         [HttpGet("GetPdf")]
-        public IActionResult Download()
+        public IActionResult GetPdf()
         {
             return File("pdf-sample.pdf", "application/pdf", "pdf-sample");
         }
