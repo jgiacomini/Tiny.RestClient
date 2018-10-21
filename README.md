@@ -324,11 +324,18 @@ catch (HttpException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Intern
 ## ETag
 The lib support the Entity tag but it's not enabled by default.
 
+### Define an ETagContainer globally
 An implementation of IETagContainer is provided. It stores all data in multiples files.
 
 To enable it :
 ```cs
 client.Settings.ETagContainer = new ETagFileContainer(@"C:\ETagFolder");
+```
+
+### Define an ETagContainer for one request
+You can also define the ETagContainer only on specifice request.
+```cs
+request.WithETagContainer(eTagContainer);
 ```
 
 ## Formatters 
