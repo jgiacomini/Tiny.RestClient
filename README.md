@@ -321,6 +321,15 @@ catch (HttpException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Intern
    throw new ServerErrorException($"{ex.Message} {ex.ReasonPhrase}");
 }
 ```
+## ETag
+The lib support the Entity tag but it's not enabled by default.
+
+An implementation of IETagContainer is provided. It store all data in multiples files.
+
+To enable it :
+```cs
+client.Settings.ETagContainer = new ETagFileContainer(@"C:\ETagFolder");
+```
 
 ## Formatters 
 
