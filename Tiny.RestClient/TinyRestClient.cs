@@ -212,12 +212,13 @@ namespace Tiny.RestClient
             using (var content = await CreateContentAsync(tinyRequest.Content, cancellationToken).ConfigureAwait(false))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
+                var eTagContainer = GetETagContainer(tinyRequest);
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                using (HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, formatter, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false))
+                using (HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, eTagContainer, formatter, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false))
                 {
-                    using (var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false))
+                    using (var stream = await ReadResponseAsync(response, tinyRequest.ResponseHeaders, eTagContainer, cancellationToken).ConfigureAwait(false))
                     {
                         if (stream == null || stream.CanRead == false)
                         {
@@ -277,9 +278,9 @@ namespace Tiny.RestClient
             using (var content = await CreateContentAsync(tinyRequest.Content, cancellationToken).ConfigureAwait(false))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                using (HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false))
+                using (HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false))
                 {
-                    await HandleResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false);
+                    await HandleResponseAsync(response, tinyRequest.ResponseHeaders, null, cancellationToken).ConfigureAwait(false);
                 }
             }
         }
@@ -291,9 +292,11 @@ namespace Tiny.RestClient
             using (var content = await CreateContentAsync(tinyRequest.Content, cancellationToken).ConfigureAwait(false))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                using (HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false))
+                var eTagContainer = GetETagContainer(tinyRequest);
+
+                using (HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, eTagContainer, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false))
                 {
-                    using (var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false))
+                    using (var stream = await ReadResponseAsync(response, tinyRequest.ResponseHeaders, eTagContainer, cancellationToken).ConfigureAwait(false))
                     {
                         if (stream == null || !stream.CanRead)
                         {
@@ -318,8 +321,9 @@ namespace Tiny.RestClient
             using (var content = await CreateContentAsync(tinyRequest.Content, cancellationToken).ConfigureAwait(false))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                var response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false);
-                var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false);
+                var eTagContainer = GetETagContainer(tinyRequest);
+                var response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, eTagContainer, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false);
+                var stream = await ReadResponseAsync(response, tinyRequest.ResponseHeaders, eTagContainer, cancellationToken).ConfigureAwait(false);
                 if (stream == null || !stream.CanRead)
                 {
                     return null;
@@ -336,9 +340,10 @@ namespace Tiny.RestClient
             using (var content = await CreateContentAsync(tinyRequest.Content, cancellationToken).ConfigureAwait(false))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                using (var response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false))
+                var eTagContainer = GetETagContainer(tinyRequest);
+                using (var response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, eTagContainer, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false))
                 {
-                    var stream = await ReadResponseAsync(response, tinyRequest.ReponseHeaders, cancellationToken).ConfigureAwait(false);
+                    var stream = await ReadResponseAsync(response, tinyRequest.ResponseHeaders, eTagContainer, cancellationToken).ConfigureAwait(false);
                     if (stream == null || !stream.CanRead)
                     {
                         return null;
@@ -363,7 +368,7 @@ namespace Tiny.RestClient
             using (var content = await CreateContentAsync(tinyRequest.Content, cancellationToken).ConfigureAwait(false))
             {
                 var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
-                return await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false);
+                return await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, null, null, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -553,7 +558,15 @@ namespace Tiny.RestClient
             return new Uri(stringBuilder.ToString());
         }
 
-        private async Task<HttpResponseMessage> SendRequestAsync(HttpMethod httpMethod, Uri uri, Headers requestHeader, HttpContent content, IFormatter deserializer, TimeSpan? localTimeout, CancellationToken cancellationToken)
+        private async Task<HttpResponseMessage> SendRequestAsync(
+            HttpMethod httpMethod,
+            Uri uri,
+            Headers requestHeader,
+            HttpContent content,
+            IETagContainer eTagContainer,
+            IFormatter deserializer,
+            TimeSpan? localTimeout,
+            CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             Stopwatch stopwatch = null;
@@ -598,17 +611,15 @@ namespace Tiny.RestClient
                     }
                 }
 
-                var etagContainer = Settings.ETagContainer;
-
-                if (etagContainer != null)
+                if (eTagContainer != null)
                 {
                     if (!request.Headers.IfNoneMatch.Any())
                     {
-                        var etag = await etagContainer.GetExistingETagAsync(uri, cancellationToken).ConfigureAwait(false);
+                        var eTag = await eTagContainer.GetExistingETagAsync(uri, cancellationToken).ConfigureAwait(false);
 
-                        if (etag != null)
+                        if (eTag != null)
                         {
-                            request.Headers.IfNoneMatch.Add(new EntityTagHeaderValue(etag));
+                            request.Headers.IfNoneMatch.Add(new EntityTagHeaderValue(eTag));
                         }
                     }
                 }
@@ -691,27 +702,35 @@ namespace Tiny.RestClient
             }
         }
 
-        #region Read response
-        private async Task<Stream> ReadResponseAsync(HttpResponseMessage response, Headers headersToFill, CancellationToken cancellationToken)
+        private IETagContainer GetETagContainer(Request request)
         {
-            await HandleResponseAsync(response, headersToFill, cancellationToken).ConfigureAwait(false);
+            return request.ETagContainer ?? Settings.ETagContainer;
+        }
 
-            var etagContainer = Settings.ETagContainer;
+        #region Read response
+        private async Task<Stream> ReadResponseAsync(
+            HttpResponseMessage response,
+            Headers responseHeader,
+            IETagContainer eTagContainer,
+            CancellationToken cancellationToken)
+        {
+            await HandleResponseAsync(response, responseHeader, eTagContainer, cancellationToken).ConfigureAwait(false);
+
             Stream stream = null;
-            if (etagContainer != null && response.StatusCode == HttpStatusCode.NotModified)
+            if (eTagContainer != null && response.StatusCode == HttpStatusCode.NotModified)
             {
-                stream = await etagContainer.GetDataAsync(response.RequestMessage.RequestUri, cancellationToken).ConfigureAwait(false);
+                stream = await eTagContainer.GetDataAsync(response.RequestMessage.RequestUri, cancellationToken).ConfigureAwait(false);
             }
             else
             {
                 stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
-                if (etagContainer != null)
+                if (eTagContainer != null)
                 {
                     var tag = response.Headers.ETag.Tag;
                     if (tag != null)
                     {
-                        await etagContainer.SaveDataAsync(response.RequestMessage.RequestUri, tag, stream, cancellationToken).ConfigureAwait(false);
+                        await eTagContainer.SaveDataAsync(response.RequestMessage.RequestUri, tag, stream, cancellationToken).ConfigureAwait(false);
                     }
                 }
             }
@@ -739,22 +758,26 @@ namespace Tiny.RestClient
             return stream;
         }
 
-        private async Task HandleResponseAsync(HttpResponseMessage response, Headers headersToFill, CancellationToken cancellationToken)
+        private async Task HandleResponseAsync(
+            HttpResponseMessage response,
+            Headers responseHeaders,
+            IETagContainer eTagContainer,
+            CancellationToken cancellationToken)
         {
             string content = null;
-            if (headersToFill != null)
+            if (responseHeaders != null)
             {
-                headersToFill.AddRange(response.Headers);
+                responseHeaders.AddRange(response.Headers);
 
                 if (response.Content != null && response.Content.Headers != null)
                 {
-                    headersToFill.AddRange(response.Content.Headers);
+                    responseHeaders.AddRange(response.Content.Headers);
                 }
             }
 
             try
             {
-                if (Settings.ETagContainer != null && response.StatusCode == HttpStatusCode.NotModified)
+                if (eTagContainer != null && response.StatusCode == HttpStatusCode.NotModified)
                 {
                     return;
                 }

@@ -26,14 +26,16 @@ namespace Tiny.RestClient
         private IContent _content;
         private List<KeyValuePair<string, string>> _formParameters;
         private MultipartContent _multiPartFormData;
-        private Headers _reponseHeaders;
+        private Headers _responseHeaders;
         private TimeSpan? _timeout;
+        private IETagContainer _eTagContainer;
 
         internal HttpMethod HttpMethod { get => _httpMethod; }
         internal Dictionary<string, string> QueryParameters { get => _queryParameters; }
         internal string Route { get => _route; }
         internal IContent Content { get => _content; }
-        internal Headers ReponseHeaders { get => _reponseHeaders; }
+        internal IETagContainer ETagContainer { get => _eTagContainer; }
+        internal Headers ResponseHeaders { get => _responseHeaders; }
         internal Headers Headers { get => _headers; }
         internal TimeSpan? Timeout { get => _timeout; }
 
@@ -123,7 +125,7 @@ namespace Tiny.RestClient
         public IParameterRequest FillResponseHeaders(out Headers headers)
         {
             headers = new Headers();
-            _reponseHeaders = headers;
+            _responseHeaders = headers;
             return this;
         }
 
@@ -315,6 +317,13 @@ namespace Tiny.RestClient
         #endregion
 
         /// <inheritdoc/>
+        public IRequest WithETagContainer(IETagContainer eTagContainer)
+        {
+            _eTagContainer = eTagContainer;
+            return this;
+        }
+
+        /// <inheritdoc/>
         public IRequest WithTimeout(TimeSpan timeout)
         {
             _timeout = timeout;
@@ -364,7 +373,7 @@ namespace Tiny.RestClient
             return _client.ExecuteAsHttpResponseMessageResultAsync(this, cancellationToken);
         }
 
-        #if !FILEINFO_NOT_SUPPORTED
+#if !FILEINFO_NOT_SUPPORTED
         /// <inheritdoc/>
         public async Task<FileInfo> DownloadFileAsync(string fileName, CancellationToken cancellationToken)
         {
@@ -392,7 +401,7 @@ namespace Tiny.RestClient
 
             return new FileInfo(fileName);
         }
-        #endif
+#endif
 
 #region MultiPart
 
@@ -442,7 +451,7 @@ namespace Tiny.RestClient
 
             return this;
         }
-        #if !FILEINFO_NOT_SUPPORTED
+#if !FILEINFO_NOT_SUPPORTED
         IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddFileContent(FileInfo content, string contentType)
         {
             IMultipartFromDataRequest me = this;
@@ -475,7 +484,7 @@ namespace Tiny.RestClient
 
             return this;
         }
-        #endif
+#endif
 #endregion
     }
 }
