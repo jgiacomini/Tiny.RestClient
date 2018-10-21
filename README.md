@@ -205,7 +205,7 @@ string response = await client.
 // GET http://MyAPI.com/api/City/All with from url encoded content
 ```
 
-## multi-part form data
+## Multi-part form data
 
 ```cs
 // With 2 json content
