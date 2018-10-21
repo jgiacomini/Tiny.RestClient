@@ -9,18 +9,18 @@ using System.Threading.Tasks;
 namespace Tiny.RestClient
 {
     /// <summary>
-    /// Class <see cref="EtagFileContainer"/> which store data of entity in a directory
+    /// Class <see cref="ETagFileContainer"/> which store data of entity in a directory
     /// </summary>
-    public class EtagFileContainer : IEtagContainer
+    public class ETagFileContainer : IETagContainer
     {
         private const int BufferSize = 81920;
         private readonly string _pathOfDirectoryContainer;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EtagFileContainer"/> class.
+        /// Initializes a new instance of the <see cref="ETagFileContainer"/> class.
         /// </summary>
         /// <param name="pathOfDirectoryContainer">the path of the directory which will store the data</param>
-        public EtagFileContainer(string pathOfDirectoryContainer)
+        public ETagFileContainer(string pathOfDirectoryContainer)
         {
             _pathOfDirectoryContainer = pathOfDirectoryContainer ?? throw new ArgumentNullException(nameof(pathOfDirectoryContainer));
 
@@ -31,11 +31,11 @@ namespace Tiny.RestClient
         }
 
         /// <inheritdoc/>
-        public Task<string> GetExistingEtagAsync(Uri uri, CancellationToken cancellationToken)
+        public Task<string> GetExistingETagAsync(Uri uri, CancellationToken cancellationToken)
         {
             var url = uri.AbsoluteUri;
             var key = CalculateMD5Hash(url);
-            var hashPath = GetEtagPath(key);
+            var hashPath = GetETagPath(key);
             if (File.Exists(hashPath))
             {
                 return Task.FromResult(File.ReadAllText(hashPath));
@@ -59,7 +59,7 @@ namespace Tiny.RestClient
             var url = uri.AbsoluteUri;
             var key = CalculateMD5Hash(url);
 
-            var hashPath = GetEtagPath(key);
+            var hashPath = GetETagPath(key);
             var dataPath = GetDataPath(key);
 
             if (File.Exists(hashPath))
@@ -85,7 +85,7 @@ namespace Tiny.RestClient
             }
         }
 
-        private string GetEtagPath(string key)
+        private string GetETagPath(string key)
         {
             return Path.Combine(_pathOfDirectoryContainer, $"{key}.etag");
         }

@@ -8,15 +8,15 @@ namespace Tiny.RestClient
     /// <summary>
     /// Entity Tag container
     /// </summary>
-    public interface IEtagContainer
+    public interface IETagContainer
     {
         /// <summary>
-        /// Get the existing Etag.
+        /// Get the existing ETag.
         /// </summary>
         /// <param name="uri">the uri</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>return the etag if found. If not return null.</returns>
-        Task<string> GetExistingEtagAsync(Uri uri, CancellationToken cancellationToken);
+        Task<string> GetExistingETagAsync(Uri uri, CancellationToken cancellationToken);
 
         /// <summary>
         /// Get data of specific uri

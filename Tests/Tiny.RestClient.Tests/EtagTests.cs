@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Tiny.RestClient.Tests
 {
     [TestClass]
-    public class EtagTests : BaseTest
+    public class ETagTests : BaseTest
     {
         private string _directoryPath;
 
@@ -20,7 +20,7 @@ namespace Tiny.RestClient.Tests
         public void TestInitialize()
         {
             var tempPath = System.IO.Path.GetTempPath();
-            _directoryPath = Path.Combine(tempPath, $"{nameof(EtagTests)}_{TestContext.TestName}");
+            _directoryPath = Path.Combine(tempPath, $"{nameof(ETagTests)}_{TestContext.TestName}");
 
             if (!Directory.Exists(_directoryPath))
             {
@@ -50,8 +50,8 @@ namespace Tiny.RestClient.Tests
         {
             var client = GetNewClient();
 
-            var etagContainer = new EtagFileContainer(_directoryPath);
-            client.Settings.EtagContainer = etagContainer;
+            var etagContainer = new ETagFileContainer(_directoryPath);
+            client.Settings.ETagContainer = etagContainer;
             var data = await client.GetRequest("GetTest/complex").
                 FillResponseHeaders(out Headers headers).
                 ExecuteAsync<string[]>();
@@ -61,7 +61,7 @@ namespace Tiny.RestClient.Tests
 
             var actionUri = new Uri($"{ServerUrl}GetTest/complex");
             var etag = headers["ETag"].FirstOrDefault();
-            var etagStored = await etagContainer.GetExistingEtagAsync(actionUri, CancellationToken.None);
+            var etagStored = await etagContainer.GetExistingETagAsync(actionUri, CancellationToken.None);
             Assert.AreEqual(etagStored, etag);
 
             var fakeData = new List<string>() { "test1", "test2" };
@@ -80,7 +80,7 @@ namespace Tiny.RestClient.Tests
             data = await client.GetRequest("GetTest/complex").
                ExecuteAsync<string[]>();
 
-            etagStored = await etagContainer.GetExistingEtagAsync(actionUri, CancellationToken.None);
+            etagStored = await etagContainer.GetExistingETagAsync(actionUri, CancellationToken.None);
             Assert.AreEqual(etagStored, etag);
 
             Assert.AreEqual(data.Length, 2);

@@ -30,9 +30,9 @@ namespace Tiny.RestClient
         public bool AddAcceptLanguageBasedOnCurrentCulture { get; set; }
 
         /// <summary>
-        /// Get or set the EtagContainer
+        /// Get or set the ETagContainer
         /// </summary>
-        public IEtagContainer EtagContainer { get; set; }
+        public IETagContainer ETagContainer { get; set; }
 
         /// <summary>
         /// Get or set the default timeout of each request

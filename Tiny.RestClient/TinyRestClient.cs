@@ -598,13 +598,13 @@ namespace Tiny.RestClient
                     }
                 }
 
-                var etagContainer = Settings.EtagContainer;
+                var etagContainer = Settings.ETagContainer;
 
                 if (etagContainer != null)
                 {
                     if (!request.Headers.IfNoneMatch.Any())
                     {
-                        var etag = await etagContainer.GetExistingEtagAsync(uri, cancellationToken).ConfigureAwait(false);
+                        var etag = await etagContainer.GetExistingETagAsync(uri, cancellationToken).ConfigureAwait(false);
 
                         if (etag != null)
                         {
@@ -696,7 +696,7 @@ namespace Tiny.RestClient
         {
             await HandleResponseAsync(response, headersToFill, cancellationToken).ConfigureAwait(false);
 
-            var etagContainer = Settings.EtagContainer;
+            var etagContainer = Settings.ETagContainer;
             Stream stream = null;
             if (etagContainer != null && response.StatusCode == HttpStatusCode.NotModified)
             {
@@ -754,7 +754,7 @@ namespace Tiny.RestClient
 
             try
             {
-                if (Settings.EtagContainer != null && response.StatusCode == HttpStatusCode.NotModified)
+                if (Settings.ETagContainer != null && response.StatusCode == HttpStatusCode.NotModified)
                 {
                     return;
                 }

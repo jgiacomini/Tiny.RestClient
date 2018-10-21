@@ -21,7 +21,7 @@ namespace Tiny.RestClient.ForTest.Api.Middleware
             var response = context.Response;
             using (var ms = new MemoryStream())
             {
-                if (IsEtagSupported(response))
+                if (IsETagSupported(response))
                 {
                     var originalStream = response.Body;
                     string checksum = CalculateChecksum(ms);
@@ -45,7 +45,7 @@ namespace Tiny.RestClient.ForTest.Api.Middleware
             }
         }
 
-        private static bool IsEtagSupported(HttpResponse response)
+        private static bool IsETagSupported(HttpResponse response)
         {
             if (response.StatusCode != StatusCodes.Status200OK)
             {

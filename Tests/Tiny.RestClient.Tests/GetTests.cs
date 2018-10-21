@@ -41,7 +41,7 @@ namespace Tiny.RestClient.Tests
                 FillResponseHeaders(out Headers headersOfResponse).
                 ExecuteAsync();
 
-            // 3 custom headers  + Etag
+            // 3 custom headers  + ETag
             var headerFiltered = headersOfResponse.Where(h => h.Key != "ETag");
 
             Assert.IsTrue(headerFiltered.Count() == 3, "3 headers expected");
