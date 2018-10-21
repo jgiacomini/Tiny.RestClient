@@ -28,6 +28,14 @@ namespace Tiny.RestClient.Tests
             return _client;
         }
 
+        public static string ServerUrl
+        {
+            get
+            {
+                return _serverUrl;
+            }
+        }
+
         public static TinyRestClient GetNewClient()
         {
             return GetNewClient(_serverUrl);
