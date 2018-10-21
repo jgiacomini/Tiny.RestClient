@@ -49,7 +49,7 @@
   <PropertyGroup>
     <DocumentationFile>$(TargetDir)\Tiny.RestClient.xml</DocumentationFile>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>strong_name.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>strong_name.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
