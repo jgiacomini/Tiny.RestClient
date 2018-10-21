@@ -1,6 +1,7 @@
 # Release notes
 ## 1.6.0
-* Add support of Etag
+* Add support of ETag
+* The assembly is now strong named
 
 ## 1.5.5
 * Fix a bug on cURL listener (when body was null) the cURL request wasn't displayed
