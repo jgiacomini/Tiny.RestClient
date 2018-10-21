@@ -132,5 +132,13 @@ namespace Tiny.RestClient.Tests
             Assert.AreEqual(data[0], "value1");
             Assert.AreEqual(data[1], "value2");
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(DirectoryNotFoundException))]
+        public void ETagFileContainerDirectoryNotFound()
+        {
+            new ETagFileContainer(@"C:\notfound");
+            Assert.Fail("It must not go here");
+        }
     }
 }
