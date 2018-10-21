@@ -426,18 +426,18 @@ namespace Tiny.RestClient
                     {
                         var bytesMultiContent = new ByteArrayContent(currentBytesPart.Data);
                         SetContentType(currentBytesPart.ContentType, bytesMultiContent);
-                        AddMulitPartContent(currentPart, bytesMultiContent, multiPartContent);
+                        AddMultiPartContent(currentPart, bytesMultiContent, multiPartContent);
                     }
                     else if (currentPart is StreamMultipartData currentStreamPart)
                     {
                         var streamContent = new HttpStreamContent(currentStreamPart.Data);
                         SetContentType(currentStreamPart.ContentType, streamContent);
-                        AddMulitPartContent(currentPart, streamContent, multiPartContent);
+                        AddMultiPartContent(currentPart, streamContent, multiPartContent);
                     }
                     else if (currentPart is IToSerializeContent toSerializeMultiContent)
                     {
                         var stringContent = await GetSerializedContentAsync(toSerializeMultiContent, cancellationToken).ConfigureAwait(false);
-                        AddMulitPartContent(currentPart, stringContent, multiPartContent);
+                        AddMultiPartContent(currentPart, stringContent, multiPartContent);
                     }
 
                     #if !FILEINFO_NOT_SUPPORTED
@@ -445,7 +445,7 @@ namespace Tiny.RestClient
                     {
                         var currentStreamContent = new HttpStreamContent(currentFileMultipartData.Data.OpenRead());
                         SetContentType(currentFileMultipartData.ContentType, currentStreamContent);
-                        AddMulitPartContent(currentPart, currentStreamContent, multiPartContent);
+                        AddMultiPartContent(currentPart, currentStreamContent, multiPartContent);
                     }
                     #endif
                     else
@@ -504,7 +504,7 @@ namespace Tiny.RestClient
             return stringContent;
         }
 
-        private void AddMulitPartContent(MultipartData currentContent, HttpContent content, MultipartFormDataContent multipartFormDataContent)
+        private void AddMultiPartContent(MultipartData currentContent, HttpContent content, MultipartFormDataContent multipartFormDataContent)
         {
             if (string.IsNullOrWhiteSpace(currentContent.Name) && string.IsNullOrWhiteSpace(currentContent.FileName))
             {
