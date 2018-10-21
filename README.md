@@ -324,7 +324,7 @@ catch (HttpException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Intern
 ## ETag
 The lib support the Entity tag but it's not enabled by default.
 
-An implementation of IETagContainer is provided. It store all data in multiples files.
+An implementation of IETagContainer is provided. It stores all data in multiples files.
 
 To enable it :
 ```cs
