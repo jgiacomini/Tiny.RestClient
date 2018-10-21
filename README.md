@@ -25,6 +25,7 @@ The support of **.NET Standard 1.1 to 2.0** allow you to use it in :
 * Support of verbs : GET, POST , PUT, DELETE, PATCH
 * Support of custom http verbs
 * Support of cancellation token on each requests
+* Support of ETag
 * Automatic XML and JSON serialization / deserialization
 * Support of custom serialisation / deserialisation
 * Support of camelCase, snakeCase kebabCase for json serialization
