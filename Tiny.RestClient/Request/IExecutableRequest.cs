@@ -13,7 +13,7 @@ namespace Tiny.RestClient
         /// <summary>
         /// Executes the request.
         /// </summary>
-        /// <typeparam name="TResult">The type of the t result.</typeparam>
+        /// <typeparam name="TResult">The type of the TResult.</typeparam>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns><see cref="Task{TResult}"/></returns>
         Task<TResult> ExecuteAsync<TResult>(CancellationToken cancellationToken = default);
@@ -21,7 +21,7 @@ namespace Tiny.RestClient
         /// <summary>
         /// Executes the request.
         /// </summary>
-        /// <typeparam name="TResult">The type of the t result.</typeparam>
+        /// <typeparam name="TResult">The type of the TResult.</typeparam>
         /// <param name="formatter">Allow to override the formatter use for the deserialization.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task of TResukt</returns>

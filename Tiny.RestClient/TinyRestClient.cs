@@ -598,6 +598,21 @@ namespace Tiny.RestClient
                     }
                 }
 
+                var etagContainer = Settings.EtagContainer;
+
+                if (etagContainer != null)
+                {
+                    if (!request.Headers.IfNoneMatch.Any())
+                    {
+                        var etag = await etagContainer.GetExistingEtagAsync(uri, cancellationToken).ConfigureAwait(false);
+
+                        if (etag != null)
+                        {
+                            request.Headers.IfNoneMatch.Add(new EntityTagHeaderValue(etag));
+                        }
+                    }
+                }
+
                 if (content != null)
                 {
                     request.Content = content;
@@ -680,7 +695,27 @@ namespace Tiny.RestClient
         private async Task<Stream> ReadResponseAsync(HttpResponseMessage response, Headers headersToFill, CancellationToken cancellationToken)
         {
             await HandleResponseAsync(response, headersToFill, cancellationToken).ConfigureAwait(false);
-            var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+
+            var etagContainer = Settings.EtagContainer;
+            Stream stream = null;
+            if (etagContainer != null && response.StatusCode == HttpStatusCode.NotModified)
+            {
+                stream = await etagContainer.GetDataAsync(response.RequestMessage.RequestUri, cancellationToken).ConfigureAwait(false);
+            }
+            else
+            {
+                stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+
+                if (etagContainer != null)
+                {
+                    var tag = response.Headers.ETag.Tag;
+                    if (tag != null)
+                    {
+                        await etagContainer.SaveDataAsync(response.RequestMessage.RequestUri, tag, stream, cancellationToken).ConfigureAwait(false);
+                    }
+                }
+            }
+
             cancellationToken.ThrowIfCancellationRequested();
             return await DecompressAsync(response, stream, cancellationToken).ConfigureAwait(false);
         }
@@ -719,6 +754,11 @@ namespace Tiny.RestClient
 
             try
             {
+                if (Settings.EtagContainer != null && response.StatusCode == HttpStatusCode.NotModified)
+                {
+                    return;
+                }
+
                 if (!response.IsSuccessStatusCode)
                 {
                     content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
