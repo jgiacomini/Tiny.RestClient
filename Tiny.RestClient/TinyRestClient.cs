@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using HttpStreamContent = System.Net.Http.StreamContent;
+using HttpStringContent = System.Net.Http.StringContent;
 
 namespace Tiny.RestClient
 {
@@ -379,6 +380,13 @@ namespace Tiny.RestClient
                 return null;
             }
 
+            if (content is StringContent stringContent)
+            {
+                var contentString = new HttpStringContent(stringContent.Data);
+                SetContentType(stringContent.ContentType, contentString);
+                return contentString;
+            }
+
             if (content is StreamContent currentContent)
             {
                 var contentStream = new HttpStreamContent(currentContent.Data);
@@ -441,8 +449,8 @@ namespace Tiny.RestClient
                     }
                     else if (currentPart is IToSerializeContent toSerializeMultiContent)
                     {
-                        var stringContent = await GetSerializedContentAsync(toSerializeMultiContent, cancellationToken).ConfigureAwait(false);
-                        AddMultiPartContent(currentPart, stringContent, multiPartContent);
+                        var serializedContent = await GetSerializedContentAsync(toSerializeMultiContent, cancellationToken).ConfigureAwait(false);
+                        AddMultiPartContent(currentPart, serializedContent, multiPartContent);
                     }
 
                     #if !FILEINFO_NOT_SUPPORTED
@@ -504,7 +512,7 @@ namespace Tiny.RestClient
                 }
             }
 
-            var stringContent = new StringContent(serializedString, Settings.Encoding);
+            var stringContent = new HttpStringContent(serializedString, Settings.Encoding);
             stringContent.Headers.ContentType = new MediaTypeHeaderValue(serializer.DefaultMediaType);
             return stringContent;
         }
