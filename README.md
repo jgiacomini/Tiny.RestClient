@@ -251,13 +251,23 @@ var response = await client.
                 AddFileContent(fileInfo1, "text/plain").
                 AddFileContent(fileInfo2, "text/plain").
                 ExecuteAsync<Response>();
+                
+                
+// With 2 strings content   
+var response = await client.
+                PostRequest("City/Image/Text").
+                AsMultiPartFromDataRequest().
+                AddString("string1", "text/plain").
+                AddString("string2", "text/plain").
+                ExecuteAsync<Response>();
 
 // With mixed content                  
-await client.PostRequest("MultiPart/Test").
+await client.PostRequest("Files/Add").
               AsMultiPartFromDataRequest().
               AddContent<City>(city1, "city1", "city1.json").
               AddByteArray(byteArray1, "request", "request2.bin").
               AddStream(stream2, "request", "request2.bin")
+              AddString("string1", "text", "request.txt")
               ExecuteAsync();
 ```
 
