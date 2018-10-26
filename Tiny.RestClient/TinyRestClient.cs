@@ -447,6 +447,12 @@ namespace Tiny.RestClient
                         SetContentType(currentStreamPart.ContentType, streamContent);
                         AddMultiPartContent(currentPart, streamContent, multiPartContent);
                     }
+                    else if (currentPart is StringMultipartData currentStringPart)
+                    {
+                        var stringMultiContent = new HttpStringContent(currentStringPart.Data);
+                        SetContentType(currentStringPart.ContentType, stringMultiContent);
+                        AddMultiPartContent(currentPart, stringMultiContent, multiPartContent);
+                    }
                     else if (currentPart is IToSerializeContent toSerializeMultiContent)
                     {
                         var serializedContent = await GetSerializedContentAsync(toSerializeMultiContent, cancellationToken).ConfigureAwait(false);

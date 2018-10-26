@@ -434,6 +434,19 @@ namespace Tiny.RestClient
         }
 
         /// <inheritdoc/>
+        IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddString(string data, string name, string fileName, string contentType)
+        {
+            if (data == null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+
+            _multiPartFormData.Add(new StringMultipartData(data, name, fileName, contentType));
+
+            return this;
+        }
+
+        /// <inheritdoc/>
         IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddStream(Stream data, string name, string fileName, string contentType)
         {
             if (data == null)

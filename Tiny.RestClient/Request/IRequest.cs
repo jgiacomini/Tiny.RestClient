@@ -66,7 +66,7 @@ namespace Tiny.RestClient
         IParameterRequest AddStreamContent(Stream stream, string contentType = "application/octet-stream");
 
         /// <summary>
-        /// Adds string as content
+        /// Adds string as content (without apply any serialization)
         /// </summary>
         /// <param name="content">The content.</param>
         /// <param name="contentType">The content type</param>
