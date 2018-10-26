@@ -114,6 +114,29 @@ namespace Tiny.RestClient.Tests
         }
 
         [TestMethod]
+        public async Task PostStringData()
+        {
+            uint size = 2048;
+            var client = GetClient();
+
+            var byteArray = GetByteArray(size);
+
+            var data = System.Text.Encoding.Default.GetString(byteArray);
+
+            var response = await client.
+                 PostRequest("PostTest/Stream").
+                 AddStringContent(data).
+                ExecuteAsByteArrayAsync();
+            Assert.IsNotNull(response);
+            Assert.AreEqual(size, (uint)response.Length);
+
+            for (int i = 0; i < byteArray.Length; i++)
+            {
+                Assert.IsTrue(byteArray[i] == response[i], "byte array response must have same data than byte array sended");
+            }
+        }
+
+        [TestMethod]
         public async Task PostStreamData()
         {
             uint size = 4024;
