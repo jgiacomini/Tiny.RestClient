@@ -333,7 +333,7 @@ client.Settings.ETagContainer = new ETagFileContainer(@"C:\ETagFolder");
 ```
 
 ### Define an ETagContainer for one request
-You can also define the ETagContainer only on specifice request.
+You can also define the ETagContainer only on specific request.
 ```cs
 request.WithETagContainer(eTagContainer);
 ```
