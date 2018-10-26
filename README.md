@@ -262,9 +262,22 @@ await client.PostRequest("MultiPart/Test").
 ```
 
 
-## Streams and bytes array
-You can use as content : streams or byte arrays.
+## String, Streams and bytes array
+You can use as content : strings, streams or byte arrays.
 If you use these methods no serializer will be used.
+
+### String
+```cs
+// Read string response
+ Stream stream = await client.
+              GetRequest("text").
+              ExecuteAsStringAsync();
+              
+// Post String as content
+await client.PostRequest("poetry/text").
+            AddStringContent(stream).
+            ExecuteAsync();
+```
 
 ### Streams
 ```cs
