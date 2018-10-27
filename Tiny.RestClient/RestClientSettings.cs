@@ -25,6 +25,16 @@ namespace Tiny.RestClient
         }
 
         /// <summary>
+        /// Add to all request the AcceptLanguage based on CurrentCulture of the Thread
+        /// </summary>
+        public bool AddAcceptLanguageBasedOnCurrentCulture { get; set; }
+
+        /// <summary>
+        /// Get or set the ETagContainer
+        /// </summary>
+        public IETagContainer ETagContainer { get; set; }
+
+        /// <summary>
         /// Get or set the default timeout of each request
         /// </summary>
         public TimeSpan DefaultTimeout { get; set; }
@@ -59,11 +69,6 @@ namespace Tiny.RestClient
         /// Log all requests.
         /// </summary>
         public Listeners Listeners { get; private set; }
-
-        /// <summary>
-        /// Add to all request the AcceptLanguage based on CurrentCulture of the Thread
-        /// </summary>
-        public bool AddAcceptLanguageBasedOnCurrentCulture { get; set; }
 
         /// <summary>
         /// Gets the list of formatter used to serialize and deserialize data

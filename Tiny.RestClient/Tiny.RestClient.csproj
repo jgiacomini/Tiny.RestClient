@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard1.1;netstandard1.2;netstandard1.3;netstandard2.0;net45;net46;net47;</TargetFrameworks>
-    <Version>1.5.5</Version>
+    <Version>1.6.0</Version>
     <Copyright>Copyright © Jérôme Giacomini 2018</Copyright>
     <NeutralLanguage>en</NeutralLanguage>
     <Title>Tiny.RestClient</Title>
@@ -11,25 +11,24 @@
 
       Features :
       * Modern async http client for REST API.
-      * Support of verbs : GET, POST , PUT, DELETE, PATCH
-      * Support of custom http verbs
+      * Support of verbs : GET, POST , PUT, DELETE, PATCH and custom http verbs
+      * Support of ETag
+      * Support of multi-part form data
       * Support of cancellation token on each requests
+      * Support of : download file and Upload file
       * Automatic XML and JSON serialization / deserialization
       * Support of custom serialisation / deserialisation
       * Support of camelCase, snakeCase kebabCase for json serialization
-      * Support of multi-part form data
-      * Download file
-      * Upload file
-      * Support of gzip and deflate (compression and decompression)
-      * Optimized http calls
+      * Support of compression and decompression (gzip and deflate)
       * Typed exceptions which are easier to interpret
-      * Define timeout globally or by request
-      * Timeout exception throwed if the request is in timeout (by default HttpClient send OperationCancelledException, so we can't make difference between a user annulation and timeout)
-      * Provide an easy way to log : all sending of request, failed to get response,  and the time get response.
+      * Define timeout globally or per request
+      * Timeout exception thrown if the request is in timeout (by default HttpClient sends OperationCancelledException, so we can't distinguish between user cancellation and timeout)
+      * Provide an easy way to log : all sending of request, failed to get response, and the time get response.
       * Support of export requests to postman collection
-      * Support of display cURL request in debug output
+      * Support of display cURL requests in debug output
       * Support of Basic Authentification
-      * Support of OAuth2 Authentification</Description>
+      * Support of OAuth2 Authentification
+    </Description>
     <PackageLicenseUrl>https://github.com/jgiacomini/Tiny.RestClient/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/jgiacomini/Tiny.RestClient</PackageProjectUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/jgiacomini/Tiny.RestClient/master/icon.png</PackageIconUrl>
@@ -37,7 +36,7 @@
     <RepositoryUrl>https://github.com/jgiacomini/Tiny.RestClient.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <MinClientVersion>3.0.3</MinClientVersion>
-    <PackageReleaseNotes>See release notes at https://github.com/jgiacomini/Tiny.RestClient/blob/1.5.5/RELEASE-NOTES.md</PackageReleaseNotes>
+    <PackageReleaseNotes>See release notes at https://github.com/jgiacomini/Tiny.RestClient/blob/1.6.0/RELEASE-NOTES.md</PackageReleaseNotes>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
@@ -47,10 +46,13 @@
   </PropertyGroup>
   <PropertyGroup>
     <DocumentationFile>$(TargetDir)\Tiny.RestClient.xml</DocumentationFile>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>strong_name.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All"/>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.DotNet.Analyzers.Compatibility" Version="0.2.12-alpha" PrivateAssets="All" />
   </ItemGroup>
 
   <!--NET Standard 1.1-->

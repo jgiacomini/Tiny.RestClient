@@ -5,23 +5,17 @@
 [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/Tiny-RestClient/Lobby)
 [![StackOverflow](https://img.shields.io/badge/questions-on%20StackOverflow-orange.svg?style=flat)](http://stackoverflow.com/questions/tagged/tiny.restclient)
 
+[Please visit the main site.](https://jgiacomini.github.io/Tiny.RestClient/)
+
 Tiny.RestClient facilitates the dialog between your API and your application.
 It hides all the complexity of communication, deserialisation ...
 
 
 ## Platform Support
-|Platform|Supported|Version|Dependencies|Feature not supported|
-| ------------------- | :-----------: | :------------------: | :------------------: |:------------------: |
-|.NET Standard|Yes|1.1 && 1.2|Use System.Xml.XmlSerializer and Newtonsoft.Json|Manipulate files|
-|.NET Standard|Yes|1.3|Use System.Xml.XmlSerializer and Newtonsoft.Json|-|
-|.NET Standard|Yes|2.0|Use Newtonsoft.Json|-|
-|.NET Framework|Yes|4.5+|Use Newtonsoft.Json|-|
-|.NET Framework|Yes|4.6+|Use Newtonsoft.Json|-|
-|.NET Framework|Yes|4.7+|Use Newtonsoft.Json|-|
 
-The support of .NET Standard 1.1 to 2.0 allow you to use it in :
-- .Net Framework 4.6+
-- Xamarin iOS et Android
+The support of **.NET Standard 1.1 to 2.0** allow you to use it in :
+- .Net Framework 4.5+
+- Xamarin iOS, Xamarin Android
 - .Net Core
 - UWP
 - Windows Phone 8.1
@@ -29,32 +23,28 @@ The support of .NET Standard 1.1 to 2.0 allow you to use it in :
 
 ## Features
 * Modern async http client for REST API.
-* Support of verbs : GET, POST , PUT, DELETE, PATCH
-* Support of custom http verbs
+* Support of verbs : GET, POST , PUT, DELETE, PATCH and custom http verbs
+* Support of ETag
+* Support of multi-part form data
 * Support of cancellation token on each requests
+* Support of : download file and Upload file
 * Automatic XML and JSON serialization / deserialization
 * Support of custom serialisation / deserialisation
 * Support of camelCase, snakeCase kebabCase for json serialization
-* Support of multi-part form data
-* Download file
-* Upload file
-* Support of gzip/deflate (compression and decompression)
-* Optimized http calls
+* Support of compression and decompression (gzip and deflate)
 * Typed exceptions which are easier to interpret
-* Define timeout globally or by request
-* Timeout exception throwed if the request is in timeout (by default HttpClient send OperationCancelledException, so we can't make difference between a user annulation and timeout)
+* Define timeout globally or per request
+* Timeout exception thrown if the request is in timeout (by default HttpClient sends OperationCancelledException, so we can't distinguish between user cancellation and timeout)
 * Provide an easy way to log : all sending of request, failed to get response, and the time get response.
 * Support of export requests to postman collection
-* Support of display cURL request in debug output
+* Support of display cURL requests in debug output
 * Support of Basic Authentification
 * Support of OAuth2 Authentification
-
 
 ## Basic usage
 
 ### Create the client
 
-Define a global timeout for all client. (By default it's setted to 100 secondes)
 ```cs
 using Tiny.RestClient;
 
@@ -171,8 +161,8 @@ var response = await client.
 ```
 
 ### Define timeout
+Define a global timeout for all client. (By default it's setted to 100 secondes)
 
-Define global timeout
 ```cs
 client.Settings.DefaultTimeout = TimeSpan.FromSeconds(100);
 ```
@@ -211,7 +201,7 @@ string response = await client.
 // GET http://MyAPI.com/api/City/All with from url encoded content
 ```
 
-## multi-part form data
+## Multi-part form data
 
 ```cs
 // With 2 json content
@@ -257,20 +247,43 @@ var response = await client.
                 AddFileContent(fileInfo1, "text/plain").
                 AddFileContent(fileInfo2, "text/plain").
                 ExecuteAsync<Response>();
+                
+                
+// With 2 strings content   
+var response = await client.
+                PostRequest("City/Image/Text").
+                AsMultiPartFromDataRequest().
+                AddString("string1", "text/plain").
+                AddString("string2", "text/plain").
+                ExecuteAsync<Response>();
 
 // With mixed content                  
-await client.PostRequest("MultiPart/Test").
+await client.PostRequest("Files/Add").
               AsMultiPartFromDataRequest().
               AddContent<City>(city1, "city1", "city1.json").
               AddByteArray(byteArray1, "request", "request2.bin").
               AddStream(stream2, "request", "request2.bin")
+              AddString("string1", "text", "request.txt")
               ExecuteAsync();
 ```
 
 
-## Streams and bytes array
-You can use as content : streams or byte arrays.
+## String, Streams and bytes array
+You can use as content : strings, streams or byte arrays.
 If you use these methods no serializer will be used.
+
+### String
+```cs
+// Read string response
+ Stream stream = await client.
+              GetRequest("text").
+              ExecuteAsStringAsync();
+              
+// Post String as content
+await client.PostRequest("poetry/text").
+            AddStringContent(stream).
+            ExecuteAsync();
+```
 
 ### Streams
 ```cs
@@ -326,6 +339,22 @@ catch (HttpException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Intern
 {
    throw new ServerErrorException($"{ex.Message} {ex.ReasonPhrase}");
 }
+```
+## ETag
+The lib support the Entity tag but it's not enabled by default.
+
+### Define an ETagContainer globally
+An implementation of IETagContainer is provided. It stores all data in multiples files.
+
+To enable it :
+```cs
+client.Settings.ETagContainer = new ETagFileContainer(@"C:\ETagFolder");
+```
+
+### Define an ETagContainer for one request
+You can also define the ETagContainer only on specific request.
+```cs
+request.WithETagContainer(eTagContainer);
 ```
 
 ## Formatters 

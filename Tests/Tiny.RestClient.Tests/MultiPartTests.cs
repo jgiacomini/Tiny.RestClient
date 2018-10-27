@@ -22,12 +22,13 @@ namespace Tiny.RestClient.Tests
             var data = await client.
               PostRequest("MultiPart/Test").
               AsMultiPartFromDataRequest().
+              AddContent<Request>(postRequest, "request", "request.json").
               AddByteArray(new byte[42], "bytesArray", "bytesArray.bin").
               AddStream(new MemoryStream(new byte[42]), "stream", "stream.bin").
-              AddContent<Request>(postRequest, "request", "request.json").
+              AddString("string", "string", "string.txt").
               ExecuteAsync<string>();
 
-            Assert.AreEqual<string>(data, "bytesArray-bytesArray.bin;stream-stream.bin;request-request.json;");
+            Assert.AreEqual<string>("request-request.json;bytesArray-bytesArray.bin;stream-stream.bin;string-string.txt;", data);
         }
 
         [ExpectedException(typeof(ArgumentNullException))]
@@ -44,7 +45,7 @@ namespace Tiny.RestClient.Tests
             var data = await client.
               PostRequest("MultiPart/Test").
               AsMultiPartFromDataRequest().
-              AddByteArray(null, "bytesArray", "bytesArray.bin").
+              AddStream(null).
               ExecuteAsync<string>();
         }
 
@@ -62,7 +63,7 @@ namespace Tiny.RestClient.Tests
             var data = await client.
               PostRequest("MultiPart/Test").
               AsMultiPartFromDataRequest().
-              AddStream(null).
+              AddByteArray(null, "bytesArray", "bytesArray.bin").
               ExecuteAsync<string>();
         }
 

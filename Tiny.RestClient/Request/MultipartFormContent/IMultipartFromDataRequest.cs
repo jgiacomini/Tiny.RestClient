@@ -27,6 +27,17 @@ namespace Tiny.RestClient
         /// <param name="contentType">The content type of the file</param>
         /// <returns>The current request</returns>
         /// <exception cref="System.ArgumentNullException">thrown when data is null</exception>
+        IMultiPartFromDataExecutableRequest AddString(string data, string name = null, string fileName = null, string contentType = "text/plain");
+
+        /// <summary>
+        /// Adds the content.
+        /// </summary>
+        /// <param name="data">The content.</param>
+        /// <param name="name">The name of the item</param>
+        /// <param name="fileName">The name of the file</param>
+        /// <param name="contentType">The content type of the file</param>
+        /// <returns>The current request</returns>
+        /// <exception cref="System.ArgumentNullException">thrown when data is null</exception>
         IMultiPartFromDataExecutableRequest AddStream(Stream data, string name = null, string fileName = null, string contentType = "application/octet-stream");
 
         /// <summary>

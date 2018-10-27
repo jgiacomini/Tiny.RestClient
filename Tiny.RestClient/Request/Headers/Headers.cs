@@ -90,6 +90,23 @@ namespace Tiny.RestClient
             }
         }
 
+        /// <summary>
+        /// Gets or sets header
+        /// </summary>
+        /// <param name="name">header name</param>
+        /// <returns>return header's value</returns>
+        public IEnumerable<string> this[string name]
+        {
+            get
+            {
+                return _headers[name];
+            }
+            set
+            {
+                Add(name, value);
+            }
+        }
+
         /// <inheritdoc/>
         public IEnumerator<KeyValuePair<string, IEnumerable<string>>> GetEnumerator()
         {
