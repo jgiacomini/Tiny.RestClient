@@ -47,7 +47,7 @@ namespace Tiny.RestClient
             using (var decompressionStream = new DeflateStream(stream, CompressionMode.Decompress))
             {
                 await decompressionStream.CopyToAsync(decompressedStream, bufferSize, cancellationToken).ConfigureAwait(false);
-                await decompressionStream.FlushAsync();
+                await decompressionStream.FlushAsync().ConfigureAwait(false);
             }
 
             return decompressedStream;

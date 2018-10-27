@@ -72,7 +72,14 @@ namespace Tiny.RestClient
             _content = new StreamContent(stream, contentType);
             return this;
         }
-        #if !FILEINFO_NOT_SUPPORTED
+
+        public IParameterRequest AddStringContent(string content, string contentType)
+        {
+            _content = new StringContent(content, contentType);
+            return this;
+        }
+
+#if !FILEINFO_NOT_SUPPORTED
         public IParameterRequest AddFileContent(FileInfo content, string contentType)
         {
             if (content == null)
@@ -88,9 +95,9 @@ namespace Tiny.RestClient
             _content = new FileContent(content, contentType);
             return this;
         }
-        #endif
+#endif
 
-#endregion
+        #endregion
 
         #region Forms Parameters
 
@@ -422,6 +429,19 @@ namespace Tiny.RestClient
             }
 
             _multiPartFormData.Add(new BytesMultipartData(data, name, fileName, contentType));
+
+            return this;
+        }
+
+        /// <inheritdoc/>
+        IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddString(string data, string name, string fileName, string contentType)
+        {
+            if (data == null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+
+            _multiPartFormData.Add(new StringMultipartData(data, name, fileName, contentType));
 
             return this;
         }
