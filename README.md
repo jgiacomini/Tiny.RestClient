@@ -10,11 +10,10 @@ It hides all the complexity of communication, deserialisation ...
 
 
 ## Platform Support
-The lib support **.NET Standard 1.1 to 2.0**, and **.NET Framework 4.5 to 4.7.**
 
 The support of **.NET Standard 1.1 to 2.0** allow you to use it in :
-- .Net Framework 4.6+
-- Xamarin iOS et Android
+- .Net Framework 4.5+
+- Xamarin iOS, Xamarin Android
 - .Net Core
 - UWP
 - Windows Phone 8.1
