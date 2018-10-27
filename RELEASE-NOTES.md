@@ -10,12 +10,11 @@ You can also enable on only on specific request like below :
 ```cs
 request.WithETagContainer(eTagContainer);
 ```
-
-* Now the assembly is strong named
 * Add support of string content (for mono part and multipart requests)
 ```cs
 request.AddStringContent("myContent").ExecuteAsycnc();
 ```
+* Now the assembly is strong named
 
 ## 1.5.5
 * Fix a bug on cURL listener (when body was null) the cURL request wasn't displayed
