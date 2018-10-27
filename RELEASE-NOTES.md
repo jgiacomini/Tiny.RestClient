@@ -1,6 +1,6 @@
 # Release notes
 ## 1.6.0
-* Add support of Entity tag (ETag)
+* Add support of Entity Tag (ETag)
 
 ETag is not enabled by default to enable it :
 ```cs
