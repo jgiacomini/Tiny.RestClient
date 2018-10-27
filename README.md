@@ -21,33 +21,28 @@ The support of **.NET Standard 1.1 to 2.0** allow you to use it in :
 
 ## Features
 * Modern async http client for REST API.
-* Support of verbs : GET, POST , PUT, DELETE, PATCH
-* Support of custom http verbs
-* Support of cancellation token on each requests
+* Support of verbs : GET, POST , PUT, DELETE, PATCH and custom http verbs
 * Support of ETag
+* Support of multi-part form data
+* Support of cancellation token on each requests
+* Support of : download file and Upload file
 * Automatic XML and JSON serialization / deserialization
 * Support of custom serialisation / deserialisation
 * Support of camelCase, snakeCase kebabCase for json serialization
-* Support of multi-part form data
-* Download file
-* Upload file
-* Support of gzip/deflate (compression and decompression)
-* Optimized http calls
+* Support of compression and decompression (gzip and deflate)
 * Typed exceptions which are easier to interpret
 * Define timeout globally or per request
 * Timeout exception thrown if the request is in timeout (by default HttpClient sends OperationCancelledException, so we can't distinguish between user cancellation and timeout)
 * Provide an easy way to log : all sending of request, failed to get response, and the time get response.
 * Support of export requests to postman collection
-* Support of display cURL request in debug output
+* Support of display cURL requests in debug output
 * Support of Basic Authentification
 * Support of OAuth2 Authentification
-
 
 ## Basic usage
 
 ### Create the client
 
-Define a global timeout for all client. (By default it's setted to 100 secondes)
 ```cs
 using Tiny.RestClient;
 
@@ -164,8 +159,8 @@ var response = await client.
 ```
 
 ### Define timeout
+Define a global timeout for all client. (By default it's setted to 100 secondes)
 
-Define global timeout
 ```cs
 client.Settings.DefaultTimeout = TimeSpan.FromSeconds(100);
 ```
