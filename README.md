@@ -13,7 +13,7 @@ It hides all the complexity of communication, deserialisation ...
 
 ## Platform Support
 
-The support of **.NET Standard 1.1 to 2.0** allow you to use it in :
+The support of **.NET Standard 1.1 to 2.0** allows you to use it with :
 - .Net Framework 4.5+
 - Xamarin iOS, Xamarin Android
 - .Net Core
@@ -341,7 +341,7 @@ catch (HttpException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Intern
 }
 ```
 ## ETag
-The lib support the Entity tag but it's not enabled by default.
+The lib supports the Entity tag but it's not enabled by default.
 
 ### Define an ETagContainer globally
 An implementation of IETagContainer is provided. It stores all data in multiples files.
@@ -424,7 +424,7 @@ IFormatter deserializer = new XmlFormatter();
 
 ### Custom formatter
 
-You create your own serializer/deserializer by implementing IFormatter
+You can create your own serializer/deserializer by implementing IFormatter
 
 For example the implementation of XmlFormatter is really simple : 
 ```cs
@@ -472,20 +472,20 @@ public class XmlFormatter : IFormatter
 You can easily add a listener to listen all the sent requests / responses received and all exceptions.
 
 Two listeners are provided by the lib :
-* A debug listener : which log all request in debug console
-* A postman listener : which allow you to export all your request in postman collection
+* A debug listener : which logs all requests in debug console
+* A postman listener : which allows you to export all your requests as a postman collection
 
 
 ### Debug Listener
 
-To add Debug listener you have to call AddDebug on Listeners property
+To add a Debug listener you have to call AddDebug on Listeners property
 ```cs
 
 client.Settings.Listeners.AddDebug();
 ```
 
 ### cURL Listener
-To add cURL listener you have to call AddCurl on Listeners property
+To add a cURL listener you have to call AddCurl on Listeners property
 
 ```cs
 client.Settings.Listeners.AddCurl();
@@ -497,7 +497,7 @@ curl -X POST "http://localhost:4242/api/PostTest/complex"-H "Accept: application
 ```
 
 ### Postman Listener
-To add postman listener you have to call AddPostman on Listeners property
+To add a postman listener you have to call AddPostman on Listeners property
 ```cs
 PostmanListerner postmanListener = client.Settings.Listeners.AddPostman("nameOfCollection");
 ```
@@ -522,13 +522,13 @@ client.Settings.Listeners.Add(myCustomListerner);
 ```
 
 ## Compression and Decompression
-By default, the client support the decompression of Gzip and deflate.
+By default, the client supports the decompression of Gzip and deflate.
 
 
 If the server respond with the header ContentEncoding "gzip" or "deflate" the client will decompress it automaticly.
 
 ### Compression
-For each request which post a content you can specified the compression algorithm like below
+For each request which posts a content you can specified the compression algorithm like below
 ```cs
 var response = await client.
                 PostRequest("Gzip/complex", postRequest, compression: client.Settings.Compressions["gzip"]).
@@ -545,7 +545,7 @@ var compression = client.Settings.Compressions["gzip"];
 compression.AddAcceptEncodingHeader = true;
 ```
 
-You can add it for deflate all request like below :
+You can add it for deflate all requests like below :
 ```cs
 var compression = client.Settings.Compressions["deflate"];
 compression.AddAcceptEncodingHeader = true;
@@ -558,4 +558,4 @@ You can add your own compression / decompression algorithm :
 ```cs
 client.Settings.Add(new CustomCompression());
 ```
-You class must implement the interface ICompression.
+Your class must implement the interface ICompression.
