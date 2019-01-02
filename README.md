@@ -510,7 +510,7 @@ await postmanListener.SaveAsync(new FileInfo("postmanCollection.json");
 
 If you only want the Json of collection you can call the method GetCollectionJson 
 ```cs
-await listener.GetCollectionJson();
+listener.GetCollectionJson();
 ```
 
 ### Custom Listener
