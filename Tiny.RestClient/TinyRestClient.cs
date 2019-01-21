@@ -22,7 +22,7 @@ namespace Tiny.RestClient
     {
         #region Fields
         private const int BufferSize = 81920;
-        private static readonly HttpMethod _PatchMethod = new HttpMethod("Patch");
+        private static readonly HttpMethod _PatchMethod = new HttpMethod("PATCH");
         private readonly HttpClient _httpClient;
         private readonly string _serverAddress;
         #endregion
