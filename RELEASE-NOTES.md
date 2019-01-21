@@ -1,4 +1,7 @@
 # Release notes
+## 1.6.1
+* Fix patch request which sent patch verb in lowercase
+
 ## 1.6.0
 * Add support of Entity Tag (ETag)
 
