@@ -36,7 +36,7 @@
     <RepositoryUrl>https://github.com/jgiacomini/Tiny.RestClient.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <MinClientVersion>3.0.3</MinClientVersion>
-    <PackageReleaseNotes>See release notes at https://github.com/jgiacomini/Tiny.RestClient/blob/1.6.0/RELEASE-NOTES.md</PackageReleaseNotes>
+    <PackageReleaseNotes>See release notes at https://github.com/jgiacomini/Tiny.RestClient/blob/1.6.1/RELEASE-NOTES.md</PackageReleaseNotes>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
