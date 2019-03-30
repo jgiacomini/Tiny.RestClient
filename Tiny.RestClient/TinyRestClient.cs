@@ -802,7 +802,7 @@ namespace Tiny.RestClient
                     cancellationToken.ThrowIfCancellationRequested();
                 }
 
-                if (!Settings.Ranges.CheckIfHttpStatusIsAllowed((int)response.StatusCode))
+                if (!Settings.HttpStatusCodeAllowed.CheckIfHttpStatusIsAllowed((int)response.StatusCode))
                 {
                     response.EnsureSuccessStatusCode();
                 }

@@ -22,7 +22,7 @@ namespace Tiny.RestClient
             };
             _encoding = Encoding.UTF8;
             DefaultTimeout = TimeSpan.FromSeconds(100);
-            Ranges = new HttpStatusRanges();
+            HttpStatusCodeAllowed = new HttpStatusRanges();
         }
 
         /// <summary>
@@ -84,6 +84,6 @@ namespace Tiny.RestClient
         /// <summary>
         /// Range of status allowed if empty use default behavior
         /// </summary>
-        public HttpStatusRanges Ranges { get; set; }
+        public HttpStatusRanges HttpStatusCodeAllowed { get; private set; }
     }
 }
