@@ -171,6 +171,18 @@ Define the timeout for one request
 ```cs
 request.WithTimeout(TimeSpan.FromSeconds(100));
 ```
+### Allow non http 2xx responses
+
+Allow all status code :
+```cs
+client.Settings.HttpStatusCodeAllowed.AllowAllStatus = false;
+```
+
+Allow only a range of http status codes :
+```cs
+client.Settings.HttpStatusCodeAllowed.Add(new HttpStatusRange(400, 420));
+```
+
 
 ### Download file
 ```cs
