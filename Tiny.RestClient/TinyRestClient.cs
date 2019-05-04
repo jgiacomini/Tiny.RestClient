@@ -817,6 +817,7 @@ namespace Tiny.RestClient
                     response.RequestMessage.Headers,
                     content,
                     response.StatusCode,
+                    response.Headers,
                     ex);
 
                 throw newEx;
