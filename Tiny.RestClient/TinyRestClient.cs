@@ -729,8 +729,7 @@ namespace Tiny.RestClient
             CancellationToken cancellationToken)
         {
             await HandleResponseAsync(response, responseHeader, eTagContainer, cancellationToken).ConfigureAwait(false);
-
-            Stream stream = null;
+            Stream stream;
             if (eTagContainer != null && response.StatusCode == HttpStatusCode.NotModified)
             {
                 stream = await eTagContainer.GetDataAsync(response.RequestMessage.RequestUri, cancellationToken).ConfigureAwait(false);
