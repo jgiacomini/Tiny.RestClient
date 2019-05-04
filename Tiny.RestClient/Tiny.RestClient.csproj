@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.1;netstandard1.2;netstandard1.3;netstandard2.0;net45;net46;net47</TargetFrameworks>
     <Version>1.6.2</Version>
-    <Copyright>Copyright © Jérôme Giacomini 2018</Copyright>
+    <Copyright>Copyright © Jérôme Giacomini 2019</Copyright>
     <NeutralLanguage>en</NeutralLanguage>
     <Title>Tiny.RestClient</Title>
     <Authors>Jérôme Giacomini</Authors>
