@@ -223,6 +223,7 @@ namespace Tiny.RestClient
                     {
                         if (stream == null || stream.CanRead == false)
                         {
+                            // TODO : throw an exception ?
                             return default;
                         }
 
@@ -488,7 +489,7 @@ namespace Tiny.RestClient
                 serializer = content.Serializer;
             }
 
-            string serializedString = null;
+            string serializedString;
             try
             {
                 serializedString = content.GetSerializedString(serializer, Settings.Encoding);
@@ -559,7 +560,6 @@ namespace Tiny.RestClient
 
             if (queryParameters != null && queryParameters.Any())
             {
-                var last = queryParameters.Last();
                 stringBuilder.Append("?");
                 for (int i = 0; i < queryParameters.Count; i++)
                 {
