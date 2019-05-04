@@ -16,13 +16,14 @@ namespace Tiny.RestClient.Tests
             var client = GetClient();
             try
             {
-                await client.GetRequest("HeaderTest/Get").ExecuteAsync();
+                // Call an api not found (the Etag header is present in all responses on this server)
+                await client.GetRequest("APIWhichNotExists").ExecuteAsync();
             }
             catch (HttpException ex)
             {
                 exceptionThrowed = true;
 
-                Assert.IsTrue(ex.ResponseHeaders.Contains("CustomHeader"), "An header name 'CustomHeader' must be present in response");
+                Assert.IsTrue(ex.ResponseHeaders.Contains("ETag"), "An header name 'ETag' must be present in response");
             }
 
             Assert.IsTrue(exceptionThrowed, $"An {nameof(HttpException)} must be throwed");
