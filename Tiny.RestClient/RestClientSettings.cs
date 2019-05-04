@@ -79,5 +79,10 @@ namespace Tiny.RestClient
         /// Compression / decompression system enabled.
         /// </summary>
         public Compressions Compressions { get; private set; }
+
+        /// <summary>
+        /// Gets or set the handler used when HttpException will be throw (can be used to transform exception).
+        /// </summary>
+        public Func<HttpException, Exception> EncapsulateHttpExceptionHandler { get; set; }
     }
 }

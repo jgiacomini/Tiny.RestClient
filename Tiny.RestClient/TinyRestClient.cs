@@ -819,6 +819,12 @@ namespace Tiny.RestClient
                     response.Headers,
                     ex);
 
+                var handler = Settings.EncapsulateHttpExceptionHandler;
+                if (handler != null)
+                {
+                    throw handler(newEx);
+                }
+
                 throw newEx;
             }
         }
