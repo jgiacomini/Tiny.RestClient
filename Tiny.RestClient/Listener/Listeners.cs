@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Tiny.RestClient
 {
     /// <summary>
-    /// Collection of <see cref="IListener"/>
+    /// Collection of <see cref="IListener"/>.
     /// </summary>
     public class Listeners : ICollection<IListener>, IListener
     {

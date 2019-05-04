@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 namespace Tiny.RestClient
 {
     /// <summary>
-    /// A listener which will trace all requests with <see cref="Debug.WriteLine(object)"/>
+    /// A listener which will trace all requests with <see cref="Debug.WriteLine(object)"/>.
     /// </summary>
     public class DebugListener : IListener
     {
         /// <summary>
         ///  Initializes a new instance of the <see cref="DebugListener"/> class.
         /// </summary>
-        /// <param name="measureTime">true if measure time</param>
+        /// <param name="measureTime">true if measure time.</param>
         public DebugListener(bool measureTime)
         {
             MeasureTime = measureTime;

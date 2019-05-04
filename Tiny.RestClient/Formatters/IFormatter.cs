@@ -5,18 +5,18 @@ using System.Text;
 namespace Tiny.RestClient
 {
     /// <summary>
-    /// Interface IFormatter
+    /// Interface IFormatter.
     /// </summary>
     public interface IFormatter
     {
         /// <summary>
-        /// Gets the default media type used to send request
+        /// Gets the default media type used to send request.
         /// </summary>
         /// <value>The type of the media.</value>
         string DefaultMediaType { get; }
 
         /// <summary>
-        /// Gets the supported media type by the serializer
+        /// Gets the supported media type by the serializer.
         /// </summary>
         /// <value>The type of the media.</value>
         IEnumerable<string> SupportedMediaTypes { get; }
@@ -24,7 +24,7 @@ namespace Tiny.RestClient
         /// <summary>
         /// Serializes the specified data.
         /// </summary>
-        /// <typeparam name="T">Type of data serialized</typeparam>
+        /// <typeparam name="T">Type of data serialized.</typeparam>
         /// <param name="data">The data.</param>
         /// <param name="encoding">The encoding.</param>
         /// <returns>System.String.</returns>
@@ -36,7 +36,7 @@ namespace Tiny.RestClient
         /// <typeparam name="T"></typeparam>
         /// <param name="stream">The stream.</param>
         /// <param name="encoding">The encoding.</param>
-        /// <returns>An instance of type <typeparamref name="T"/></returns>
+        /// <returns>An instance of type <typeparamref name="T"/>.</returns>
         T Deserialize<T>(Stream stream, Encoding encoding);
     }
 }

@@ -5,25 +5,25 @@ using System.Text;
 namespace Tiny.RestClient.Json
 {
     /// <summary>
-    ///  Allow a custom separator to resolve of property (propertySEPARATORname become PropertyName)
+    ///  Allow a custom separator to resolve of property (propertySEPARATORname become PropertyName).
     /// </summary>
     public class SeparatorPropertyNamesContractResolver : DefaultContractResolver
     {
         private readonly string _separator;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SeparatorPropertyNamesContractResolver"/>
+        /// Initializes a new instance of the <see cref="SeparatorPropertyNamesContractResolver"/>.
         /// </summary>
-        /// <param name="separator">separator bewteen words</param>
+        /// <param name="separator">separator bewteen words.</param>
         public SeparatorPropertyNamesContractResolver(char separator)
         {
             _separator = separator.ToString();
         }
 
         /// <summary>
-        /// Resolves a property name to a delimited name
+        /// Resolves a property name to a delimited name.
         /// </summary>
-        /// <param name="propertyName">property name to resolve</param>
+        /// <param name="propertyName">property name to resolve.</param>
         /// <returns></returns>
         protected override string ResolvePropertyName(string propertyName)
         {
