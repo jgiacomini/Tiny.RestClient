@@ -7,7 +7,7 @@ using System.Text;
 namespace Tiny.RestClient
 {
     /// <summary>
-    /// Represent headers of requests
+    /// Represent headers of requests.
     /// </summary>
     public class Headers : IEnumerable<KeyValuePair<string, IEnumerable<string>>>
     {
@@ -19,19 +19,19 @@ namespace Tiny.RestClient
         }
 
         /// <summary>
-        /// Add OAuth 2.0 token
+        /// Add OAuth 2.0 token.
         /// </summary>
-        /// <param name="token">token to add</param>
+        /// <param name="token">token to add.</param>
         public void AddBearer(string token)
         {
             Add("Authorization", $"Bearer {token}");
         }
 
         /// <summary>
-        /// Add basic authentication
+        /// Add basic authentication.
         /// </summary>
-        /// <param name="username">the username</param>
-        /// <param name="password">the password</param>
+        /// <param name="username">the username.</param>
+        /// <param name="password">the password.</param>
         public void AddBasicAuthentication(string username, string password)
         {
             var encodedCreds = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
@@ -39,10 +39,10 @@ namespace Tiny.RestClient
         }
 
         /// <summary>
-        /// Add header
+        /// Add header.
         /// </summary>
-        /// <param name="name">header name</param>
-        /// <param name="value">header value</param>
+        /// <param name="name">header name.</param>
+        /// <param name="value">header value.</param>
         public void Add(string name, string value)
         {
             List<string> list = null;
@@ -60,9 +60,9 @@ namespace Tiny.RestClient
         }
 
         /// <summary>
-        /// Removes the header with specified name
+        /// Removes the header with specified name.
         /// </summary>
-        /// <param name="name">name of the header</param>
+        /// <param name="name">name of the header.</param>
         /// <returns></returns>
         public bool Remove(string name)
         {
@@ -91,10 +91,10 @@ namespace Tiny.RestClient
         }
 
         /// <summary>
-        /// Gets or sets header
+        /// Gets or sets header.
         /// </summary>
-        /// <param name="name">header name</param>
-        /// <returns>return header's value</returns>
+        /// <param name="name">header name.</param>
+        /// <returns>return header's value.</returns>
         public IEnumerable<string> this[string name]
         {
             get
