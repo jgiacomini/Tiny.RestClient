@@ -3,7 +3,7 @@
 namespace Tiny.RestClient
 {
     /// <summary>
-    /// Interface IMultiPartFromDataRequest
+    /// Interface IMultiPartFromDataRequest.
     /// </summary>
     /// <seealso cref="IMultipartFromDataRequest"/>
     /// <seealso cref="IExecutableRequest"/>

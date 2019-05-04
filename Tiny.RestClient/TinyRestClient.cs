@@ -32,7 +32,7 @@ namespace Tiny.RestClient
         /// <summary>
         /// Initializes a new instance of the <see cref="TinyRestClient"/> class.
         /// </summary>
-        /// <param name="httpClient">The httpclient used</param>
+        /// <param name="httpClient">The httpclient used.</param>
         /// <param name="serverAddress">The server address.</param>
         public TinyRestClient(HttpClient httpClient, string serverAddress)
         {
@@ -55,7 +55,7 @@ namespace Tiny.RestClient
         #endregion
 
         /// <summary>
-        /// Settings of <see cref="TinyRestClient"/>
+        /// Settings of <see cref="TinyRestClient"/>.
         /// </summary>
         public RestClientSettings Settings { get; }
 
@@ -95,9 +95,9 @@ namespace Tiny.RestClient
         /// <summary>
         /// Create a new POST request.
         /// </summary>
-        /// <param name="content">The content of the request</param>
-        /// <param name="formatter">The formatter use to serialize the content</param>
-        /// <param name="compression">Add compresion system use to compress content</param>
+        /// <param name="content">The content of the request.</param>
+        /// <param name="formatter">The formatter use to serialize the content.</param>
+        /// <param name="compression">Add compresion system use to compress content.</param>
         /// <returns>The new request.</returns>
         public IParameterRequest PostRequest<TContent>(TContent content, IFormatter formatter = null, ICompression compression = null)
         {
@@ -109,9 +109,9 @@ namespace Tiny.RestClient
         /// Create a new POST request.
         /// </summary>
         /// <param name="route">The route.</param>
-        /// <param name="content">The content of the request</param>
-        /// <param name="formatter">The formatter use to serialize the content</param>
-        /// <param name="compression">Add compresion system use to compress content</param>
+        /// <param name="content">The content of the request.</param>
+        /// <param name="formatter">The formatter use to serialize the content.</param>
+        /// <param name="compression">Add compresion system use to compress content.</param>
         /// <returns>The new request.</returns>
         public IParameterRequest PostRequest<TContent>(string route, TContent content, IFormatter formatter = null, ICompression compression = null)
         {
@@ -132,9 +132,9 @@ namespace Tiny.RestClient
         /// <summary>
         /// Create a new PUT request.
         /// </summary>
-        /// <param name="content">The content of the request</param>
-        /// <param name="formatter">The formatter use to serialize the content</param>
-        /// <param name="compression">Add compresion system use to compress content</param>
+        /// <param name="content">The content of the request.</param>
+        /// <param name="formatter">The formatter use to serialize the content.</param>
+        /// <param name="compression">Add compresion system use to compress content.</param>
         /// <returns>The new request.</returns>
         public IParameterRequest PutRequest<TContent>(TContent content, IFormatter formatter = null, ICompression compression = null)
         {
@@ -146,9 +146,9 @@ namespace Tiny.RestClient
         /// Create a new PUT request.
         /// </summary>
         /// <param name="route">The route.</param>
-        /// <param name="content">The content of the request</param>
-        /// <param name="formatter">The formatter use to serialize the content</param>
-        /// <param name="compression">Add compresion system use to compress content</param>
+        /// <param name="content">The content of the request.</param>
+        /// <param name="formatter">The formatter use to serialize the content.</param>
+        /// <param name="compression">Add compresion system use to compress content.</param>
         /// <returns>The new request.</returns>
         public IParameterRequest PutRequest<TContent>(string route, TContent content, IFormatter formatter = null, ICompression compression = null)
         {
@@ -169,9 +169,9 @@ namespace Tiny.RestClient
         /// <summary>
         /// Create a new PATCH request.
         /// </summary>
-        /// <param name="content">The content of the request</param>
-        /// <param name="serializer">The serializer use to serialize it</param>
-        /// <param name="compression">Add compresion system use to compress content</param>
+        /// <param name="content">The content of the request.</param>
+        /// <param name="serializer">The serializer use to serialize it.</param>
+        /// <param name="compression">Add compresion system use to compress content.</param>
         /// <returns>The new request.</returns>
         public IParameterRequest PatchRequest<TContent>(TContent content, IFormatter serializer = null, ICompression compression = null)
         {
@@ -183,9 +183,9 @@ namespace Tiny.RestClient
         /// Create a new PATCH request.
         /// </summary>
         /// <param name="route">The route.</param>
-        /// <param name="content">The content of the request</param>
-        /// <param name="serializer">The serializer use to serialize it</param>
-        /// <param name="compression">Add compresion system use ton compress content</param>
+        /// <param name="content">The content of the request.</param>
+        /// <param name="serializer">The serializer use to serialize it.</param>
+        /// <param name="compression">Add compresion system use ton compress content.</param>
         /// <returns>The new request.</returns>
         public IParameterRequest PatchRequest<TContent>(string route, TContent content, IFormatter serializer = null, ICompression compression = null)
         {
@@ -223,6 +223,7 @@ namespace Tiny.RestClient
                     {
                         if (stream == null || stream.CanRead == false)
                         {
+                            // TODO : throw an exception ?
                             return default;
                         }
 
@@ -488,7 +489,7 @@ namespace Tiny.RestClient
                 serializer = content.Serializer;
             }
 
-            string serializedString = null;
+            string serializedString;
             try
             {
                 serializedString = content.GetSerializedString(serializer, Settings.Encoding);
@@ -559,7 +560,6 @@ namespace Tiny.RestClient
 
             if (queryParameters != null && queryParameters.Any())
             {
-                var last = queryParameters.Last();
                 stringBuilder.Append("?");
                 for (int i = 0; i < queryParameters.Count; i++)
                 {
@@ -729,8 +729,7 @@ namespace Tiny.RestClient
             CancellationToken cancellationToken)
         {
             await HandleResponseAsync(response, responseHeader, eTagContainer, cancellationToken).ConfigureAwait(false);
-
-            Stream stream = null;
+            Stream stream;
             if (eTagContainer != null && response.StatusCode == HttpStatusCode.NotModified)
             {
                 stream = await eTagContainer.GetDataAsync(response.RequestMessage.RequestUri, cancellationToken).ConfigureAwait(false);
@@ -817,7 +816,14 @@ namespace Tiny.RestClient
                     response.RequestMessage.Headers,
                     content,
                     response.StatusCode,
+                    response.Headers,
                     ex);
+
+                var handler = Settings.EncapsulateHttpExceptionHandler;
+                if (handler != null)
+                {
+                    throw handler(newEx);
+                }
 
                 throw newEx;
             }

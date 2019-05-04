@@ -13,7 +13,7 @@ namespace Tiny.RestClient
     public class XmlFormatter : IFormatter
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="XmlFormatter"/>
+        /// Initializes a new instance of the <see cref="XmlFormatter"/>.
         /// </summary>
         public XmlFormatter()
         {
@@ -37,7 +37,7 @@ namespace Tiny.RestClient
         }
 
         /// <summary>
-        /// Gets the instance of WriterSettings
+        /// Gets the instance of WriterSettings.
         /// </summary>
         public XmlWriterSettings WriterSettings { get; }
 

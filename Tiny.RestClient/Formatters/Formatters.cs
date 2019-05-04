@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Tiny.RestClient
 {
     /// <summary>
-    /// Collection of <see cref="IFormatter"/>
+    /// Collection of <see cref="IFormatter"/>.
     /// </summary>
     public class Formatters : IEnumerable<IFormatter>
     {
@@ -23,7 +23,7 @@ namespace Tiny.RestClient
         }
 
         /// <summary>
-        /// Gets the default <see cref="IFormatter"/>
+        /// Gets the default <see cref="IFormatter"/>.
         /// </summary>
         public IFormatter Default
         {
@@ -34,11 +34,11 @@ namespace Tiny.RestClient
         }
 
         /// <summary>
-        /// Add a formatter in the list of supported formatters
+        /// Add a formatter in the list of supported formatters.
         /// </summary>
-        /// <param name="formatter">Add the formatter to the list of supported formatter. The value can't be null</param>
-        /// <param name="isDefault">Define this formatter as default formatter</param>
-        /// <exception cref="ArgumentNullException">throw <see cref="ArgumentNullException"/> if formatter is null</exception>
+        /// <param name="formatter">Add the formatter to the list of supported formatter. The value can't be null.</param>
+        /// <param name="isDefault">Define this formatter as default formatter.</param>
+        /// <exception cref="ArgumentNullException">throw <see cref="ArgumentNullException"/> if formatter is null.</exception>
         public void Add(IFormatter formatter, bool isDefault)
         {
             if (formatter == null)
@@ -55,12 +55,12 @@ namespace Tiny.RestClient
         }
 
         /// <summary>
-        /// Removes a formatter in the list of supported formatters
+        /// Removes a formatter in the list of supported formatters.
         /// </summary>
-        /// <param name="formatter">The formatter to remove on the supported formatter list</param>
+        /// <param name="formatter">The formatter to remove on the supported formatter list.</param>
         /// <returns>true if item is successfully removed; otherwise, false. This method also returns false if item was not found.</returns>
-        /// <exception cref="ArgumentNullException">throw <see cref="ArgumentNullException"/> if formatter is null</exception>
-        /// <exception cref="ArgumentException">throw <see cref="ArgumentException"/> if the current formatter removed is the default one </exception>
+        /// <exception cref="ArgumentNullException">throw <see cref="ArgumentNullException"/> if formatter is null.</exception>
+        /// <exception cref="ArgumentException">throw <see cref="ArgumentException"/> if the current formatter removed is the default one. </exception>
         public bool Remove(IFormatter formatter)
         {
             if (formatter == null)

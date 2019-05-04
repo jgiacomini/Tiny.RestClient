@@ -13,7 +13,7 @@ using Tiny.RestClient.PostMan;
 namespace Tiny.RestClient
 {
     /// <summary>
-    /// A listener which will create a postMan collection/>
+    /// A listener which will create a postMan collection/>.
     /// </summary>
     public class PostmanListener : IListener
     {
@@ -22,7 +22,7 @@ namespace Tiny.RestClient
         /// <summary>
         ///  Initializes a new instance of the <see cref="PostmanListener"/> class.
         /// </summary>
-        /// <param name="name">name of the postMan collection</param>
+        /// <param name="name">name of the postMan collection.</param>
         public PostmanListener(string name)
         {
             if (string.IsNullOrEmpty(name))
@@ -49,10 +49,10 @@ namespace Tiny.RestClient
 
 #if !FILEINFO_NOT_SUPPORTED
         /// <summary>
-        /// Save PostManCollection to file
+        /// Save PostManCollection to file.
         /// </summary>
-        /// <param name="fileInfo">file where the collection is saved</param>
-        /// <returns>return a <see cref="Task"/></returns>
+        /// <param name="fileInfo">file where the collection is saved.</param>
+        /// <returns>return a <see cref="Task"/>.</returns>
         public async Task SaveAsync(FileInfo fileInfo)
         {
             if (fileInfo.Exists)
@@ -69,9 +69,9 @@ namespace Tiny.RestClient
 #endif
 
         /// <summary>
-        /// Get postman collection json data
+        /// Get postman collection json data.
         /// </summary>
-        /// <returns>return a post man collection json file</returns>
+        /// <returns>return a post man collection json file.</returns>
         public string GetCollectionJson()
         {
             lock (_toLock)

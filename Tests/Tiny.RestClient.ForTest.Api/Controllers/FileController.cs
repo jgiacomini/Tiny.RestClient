@@ -14,7 +14,7 @@ namespace Tiny.RestClient.ForTest.Api.Controllers
         {
             using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
             {
-               var result = await reader.ReadToEndAsync();
+                var result = await reader.ReadToEndAsync();
 
                 return result.TrimEnd();
             }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Tiny.RestClient
 {
     /// <summary>
-    /// Gzip compression
+    /// Gzip compression.
     /// </summary>
     public class GzipCompression : ICompression
     {

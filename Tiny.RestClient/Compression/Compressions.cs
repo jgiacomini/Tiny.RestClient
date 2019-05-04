@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Tiny.RestClient
 {
     /// <summary>
-    /// Represent headers of requests
+    /// Represent headers of requests.
     /// </summary>
     public class Compressions : IEnumerable<KeyValuePair<string, ICompression>>
     {
@@ -16,9 +16,9 @@ namespace Tiny.RestClient
         }
 
         /// <summary>
-        /// Add header
+        /// Add header.
         /// </summary>
-        /// <param name="compression">header name</param>
+        /// <param name="compression">header name.</param>
         public void Add(ICompression compression)
         {
             if (!_compressions.ContainsKey(compression.ContentEncoding))
@@ -32,9 +32,9 @@ namespace Tiny.RestClient
         }
 
         /// <summary>
-        /// Removes the compression
+        /// Removes the compression.
         /// </summary>
-        /// <param name="compression">item to remove</param>
+        /// <param name="compression">item to remove.</param>
         /// <returns></returns>
         public bool Remove(ICompression compression)
         {
@@ -42,20 +42,20 @@ namespace Tiny.RestClient
         }
 
         /// <summary>
-        /// Determines whether the <see cref="Compressions"/> contains the specified compression system
+        /// Determines whether the <see cref="Compressions"/> contains the specified compression system.
         /// </summary>
-        /// <param name="contentEncoding">content encoding</param>
-        /// <returns>returns true if contains an element with this contentEncoding otherwise false</returns>
+        /// <param name="contentEncoding">content encoding.</param>
+        /// <returns>returns true if contains an element with this contentEncoding otherwise false.</returns>
         public bool Contains(string contentEncoding)
         {
             return _compressions.ContainsKey(contentEncoding);
         }
 
         /// <summary>
-        /// Gets or sets Compression system
+        /// Gets or sets Compression system.
         /// </summary>
-        /// <param name="contentEncoding">content encoding key</param>
-        /// <returns>return compression system</returns>
+        /// <param name="contentEncoding">content encoding key.</param>
+        /// <returns>return compression system.</returns>
         public ICompression this[string contentEncoding]
         {
             get
@@ -81,7 +81,7 @@ namespace Tiny.RestClient
 
         /// <summary>
         /// Removes all <see cref="ICompression"/> system
-        /// /// </summary>
+        /// ///. </summary>
         public void Clear()
         {
             _compressions.Clear();
