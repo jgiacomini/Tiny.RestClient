@@ -1,4 +1,8 @@
 # Release notes
+## 1.6.2
+* Now HttpException expose the headers of the response
+* Constructor of HttpException is now internal
+
 ## 1.6.1
 * Fix patch request which sent patch verb in lowercase
 
