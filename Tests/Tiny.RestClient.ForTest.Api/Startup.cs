@@ -26,7 +26,7 @@ namespace Tiny.RestClient.ForTest.Api
 
             services.AddResponseCompression(o =>
             {
-               o.Providers.Add(new BrotliCompressionProvider());
+               o.Providers.Add(new CompressionProvider.BrotliCompressionProvider());
                o.Providers.Add(new DeflateCompressionProvider());
                o.EnableForHttps = true;
             });
@@ -37,7 +37,7 @@ namespace Tiny.RestClient.ForTest.Api
                 options.RespectBrowserAcceptHeader = true;
                 options.InputFormatters.Add(new XmlSerializerInputFormatter(options));
                 options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
-            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
