@@ -46,7 +46,7 @@ namespace Tiny.RestClient
         }
 
             /// <inheritdoc/>
-            public Task OnReceivedResponseAsync(Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan? elapsedTime, CancellationToken cancellationToken)
+        public Task OnReceivedResponseAsync(Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan? elapsedTime, CancellationToken cancellationToken)
         {
             if (elapsedTime.HasValue)
             {
@@ -65,17 +65,17 @@ namespace Tiny.RestClient
         }
 
             /// <inheritdoc/>
-            public Task OnSendingRequestAsync(Uri uri, HttpMethod httpMethod, HttpRequestMessage httpRequestMessage, CancellationToken cancellationToken)
-            {
+        public Task OnSendingRequestAsync(Uri uri, HttpMethod httpMethod, HttpRequestMessage httpRequestMessage, CancellationToken cancellationToken)
+        {
                 Debug.WriteLine($"Sending Method = {httpMethod}, Uri = {uri}");
 #if COMPLETED_TASK_NOT_SUPPORTED
                 return TaskHelper.CompletedTask;
 #else
                 return Task.CompletedTask;
 #endif
-            }
+        }
 
-                private string ToReadableString(TimeSpan span)
+        private string ToReadableString(TimeSpan span)
         {
             // TODO : rewrite this code
             bool addComa = false;
