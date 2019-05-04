@@ -5,7 +5,7 @@ using System.Net.Http.Headers;
 namespace Tiny.RestClient
 {
     /// <summary>
-    /// A <see cref="HttpException"/>
+    /// A <see cref="HttpException"/>.
     /// </summary>
     /// <seealso cref="TinyRestClientException" />
     public class HttpException : TinyRestClientException
@@ -16,10 +16,10 @@ namespace Tiny.RestClient
         /// <param name="uri">The URL.</param>
         /// <param name="verb">The verb.</param>
         /// <param name="reasonPhrase">The reason phrase.</param>
-        /// <param name="headers">The headers of the request</param>
+        /// <param name="headers">The headers of the request.</param>
         /// <param name="content">The content.</param>
         /// <param name="statusCode">The status code.</param>
-        /// <param name="responseHeaders">The headers of response</param>
+        /// <param name="responseHeaders">The headers of response.</param>
         /// <param name="ex">The ex.</param>
         internal HttpException(
             Uri uri,
@@ -50,7 +50,7 @@ namespace Tiny.RestClient
         public string Verb { get; private set; }
 
         /// <summary>
-        /// Gets the headers of sended request
+        /// Gets the headers of sended request.
         /// </summary>
         /// <value>
         /// The verb.
@@ -82,7 +82,7 @@ namespace Tiny.RestClient
         public string Content { get; private set; }
 
         /// <summary>
-        /// Gets the response headers of sended request
+        /// Gets the response headers of sended request.
         /// </summary>
         /// <value>
         /// The verb.
