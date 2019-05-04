@@ -28,5 +28,28 @@ namespace Tiny.RestClient.Tests
 
             Assert.IsTrue(exceptionThrowed, $"An {nameof(HttpException)} must be throwed");
         }
+
+        [ExpectedException(typeof(NotFoundCustomException))]
+        [TestMethod]
+        public async Task CheckIfEnclapsulationWorks()
+        {
+            var client = GetNewClient();
+            client.Settings.EncapsulateHttpExceptionHandler = (ex) =>
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    return new NotFoundCustomException();
+                }
+
+                return ex;
+            };
+
+            // Call an api not found (the ETag header is present in all responses on this server)
+            await client.GetRequest("APIWhichNotExists").ExecuteAsync();
+        }
+
+        internal class NotFoundCustomException : Exception
+        {
+        }
     }
 }
