@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Tiny.RestClient
 {
     /// <summary>
-    /// A listener which will create a postMan collection/>
+    /// A listener which will create a postMan collection/>.
     /// </summary>
     public class CurlListener : IListener
     {
