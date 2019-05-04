@@ -23,7 +23,7 @@ namespace Tiny.RestClient.Tests
             {
                 exceptionThrowed = true;
 
-                Assert.IsTrue(ex.ResponseHeaders.Contains("ETag"), "An header name 'ETag' must be present in response");
+                Assert.IsTrue(ex.ResponseHeaders.Contains("ETag"), "An header name 'ETag' must be present in response.");
             }
 
             Assert.IsTrue(exceptionThrowed, $"An {nameof(HttpException)} must be throwed");
