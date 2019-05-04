@@ -16,7 +16,7 @@ namespace Tiny.RestClient.Tests
             var client = GetClient();
             try
             {
-                // Call an api not found (the Etag header is present in all responses on this server)
+                // Call an api not found (the ETag header is present in all responses on this server)
                 await client.GetRequest("APIWhichNotExists").ExecuteAsync();
             }
             catch (HttpException ex)
