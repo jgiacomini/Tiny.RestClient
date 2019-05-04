@@ -9,13 +9,13 @@ using Tiny.RestClient.Json;
 namespace Tiny.RestClient
 {
     /// <summary>
-    ///  Serializes and deserializes objects into and from the JSON format using the Newtonsoft.Json.JsonSerializer
+    ///  Serializes and deserializes objects into and from the JSON format using the Newtonsoft.Json.JsonSerializer.
     /// </summary>
     /// <seealso cref="IFormatter" />
     public class JsonFormatter : IFormatter
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="JsonFormatter"/>
+        /// Initializes a new instance of the <see cref="JsonFormatter"/>.
         /// </summary>
         public JsonFormatter()
         {
@@ -23,12 +23,12 @@ namespace Tiny.RestClient
         }
 
         /// <summary>
-        /// Gets the instance of JsonSerializer
+        /// Gets the instance of JsonSerializer.
         /// </summary>
         public JsonSerializer JsonSerializer { get; }
 
         /// <summary>
-        /// Enable snake case for properties mapping. A property "PropertyName" will become "property_name"
+        /// Enable snake case for properties mapping. A property "PropertyName" will become "property_name".
         /// </summary>
         public void UseSnakeCase()
         {
@@ -36,7 +36,7 @@ namespace Tiny.RestClient
         }
 
         /// <summary>
-        /// Enable camel case for properties mapping. A property "PropertyName" will become "propertyName"
+        /// Enable camel case for properties mapping. A property "PropertyName" will become "propertyName".
         /// </summary>
         public void UseCamelCase()
         {
@@ -44,7 +44,7 @@ namespace Tiny.RestClient
         }
 
         /// <summary>
-        /// Enable kebab case (also named spinal case) for properties mapping. A property "PropertyName" will become "property-name"
+        /// Enable kebab case (also named spinal case) for properties mapping. A property "PropertyName" will become "property-name".
         /// </summary>
         public void UseKebabCase()
         {
