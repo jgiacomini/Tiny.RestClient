@@ -44,7 +44,7 @@ namespace Tiny.RestClient.Tests
                 return ex;
             };
 
-            // Call an api not found (the ETag header is present in all responses on this server)
+            // Call an API wich throw NotFound error
             await client.GetRequest("APIWhichNotExists").ExecuteAsync();
         }
 
