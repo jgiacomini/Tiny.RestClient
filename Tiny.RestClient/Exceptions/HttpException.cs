@@ -19,14 +19,16 @@ namespace Tiny.RestClient
         /// <param name="headers">The headers of the request</param>
         /// <param name="content">The content.</param>
         /// <param name="statusCode">The status code.</param>
+        /// <param name="responseHeaders">The headers of response</param>
         /// <param name="ex">The ex.</param>
-        public HttpException(
+        internal HttpException(
             Uri uri,
             string verb,
             string reasonPhrase,
             HttpRequestHeaders headers,
             string content,
             HttpStatusCode statusCode,
+            HttpResponseHeaders responseHeaders,
             Exception ex)
         : base($"Response status code does not indicate success. Url : {uri.ToString()}, Verb : {verb}, StatusCode : {statusCode}, ReasonPhrase : {reasonPhrase}", ex)
         {
@@ -36,6 +38,7 @@ namespace Tiny.RestClient
             StatusCode = statusCode;
             ReasonPhrase = reasonPhrase;
             Headers = headers;
+            ResponseHeaders = responseHeaders;
         }
 
         /// <summary>
@@ -77,6 +80,14 @@ namespace Tiny.RestClient
         /// The content.
         /// </value>
         public string Content { get; private set; }
+
+        /// <summary>
+        /// Gets the response headers of sended request
+        /// </summary>
+        /// <value>
+        /// The verb.
+        /// </value>
+        public HttpResponseHeaders ResponseHeaders { get; private set; }
 
         /// <summary>
         /// Gets the status code.

@@ -223,6 +223,7 @@ namespace Tiny.RestClient
                     {
                         if (stream == null || stream.CanRead == false)
                         {
+                            // TODO : throw an exception ?
                             return default;
                         }
 
@@ -488,7 +489,7 @@ namespace Tiny.RestClient
                 serializer = content.Serializer;
             }
 
-            string serializedString = null;
+            string serializedString;
             try
             {
                 serializedString = content.GetSerializedString(serializer, Settings.Encoding);
@@ -559,7 +560,6 @@ namespace Tiny.RestClient
 
             if (queryParameters != null && queryParameters.Any())
             {
-                var last = queryParameters.Last();
                 stringBuilder.Append("?");
                 for (int i = 0; i < queryParameters.Count; i++)
                 {
@@ -729,8 +729,7 @@ namespace Tiny.RestClient
             CancellationToken cancellationToken)
         {
             await HandleResponseAsync(response, responseHeader, eTagContainer, cancellationToken).ConfigureAwait(false);
-
-            Stream stream = null;
+            Stream stream;
             if (eTagContainer != null && response.StatusCode == HttpStatusCode.NotModified)
             {
                 stream = await eTagContainer.GetDataAsync(response.RequestMessage.RequestUri, cancellationToken).ConfigureAwait(false);
@@ -817,6 +816,7 @@ namespace Tiny.RestClient
                     response.RequestMessage.Headers,
                     content,
                     response.StatusCode,
+                    response.Headers,
                     ex);
 
                 throw newEx;
