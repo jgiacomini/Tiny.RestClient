@@ -36,7 +36,7 @@ namespace Tiny.RestClient.Tests
             {
                 Assert.IsTrue(responseHeaders.Any(h => h.Key == "FROM_CLIENT" + sendedHeader.Key), $"{sendedHeader.Key} seem not passed to server side");
                 var responseHeader = responseHeaders.FirstOrDefault(h => h.Key == "FROM_CLIENT" + sendedHeader.Key);
-                Assert.IsTrue(sendedHeader.Value == responseHeader.Value, $"Values for header {sendedHeader.Key} seem not match with values resend by server");
+                Assert.IsTrue(sendedHeader.Value.First() == responseHeader.Value.First(), $"Values for header {sendedHeader.Key} seem not match with values resend by server");
             }
         }
     }
