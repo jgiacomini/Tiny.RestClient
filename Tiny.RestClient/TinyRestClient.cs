@@ -590,6 +590,13 @@ namespace Tiny.RestClient
                 stopwatch = new Stopwatch();
             }
 
+            Headers calculatedHeaders = null;
+            var calculateHeadersHandler = Settings.CalculateHeadersHandler;
+            if (calculateHeadersHandler != null)
+            {
+                calculatedHeaders = await calculateHeadersHandler.Invoke();
+            }
+
             using (var request = new HttpRequestMessage(httpMethod, uri))
             {
                 if (deserializer == null)
@@ -620,6 +627,14 @@ namespace Tiny.RestClient
                 if (requestHeader != null)
                 {
                     foreach (var item in requestHeader)
+                    {
+                        request.Headers.Add(item.Key, item.Value);
+                    }
+                }
+
+                if (calculatedHeaders != null)
+                {
+                    foreach (var item in calculatedHeaders)
                     {
                         request.Headers.Add(item.Key, item.Value);
                     }
