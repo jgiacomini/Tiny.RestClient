@@ -193,7 +193,7 @@ request.WithTimeout(TimeSpan.FromSeconds(100));
 
 Allow all status code :
 ```cs
-client.Settings.HttpStatusCodeAllowed.AllowAllStatus = false;
+client.Settings.HttpStatusCodeAllowed.AllowAllStatus = true;
 ```
 
 Allow only a range of http status codes :
