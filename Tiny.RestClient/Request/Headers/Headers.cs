@@ -13,7 +13,10 @@ namespace Tiny.RestClient
     {
         private Dictionary<string, IEnumerable<string>> _headers;
 
-        internal Headers()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Headers"/> class.
+        /// </summary>
+        public Headers()
         {
             _headers = new Dictionary<string, IEnumerable<string>>();
         }

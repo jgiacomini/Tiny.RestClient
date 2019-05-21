@@ -1,4 +1,21 @@
 # Release notes
+# 1.6.3
+* Now calculate dynamically the headers to add to resquest.
+
+In this sample we get a custom token and add it to all our requests => 
+```cs
+client.Settings.CalculateHeadersHandler = async () =>
+{
+   var token = await GetACustomTokenAsync();
+
+   var headers = new Headers
+   {
+       { "CustomToken", token },
+   };
+   return headers;
+};
+  ```
+
 ## 1.6.2
 * Now HttpException expose the headers of the response
 * Constructor of HttpException is now internal

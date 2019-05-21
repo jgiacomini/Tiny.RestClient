@@ -92,6 +92,23 @@ client.GetRequest("City/All").
       ExecuteAsync();
 ```
 
+
+#### Calculate headers before send the requests
+
+Before send requests to server we can add calculate dynamically the headers to add to resquest like below :
+```cs
+client.Settings.CalculateHeadersHandler = async () =>
+{
+   var token = await GetACustomTokenAsync();
+
+   var headers = new Headers
+   {
+       { "CustomToken", token },
+   };
+   return headers;
+};
+  ```
+
 #### Read headers of response
 
 ```cs
@@ -107,6 +124,7 @@ foreach(var header in headersOfResponse)
     }
 }
 ```
+
 
 ### Basic GET http requests
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Tiny.RestClient
 {
@@ -64,6 +65,11 @@ namespace Tiny.RestClient
         {
             get; private set;
         }
+
+        /// <summary>
+        /// Gets or set the handler used to calculate headers before send request.
+        /// </summary>
+        public Func<Task<Headers>> CalculateHeadersHandler { get; set; }
 
         /// <summary>
         /// Log all requests.
