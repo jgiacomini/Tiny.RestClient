@@ -92,6 +92,23 @@ client.GetRequest("City/All").
       ExecuteAsync();
 ```
 
+
+#### Calculate headers before send the requests
+
+Before send requests to server we can add calculate dynamically the headers to add to resquest like below :
+```cs
+client.Settings.CalculateHeadersHandler = async () =>
+{
+   var token = await GetACustomTokenAsync();
+
+   var headers = new Headers
+   {
+       { "CustomToken", token },
+   };
+   return headers;
+};
+  ```
+
 #### Read headers of response
 
 ```cs
@@ -107,6 +124,7 @@ foreach(var header in headersOfResponse)
     }
 }
 ```
+
 
 ### Basic GET http requests
 
@@ -351,6 +369,28 @@ catch (HttpException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Intern
 {
    throw new ServerErrorException($"{ex.Message} {ex.ReasonPhrase}");
 }
+```
+
+### Enclapsulate HttpExceptions
+We can setup a global handler to provide a logic to encapsulate HttpException automatically.
+
+For example I can choose to translate all HttpException with StatusCode NotFound in a NotFoundCustomException.
+```cs
+client.Settings.EncapsulateHttpExceptionHandler = (ex) =>
+{
+   if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+   {
+      return new NotFoundCustomException();
+   }
+
+   return ex;
+};
+```
+
+Now if I call an API wich respond with status code NotFound it will throw automaticaly my custom exception.
+```cs
+// Call an API wich throw NotFound error
+await client.GetRequest("APIWhichNotExists").ExecuteAsync();
 ```
 ## ETag
 The lib supports the Entity tag but it's not enabled by default.

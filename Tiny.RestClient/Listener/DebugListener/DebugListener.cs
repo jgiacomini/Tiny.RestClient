@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 namespace Tiny.RestClient
 {
     /// <summary>
-    /// A listener which will trace all requests with <see cref="Debug.WriteLine(object)"/>
+    /// A listener which will trace all requests with <see cref="Debug.WriteLine(object)"/>.
     /// </summary>
     public class DebugListener : IListener
     {
         /// <summary>
         ///  Initializes a new instance of the <see cref="DebugListener"/> class.
         /// </summary>
-        /// <param name="measureTime">true if measure time</param>
+        /// <param name="measureTime">true if measure time.</param>
         public DebugListener(bool measureTime)
         {
             MeasureTime = measureTime;
@@ -46,7 +46,7 @@ namespace Tiny.RestClient
         }
 
             /// <inheritdoc/>
-            public Task OnReceivedResponseAsync(Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan? elapsedTime, CancellationToken cancellationToken)
+        public Task OnReceivedResponseAsync(Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan? elapsedTime, CancellationToken cancellationToken)
         {
             if (elapsedTime.HasValue)
             {
@@ -65,17 +65,17 @@ namespace Tiny.RestClient
         }
 
             /// <inheritdoc/>
-            public Task OnSendingRequestAsync(Uri uri, HttpMethod httpMethod, HttpRequestMessage httpRequestMessage, CancellationToken cancellationToken)
-            {
+        public Task OnSendingRequestAsync(Uri uri, HttpMethod httpMethod, HttpRequestMessage httpRequestMessage, CancellationToken cancellationToken)
+        {
                 Debug.WriteLine($"Sending Method = {httpMethod}, Uri = {uri}");
 #if COMPLETED_TASK_NOT_SUPPORTED
                 return TaskHelper.CompletedTask;
 #else
                 return Task.CompletedTask;
 #endif
-            }
+        }
 
-                private string ToReadableString(TimeSpan span)
+        private string ToReadableString(TimeSpan span)
         {
             // TODO : rewrite this code
             bool addComa = false;

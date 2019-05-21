@@ -1,16 +1,16 @@
 ﻿namespace Tiny.RestClient
 {
     /// <summary>
-    /// Interface IParameterRequest
+    /// Interface IParameterRequest.
     /// </summary>
     /// <seealso cref="IExecutableRequest" />
     public interface IParameterRequest : IExecutableRequest
     {
         /// <summary>
-        /// Fill header of response
+        /// Fill header of response.
         /// </summary>
-        /// <param name="headers">Header filled after execute method</param>
-        /// <returns>The current request</returns>
+        /// <param name="headers">Header filled after execute method.</param>
+        /// <returns>The current request.</returns>
         IParameterRequest FillResponseHeaders(out Headers headers);
 
         /// <summary>
@@ -18,7 +18,7 @@
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
+        /// <returns>The current request.</returns>
         IParameterRequest AddHeader(string key, string value);
 
         /// <summary>
@@ -26,7 +26,7 @@
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
+        /// <returns>The current request.</returns>
         IParameterRequest AddQueryParameter(string key, string value);
 
         /// <summary>
@@ -34,7 +34,7 @@
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
+        /// <returns>The current request.</returns>
         IParameterRequest AddQueryParameter(string key, bool value);
 
         /// <summary>
@@ -42,7 +42,7 @@
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
+        /// <returns>The current request.</returns>
         IParameterRequest AddQueryParameter(string key, bool? value);
 
         /// <summary>
@@ -50,7 +50,7 @@
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
+        /// <returns>The current request.</returns>
         IParameterRequest AddQueryParameter(string key, int value);
 
         /// <summary>
@@ -58,7 +58,7 @@
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
+        /// <returns>The current request.</returns>
         IParameterRequest AddQueryParameter(string key, int? value);
 
         /// <summary>
@@ -66,7 +66,7 @@
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
+        /// <returns>The current request.</returns>
         IParameterRequest AddQueryParameter(string key, uint value);
 
         /// <summary>
@@ -74,7 +74,7 @@
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
+        /// <returns>The current request.</returns>
         IParameterRequest AddQueryParameter(string key, uint? value);
 
         /// <summary>
@@ -82,7 +82,7 @@
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
+        /// <returns>The current request.</returns>
         IParameterRequest AddQueryParameter(string key, double value);
 
         /// <summary>
@@ -90,7 +90,7 @@
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
+        /// <returns>The current request.</returns>
         IParameterRequest AddQueryParameter(string key, double? value);
 
         /// <summary>
@@ -98,7 +98,7 @@
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
+        /// <returns>The current request.</returns>
         IParameterRequest AddQueryParameter(string key, decimal value);
 
         /// <summary>
@@ -106,7 +106,7 @@
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
+        /// <returns>The current request.</returns>
         IParameterRequest AddQueryParameter(string key, decimal? value);
 
         /// <summary>
@@ -114,7 +114,7 @@
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
+        /// <returns>The current request.</returns>
         IParameterRequest AddQueryParameter(string key, float value);
 
         /// <summary>
@@ -122,7 +122,7 @@
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
-        /// <returns>The current request</returns>
+        /// <returns>The current request.</returns>
         IParameterRequest AddQueryParameter(string key, float? value);
     }
 }

@@ -26,7 +26,7 @@ namespace Tiny.RestClient.ForTest.Api
 
             services.AddResponseCompression(o =>
             {
-               o.Providers.Add(new BrotliCompressionProvider());
+               o.Providers.Add(new CompressionProvider.BrotliCompressionProvider());
                o.Providers.Add(new DeflateCompressionProvider());
                o.EnableForHttps = true;
             });

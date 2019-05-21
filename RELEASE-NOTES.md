@@ -1,4 +1,46 @@
 # Release notes
+# 1.6.3
+* Now calculate dynamically the headers to add to resquest.
+
+In this sample we get a custom token and add it to all our requests => 
+```cs
+client.Settings.CalculateHeadersHandler = async () =>
+{
+   var token = await GetACustomTokenAsync();
+
+   var headers = new Headers
+   {
+       { "CustomToken", token },
+   };
+   return headers;
+};
+  ```
+
+## 1.6.2
+* Now HttpException expose the headers of the response
+* Constructor of HttpException is now internal
+* Add possibility to encapsulate HttpException automatically.
+
+We can setup a global handler to provide a logic to encapsulate HttpException automatically.
+For example I can choose to translate all HttpException with StatusCode NotFound in a NotFoundCustomException.
+```cs
+client.Settings.EncapsulateHttpExceptionHandler = (ex) =>
+{
+   if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+   {
+      return new NotFoundCustomException();
+   }
+
+   return ex;
+};
+```
+
+Now if I call an API wich respond with status code NotFound it will throw automaticaly my custom exception.
+```cs
+// Call an API wich throw NotFound error
+await client.GetRequest("APIWhichNotExists").ExecuteAsync();
+```
+
 ## 1.6.1
 * Fix patch request which sent patch verb in lowercase
 

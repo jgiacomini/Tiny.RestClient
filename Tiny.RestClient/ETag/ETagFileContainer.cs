@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Tiny.RestClient
 {
     /// <summary>
-    /// Class <see cref="ETagFileContainer"/> which store data of entity in a directory
+    /// Class <see cref="ETagFileContainer"/> which store data of entity in a directory.
     /// </summary>
     public class ETagFileContainer : IETagContainer
     {
@@ -19,7 +19,7 @@ namespace Tiny.RestClient
         /// <summary>
         /// Initializes a new instance of the <see cref="ETagFileContainer"/> class.
         /// </summary>
-        /// <param name="pathOfDirectoryContainer">the path of the directory which will store the data</param>
+        /// <param name="pathOfDirectoryContainer">the path of the directory which will store the data.</param>
         public ETagFileContainer(string pathOfDirectoryContainer)
         {
             _pathOfDirectoryContainer = pathOfDirectoryContainer ?? throw new ArgumentNullException(nameof(pathOfDirectoryContainer));
