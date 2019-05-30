@@ -64,7 +64,7 @@ namespace Tiny.RestClient.Tests
         [TestMethod]
         public async Task MultiPartIssue93()
         {
-            var client = GetClient();
+            var client = GetNewClient();
 
             var req = client.PostRequest("MultiPart/Test").AddHeader("Authorization", "TOKEN_STRING") as IRequest;
             var res = await req.AsMultiPartFromDataRequest()
