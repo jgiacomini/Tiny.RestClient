@@ -35,11 +35,6 @@ namespace Tiny.RestClient.Tests
         [TestMethod]
         public async Task MultiPartAddStreamNull()
         {
-            var postRequest = new Request
-            {
-                Id = 42,
-                Data = "DATA"
-            };
             var client = GetClient();
 
             var data = await client.
@@ -47,17 +42,14 @@ namespace Tiny.RestClient.Tests
               AsMultiPartFromDataRequest().
               AddStream(null).
               ExecuteAsync<string>();
+
+            Assert.IsNotNull(data);
         }
 
         [ExpectedException(typeof(ArgumentNullException))]
         [TestMethod]
         public async Task MultiPartAddByteArrayNull()
         {
-            var postRequest = new Request
-            {
-                Id = 42,
-                Data = "DATA"
-            };
             var client = GetClient();
 
             var data = await client.
@@ -65,17 +57,27 @@ namespace Tiny.RestClient.Tests
               AsMultiPartFromDataRequest().
               AddByteArray(null, "bytesArray", "bytesArray.bin").
               ExecuteAsync<string>();
+
+            Assert.IsNotNull(data);
+        }
+
+        [TestMethod]
+        public async Task MultiPartIssue93()
+        {
+            var client = GetClient();
+
+            var req = client.PostRequest("MultiPart/Test").AddHeader("Authorization", "TOKEN_STRING") as IRequest;
+            var res = await req.AsMultiPartFromDataRequest()
+                .AddByteArray(new byte[] { 0x11 }, "file", "picture.png", "image/jpg")
+                .ExecuteAsHttpResponseMessageAsync();
+
+            Assert.IsNotNull(res);
         }
 
         [ExpectedException(typeof(ArgumentNullException))]
         [TestMethod]
         public async Task MultiPartAddContentNull()
         {
-            var postRequest = new Request
-            {
-                Id = 42,
-                Data = "DATA"
-            };
             var client = GetClient();
 
             var data = await client.
@@ -83,6 +85,8 @@ namespace Tiny.RestClient.Tests
               AsMultiPartFromDataRequest().
               AddContent<Request>(null).
               ExecuteAsync<string>();
+
+            Assert.IsNotNull(data);
         }
     }
 }
