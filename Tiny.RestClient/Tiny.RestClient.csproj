@@ -32,7 +32,7 @@
     <PackageLicenseUrl>https://github.com/jgiacomini/Tiny.RestClient/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/jgiacomini/Tiny.RestClient</PackageProjectUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/jgiacomini/Tiny.RestClient/master/icon.png</PackageIconUrl>
-    <PackageTags>httpClient;FluentHttp;Fluent;RestClient;REST;rest;TinyRestClient;postman;</PackageTags>
+    <PackageTags>httpClient;rest client;FluentHttp;Fluent;RestClient;REST;rest;TinyRestClient;postman;</PackageTags>
     <RepositoryUrl>https://github.com/jgiacomini/Tiny.RestClient.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <MinClientVersion>3.0.3</MinClientVersion>
