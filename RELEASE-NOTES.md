@@ -1,4 +1,7 @@
 # Release notes
+# 1.6.4
+* Add new nuget tags
+
 # 1.6.3
 * Now calculate dynamically the headers to add to resquest.
 
