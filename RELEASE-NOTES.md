@@ -2,7 +2,6 @@
 # 1.6.5
 * Add overload with long type for AddQueryParameter method
 
-AddQueryParameter
 # 1.6.4
 * Add new nuget tags
 
