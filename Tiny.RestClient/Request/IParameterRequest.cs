@@ -124,5 +124,21 @@
         /// <param name="value">The value.</param>
         /// <returns>The current request.</returns>
         IParameterRequest AddQueryParameter(string key, float? value);
+
+        /// <summary>
+        /// Adds the query parameter.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>The current request.</returns>
+        IParameterRequest AddQueryParameter(string key, long? value);
+
+        /// <summary>
+        /// Adds the query parameter.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>The current request.</returns>
+        IParameterRequest AddQueryParameter(string key, long value);
     }
 }
