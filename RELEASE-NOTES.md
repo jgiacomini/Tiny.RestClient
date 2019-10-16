@@ -1,4 +1,7 @@
 # Release notes
+# 1.6.6
+* Add icon and license in nuget package 
+
 # 1.6.5
 * Add overload with long type for AddQueryParameter method
 
