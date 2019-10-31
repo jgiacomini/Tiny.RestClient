@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +13,18 @@ namespace Tiny.RestClient.ForTest.Api.Controllers
     {
         public GetTestController()
         {
+        }
+
+        [HttpGet("Status500Response")]
+        public IActionResult Status500Response()
+        {
+            return StatusCode(StatusCodes.Status501NotImplemented, new string[] { "value1", "value2" });
+        }
+
+        [HttpGet("Status409Response")]
+        public IActionResult Status409Response()
+        {
+            return StatusCode(StatusCodes.Status409Conflict, new string[] { "value1", "value2" });
         }
 
         [HttpGet("NoResponse")]
