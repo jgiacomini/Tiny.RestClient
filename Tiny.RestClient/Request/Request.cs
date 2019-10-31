@@ -149,7 +149,7 @@ namespace Tiny.RestClient
         }
 
         /// <inheritdoc/>
-        public IRequest WithBasicAuthentication(string username, string password)
+        public IParameterRequest WithBasicAuthentication(string username, string password)
         {
             if (_headers == null)
             {
@@ -161,7 +161,7 @@ namespace Tiny.RestClient
         }
 
         /// <inheritdoc/>
-        public IRequest WithOAuthBearer(string token)
+        public IParameterRequest WithOAuthBearer(string token)
         {
             if (_headers == null)
             {
@@ -346,14 +346,14 @@ namespace Tiny.RestClient
         #endregion
 
         /// <inheritdoc/>
-        public IRequest WithETagContainer(IETagContainer eTagContainer)
+        public IParameterRequest WithETagContainer(IETagContainer eTagContainer)
         {
             _eTagContainer = eTagContainer;
             return this;
         }
 
         /// <inheritdoc/>
-        public IRequest WithTimeout(TimeSpan timeout)
+        public IParameterRequest WithTimeout(TimeSpan timeout)
         {
             _timeout = timeout;
 
