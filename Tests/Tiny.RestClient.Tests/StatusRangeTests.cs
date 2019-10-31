@@ -25,8 +25,10 @@ namespace Tiny.RestClient.Tests
         public async Task GetStatus409ResponseAllowedMultiStatusAllowed()
         {
             var client = GetNewClient();
-            client.Settings.HttpStatusCodeAllowed.Add(new HttpStatusRange(400, 410));
-
+            client.Settings.HttpStatusCodeAllowed.Add(
+                new HttpStatusRange(
+                    System.Net.HttpStatusCode.BadRequest, // 400
+                    System.Net.HttpStatusCode.BadGateway)); // 502
             var response = await client.
                 GetRequest("GetTest/Status409Response").
                 ExecuteAsync<IEnumerable<string>>();

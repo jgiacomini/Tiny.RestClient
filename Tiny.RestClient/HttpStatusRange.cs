@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 
 namespace Tiny.RestClient
 {
@@ -12,11 +13,20 @@ namespace Tiny.RestClient
         /// </summary>
         /// <param name="minHttpStatus">min status range.</param>
         /// <param name="maxHttpStatus">max status range.</param>
+        public HttpStatusRange(HttpStatusCode minHttpStatus, HttpStatusCode maxHttpStatus)
+            : this((int)minHttpStatus, (int)maxHttpStatus)
+        {
+        }
+
+        /// <summary>
+         /// Contruct a status range.
+         /// </summary>
+         /// <param name="minHttpStatus">min status range.</param>
+         /// <param name="maxHttpStatus">max status range.</param>
         public HttpStatusRange(int minHttpStatus, int maxHttpStatus)
         {
             MinHttpStatus = minHttpStatus;
             MaxHttpStatus = maxHttpStatus;
-
             if (maxHttpStatus < minHttpStatus)
             {
                 throw new ArgumentException($"{nameof(maxHttpStatus)} must be superior or egual to {nameof(minHttpStatus)}");
