@@ -88,7 +88,7 @@ namespace Tiny.RestClient
         public Compressions Compressions { get; private set; }
 
         /// <summary>
-        /// Range of status allowed if empty use default behavior
+        /// Range of status allowed if empty use default behavior.
         /// </summary>
         public HttpStatusRanges HttpStatusCodeAllowed { get; private set; }
 

@@ -4,7 +4,7 @@ using System.Linq;
 namespace Tiny.RestClient
 {
     /// <summary>
-    /// Represent a collection ofstatus range
+    /// Represent a collection ofstatus range.
     /// </summary>
     public class HttpStatusRanges : List<HttpStatusRange>
     {
@@ -13,14 +13,14 @@ namespace Tiny.RestClient
         }
 
         /// <summary>
-        /// Allow all status codes
+        /// Allow all status codes.
         /// </summary>
         public bool AllowAllStatus { get; set; }
 
         /// <summary>
-        /// Check if httpStatus is allowed
+        /// Check if httpStatus is allowed.
         /// </summary>
-        /// <param name="statusCode">status code to check</param>
+        /// <param name="statusCode">status code to check.</param>
         /// <returns></returns>
         public bool CheckIfHttpStatusIsAllowed(int statusCode)
         {

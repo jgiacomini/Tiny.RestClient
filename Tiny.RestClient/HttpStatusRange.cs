@@ -3,15 +3,15 @@
 namespace Tiny.RestClient
 {
     /// <summary>
-    /// Represent a range of http code
+    /// Represent a range of http code.
     /// </summary>
     public class HttpStatusRange
     {
         /// <summary>
-        /// Contruct a status range
+        /// Contruct a status range.
         /// </summary>
-        /// <param name="minHttpStatus">min status range</param>
-        /// <param name="maxHttpStatus">max status range</param>
+        /// <param name="minHttpStatus">min status range.</param>
+        /// <param name="maxHttpStatus">max status range.</param>
         public HttpStatusRange(int minHttpStatus, int maxHttpStatus)
         {
             MinHttpStatus = minHttpStatus;
@@ -24,21 +24,21 @@ namespace Tiny.RestClient
         }
 
         /// <summary>
-        /// Contruct a status range
+        /// Contruct a status range.
         /// </summary>
-        /// <param name="httpStatusAllowed">httpStatus allowed</param>
+        /// <param name="httpStatusAllowed">httpStatus allowed.</param>
         public HttpStatusRange(int httpStatusAllowed)
             : this(httpStatusAllowed, httpStatusAllowed)
         {
         }
 
         /// <summary>
-        /// Min http status
+        /// Min http status.
         /// </summary>
         public int MinHttpStatus { get; private set; }
 
         /// <summary>
-        /// MAx http status
+        /// MAx http status.
         /// </summary>
         public int MaxHttpStatus { get; private set; }
     }
