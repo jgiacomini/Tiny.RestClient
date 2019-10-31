@@ -1,4 +1,7 @@
 # Release notes
+# 1.6.7
+ Add possibility for request with content (like POST, PUT ...) to use methods : WithBasicAuthentication WithOAuthBearer WithTimeout WithETagContainer.
+ 
 # 1.6.6
 * Add icon and license in nuget package 
 
