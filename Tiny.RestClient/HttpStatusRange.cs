@@ -37,6 +37,15 @@ namespace Tiny.RestClient
         /// Contruct a status range.
         /// </summary>
         /// <param name="httpStatusAllowed">httpStatus allowed.</param>
+        public HttpStatusRange(HttpStatusCode httpStatusAllowed)
+            : this((int)httpStatusAllowed)
+        {
+        }
+
+        /// <summary>
+        /// Contruct a status range.
+        /// </summary>
+        /// <param name="httpStatusAllowed">httpStatus allowed.</param>
         public HttpStatusRange(int httpStatusAllowed)
             : this(httpStatusAllowed, httpStatusAllowed)
         {

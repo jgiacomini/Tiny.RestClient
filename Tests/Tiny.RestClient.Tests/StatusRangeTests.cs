@@ -39,7 +39,7 @@ namespace Tiny.RestClient.Tests
         public async Task GetStatus409ResponseAllowed()
         {
             var client = GetNewClient();
-            client.Settings.HttpStatusCodeAllowed.Add(new HttpStatusRange(409));
+            client.Settings.HttpStatusCodeAllowed.Add(new HttpStatusRange(System.Net.HttpStatusCode.Conflict));
             var response = await client.
                 GetRequest("GetTest/Status409Response").
                 ExecuteAsync<IEnumerable<string>>();
