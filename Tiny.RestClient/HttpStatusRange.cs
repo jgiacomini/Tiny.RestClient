@@ -17,9 +17,9 @@ namespace Tiny.RestClient
             MinHttpStatus = minHttpStatus;
             MaxHttpStatus = maxHttpStatus;
 
-            if (maxHttpStatus <= minHttpStatus)
+            if (maxHttpStatus < minHttpStatus)
             {
-                throw new ArgumentException($"{nameof(maxHttpStatus)} must be inferior or egual to {nameof(minHttpStatus)}");
+                throw new ArgumentException($"{nameof(maxHttpStatus)} must be superior or egual to {nameof(minHttpStatus)}");
             }
         }
 

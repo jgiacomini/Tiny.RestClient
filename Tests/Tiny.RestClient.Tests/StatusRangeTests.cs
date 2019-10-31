@@ -22,7 +22,7 @@ namespace Tiny.RestClient.Tests
         }
 
         [TestMethod]
-        public async Task GetStatus409ResponseAllowed()
+        public async Task GetStatus409ResponseAllowedMultiStatusAllowed()
         {
             var client = GetNewClient();
             client.Settings.HttpStatusCodeAllowed.Add(new HttpStatusRange(400, 410));
@@ -31,6 +31,25 @@ namespace Tiny.RestClient.Tests
                 GetRequest("GetTest/Status409Response").
                 ExecuteAsync<IEnumerable<string>>();
             Assert.IsNotNull(response);
+        }
+
+        [TestMethod]
+        public async Task GetStatus409ResponseAllowed()
+        {
+            var client = GetNewClient();
+            client.Settings.HttpStatusCodeAllowed.Add(new HttpStatusRange(409));
+            var response = await client.
+                GetRequest("GetTest/Status409Response").
+                ExecuteAsync<IEnumerable<string>>();
+            Assert.IsNotNull(response);
+        }
+
+        [ExpectedException(typeof(ArgumentException))]
+        [TestMethod]
+        public void AddInvalidStatusRange()
+        {
+            var client = GetNewClient();
+            client.Settings.HttpStatusCodeAllowed.Add(new HttpStatusRange(500, 400));
         }
     }
 }
