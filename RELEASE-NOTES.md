@@ -1,4 +1,13 @@
 # Release notes
+# 1.6.6
+* Add icon and license in nuget package 
+
+# 1.6.5
+* Add overload with long type for AddQueryParameter method
+
+# 1.6.4
+* Add new nuget tags
+
 # 1.6.3
 * Now calculate dynamically the headers to add to resquest.
 

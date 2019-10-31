@@ -321,6 +321,28 @@ namespace Tiny.RestClient
 
             return this;
         }
+
+        /// <inheritdoc/>
+        public IParameterRequest AddQueryParameter(string key, long value)
+        {
+            return AddQueryParameter(key, value.ToString());
+        }
+
+        /// <inheritdoc/>
+        public IParameterRequest AddQueryParameter(string key, long? value)
+        {
+            if (value.HasValue)
+            {
+                return AddQueryParameter(key, value.Value.ToString());
+            }
+            else
+            {
+                AddQueryParameter(key, string.Empty);
+            }
+
+            return this;
+        }
+
         #endregion
 
         /// <inheritdoc/>
