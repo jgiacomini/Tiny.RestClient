@@ -23,6 +23,7 @@ namespace Tiny.RestClient
             };
             _encoding = Encoding.UTF8;
             DefaultTimeout = TimeSpan.FromSeconds(100);
+            HttpStatusCodeAllowed = new HttpStatusRanges();
         }
 
         /// <summary>
@@ -85,6 +86,11 @@ namespace Tiny.RestClient
         /// Compression / decompression system enabled.
         /// </summary>
         public Compressions Compressions { get; private set; }
+
+        /// <summary>
+        /// Range of status allowed if empty use default behavior.
+        /// </summary>
+        public HttpStatusRanges HttpStatusCodeAllowed { get; private set; }
 
         /// <summary>
         /// Gets or set the handler used when HttpException will be throw (can be used to transform exception).

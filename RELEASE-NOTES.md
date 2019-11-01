@@ -1,4 +1,46 @@
 # Release notes
+# 1.7.0
+* Add possibility for request with content (like POST, PUT ...) to use methods : WithBasicAuthentication WithOAuthBearer WithTimeout WithETagContainer.
+* Allow non 2xx response (see sample below)
+
+## Allow non http 2xx responses
+
+#### Globaly
+
+Allow any status codes :
+```cs
+client.Settings.HttpStatusCodeAllowed.AllowAnyStatus = true;
+```
+
+Allow only a range of http status codes :
+```cs
+client.Settings.HttpStatusCodeAllowed.Add(new HttpStatusRange(400, 420));
+```
+
+or
+
+```cs
+client.Settings.HttpStatusCodeAllowed.Add(new HttpStatusRange(System.Net.HttpStatusCode.BadRequest, System.Net.HttpStatusCode.BadGateway));
+```
+
+#### By request
+
+Allow all status code :
+```cs
+request.AllowAllHttpStatusCode().ExecuteAsync();
+```
+
+Allow only a range of http status codes :
+```cs
+request.AllowRangeHttpStatusCode(400, 420).ExecuteAsync();
+```
+
+Allow only on stats code of http status codes :
+```cs
+request.AllowSpecificHttpStatusCode(409).ExecuteAsync();
+```
+
+ 
 # 1.6.6
 * Add icon and license in nuget package 
 

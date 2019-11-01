@@ -189,6 +189,42 @@ Define the timeout for one request
 ```cs
 request.WithTimeout(TimeSpan.FromSeconds(100));
 ```
+### Allow non http 2xx responses
+
+#### Globaly
+
+Allow any status codes :
+```cs
+client.Settings.HttpStatusCodeAllowed.AllowAnyStatus = true;
+```
+
+Allow only a range of http status codes :
+```cs
+client.Settings.HttpStatusCodeAllowed.Add(new HttpStatusRange(400, 420));
+```
+
+or
+
+```cs
+client.Settings.HttpStatusCodeAllowed.Add(new HttpStatusRange(System.Net.HttpStatusCode.BadRequest, System.Net.HttpStatusCode.BadGateway));
+```
+
+#### By request
+
+Allow all status code :
+```cs
+request.AllowAllHttpStatusCode().ExecuteAsync();
+```
+
+Allow only a range of http status codes :
+```cs
+request.AllowRangeHttpStatusCode(400, 420).ExecuteAsync();
+```
+
+Allow only on stats code of http status codes :
+```cs
+request.AllowSpecificHttpStatusCode(409).ExecuteAsync();
+```
 
 ### Download file
 ```cs
