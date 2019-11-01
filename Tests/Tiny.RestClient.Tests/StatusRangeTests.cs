@@ -13,7 +13,7 @@ namespace Tiny.RestClient.Tests
         public async Task GetStatus500ResponseAllowed()
         {
             var client = GetNewClient();
-            client.Settings.HttpStatusCodeAllowed.AllowAllStatus = true;
+            client.Settings.HttpStatusCodeAllowed.AllowAnyStatus = true;
 
             var response = await client.
                 GetRequest("GetTest/Status500Response").
@@ -22,7 +22,7 @@ namespace Tiny.RestClient.Tests
         }
 
         [TestMethod]
-        public async Task GetStatus409ResponseAllowedMultiStatusAllowed()
+        public async Task GetStatus409ResponseAllowedMultiStatusesAllowed()
         {
             var client = GetNewClient();
             client.Settings.HttpStatusCodeAllowed.Add(

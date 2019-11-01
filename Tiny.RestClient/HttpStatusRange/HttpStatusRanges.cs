@@ -13,9 +13,9 @@ namespace Tiny.RestClient
         }
 
         /// <summary>
-        /// Allow all status codes.
+        /// Allow all statuses codes.
         /// </summary>
-        public bool AllowAllStatus { get; set; }
+        public bool AllowAnyStatus { get; set; }
 
         /// <summary>
         /// Check if httpStatus is allowed.
@@ -24,7 +24,7 @@ namespace Tiny.RestClient
         /// <returns></returns>
         public bool CheckIfHttpStatusIsAllowed(int statusCode)
         {
-            if (AllowAllStatus)
+            if (AllowAnyStatus)
             {
                 return true;
             }

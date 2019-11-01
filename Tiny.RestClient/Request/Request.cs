@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,13 +23,14 @@ namespace Tiny.RestClient
         private readonly TinyRestClient _client;
         private readonly string _route;
         private Headers _headers;
+        private Headers _responseHeaders;
         private Dictionary<string, string> _queryParameters;
         private IContent _content;
+        private IETagContainer _eTagContainer;
         private List<KeyValuePair<string, string>> _formParameters;
         private MultipartContent _multiPartFormData;
-        private Headers _responseHeaders;
         private TimeSpan? _timeout;
-        private IETagContainer _eTagContainer;
+        private HttpStatusRanges _httpStatusCodeAllowed;
 
         internal HttpMethod HttpMethod { get => _httpMethod; }
         internal Dictionary<string, string> QueryParameters { get => _queryParameters; }
@@ -38,6 +40,7 @@ namespace Tiny.RestClient
         internal Headers ResponseHeaders { get => _responseHeaders; }
         internal Headers Headers { get => _headers; }
         internal TimeSpan? Timeout { get => _timeout; }
+        internal HttpStatusRanges HttpStatusCodeAllowed { get => _httpStatusCodeAllowed; }
 
         static Request()
         {
@@ -493,6 +496,49 @@ namespace Tiny.RestClient
 
             return this;
         }
+
+        IParameterRequest IParameterRequest.AllowAnyHttpStatusCode()
+        {
+            if (_httpStatusCodeAllowed == null)
+            {
+                _httpStatusCodeAllowed = new HttpStatusRanges();
+            }
+
+            _httpStatusCodeAllowed.AllowAnyStatus = true;
+            return this;
+        }
+
+        IParameterRequest IParameterRequest.AllowRangeHttpStatusCode(HttpStatusCode minHttpStatus, HttpStatusCode maxHttpStatus)
+        {
+            (this as IParameterRequest).AllowRangeHttpStatusCode((int)minHttpStatus, (int)maxHttpStatus);
+            return this;
+        }
+
+        IParameterRequest IParameterRequest.AllowRangeHttpStatusCode(int minHttpStatus, int maxHttpStatus)
+        {
+            if (_httpStatusCodeAllowed == null)
+            {
+                _httpStatusCodeAllowed = new HttpStatusRanges();
+            }
+
+            _httpStatusCodeAllowed.Add(new HttpStatusRange(minHttpStatus, maxHttpStatus));
+            return this;
+        }
+
+        IParameterRequest IParameterRequest.AllowSpecificHttpStatusCode(HttpStatusCode statusCode)
+        {
+            int statusCodeNumber = (int)statusCode;
+            (this as IParameterRequest).AllowRangeHttpStatusCode(statusCodeNumber, statusCodeNumber);
+
+            return this;
+        }
+
+        IParameterRequest IParameterRequest.AllowSpecificHttpStatusCode(int statusCode)
+        {
+            (this as IParameterRequest).AllowRangeHttpStatusCode(statusCode, (int)statusCode);
+            return this;
+        }
+
 #if !FILEINFO_NOT_SUPPORTED
         IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddFileContent(FileInfo content, string contentType)
         {
@@ -527,6 +573,6 @@ namespace Tiny.RestClient
             return this;
         }
 #endif
-#endregion
+        #endregion
     }
 }
