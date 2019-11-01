@@ -1,5 +1,5 @@
 # Release notes
-# 1.6.7
+# 1.7.0
 * Add possibility for request with content (like POST, PUT ...) to use methods : WithBasicAuthentication WithOAuthBearer WithTimeout WithETagContainer.
 * Allow non 2xx response (see sample below)
 
