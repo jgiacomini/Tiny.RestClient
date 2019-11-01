@@ -18,7 +18,7 @@ namespace Tiny.RestClient.ForTest.Api.Controllers
         [HttpGet("Status500Response")]
         public IActionResult Status500Response()
         {
-            return StatusCode(StatusCodes.Status501NotImplemented, new string[] { "value1", "value2" });
+            return StatusCode(StatusCodes.Status500InternalServerError, new string[] { "value1", "value2" });
         }
 
         [HttpGet("Status409Response")]
