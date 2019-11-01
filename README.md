@@ -191,9 +191,9 @@ request.WithTimeout(TimeSpan.FromSeconds(100));
 ```
 ### Allow non http 2xx responses
 
-Allow all status codes :
+Allow any status codes :
 ```cs
-client.Settings.HttpStatusCodeAllowed.AllowAllStatus = true;
+client.Settings.HttpStatusCodeAllowed.AllowAnyStatus = true;
 ```
 
 Allow only a range of http status codes :
