@@ -203,6 +203,12 @@ Allow only a range of http status codes :
 client.Settings.HttpStatusCodeAllowed.Add(new HttpStatusRange(400, 420));
 ```
 
+or
+
+```cs
+client.Settings.HttpStatusCodeAllowed.Add(new HttpStatusRange(System.Net.HttpStatusCode.BadRequest, System.Net.HttpStatusCode.BadGateway));
+```
+
 #### By request
 
 Allow all status code :
