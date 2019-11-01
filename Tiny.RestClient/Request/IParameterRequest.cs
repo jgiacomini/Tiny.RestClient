@@ -34,14 +34,14 @@ namespace Tiny.RestClient
         /// <summary>
         /// Allow a specific status code.
         /// </summary>
-        /// <param name="statusCode">status code to be allowed</param>
+        /// <param name="statusCode">status code to be allowed.</param>
         /// <returns>The current request.</returns>
         IParameterRequest AllowSpecificHttpStatusCode(HttpStatusCode statusCode);
 
         /// <summary>
         /// Allow a specific status code.
         /// </summary>
-        /// <param name="statusCode">status code to be allowed</param>
+        /// <param name="statusCode">status code to be allowed.</param>
         /// <returns>The current request.</returns>
         IParameterRequest AllowSpecificHttpStatusCode(int statusCode);
 
