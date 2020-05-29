@@ -51,7 +51,8 @@ namespace Tiny.RestClient
         /// <param name="compression">Add compresion system use ton compress content.</param>
         /// <returns>The current request.</returns>
         /// <exception cref="System.ArgumentNullException">thrown when content is null.</exception>
-        IMultiPartFromDataExecutableRequest AddContent<TContent>(TContent content, string name = null, string fileName = null, IFormatter serializer = null, ICompression compression = null);
+        IMultiPartFromDataExecutableRequest AddContent<TContent>(TContent content, string name = null, string fileName = null, IFormatter serializer = null, ICompression compression = null)
+            where TContent : class;
 #if !FILEINFO_NOT_SUPPORTED
         /// <summary>
         /// Adds the content.

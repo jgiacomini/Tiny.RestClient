@@ -486,8 +486,9 @@ namespace Tiny.RestClient
 
         /// <inheritdoc/>
         IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddContent<TContent>(TContent content, string name, string fileName, IFormatter serializer, ICompression compression)
+            where TContent : class
         {
-            if (content == default)
+            if (content == null)
             {
                 throw new ArgumentNullException(nameof(content));
             }
