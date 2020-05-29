@@ -37,7 +37,7 @@ namespace Tiny.RestClient.Tests
         {
             var client = GetClient();
 
-            var data = await client.
+            await client.
               PostRequest("MultiPart/Test").
               AsMultiPartFromDataRequest().
               AddStream(null).
