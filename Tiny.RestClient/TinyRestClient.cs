@@ -836,15 +836,27 @@ namespace Tiny.RestClient
             }
             catch (Exception ex)
             {
+                // Fix for Blazor WASM : requestMessage.RequestUri is always null in Blazor WASM
+                Uri requestUri = null;
+                string method = null;
+                HttpRequestHeaders requestHeaders = null;
+                var requestMessage = response.RequestMessage;
+                if (requestMessage != null)
+                {
+                    requestUri = requestMessage.RequestUri;
+                    method = requestMessage.Method.ToString();
+                    requestHeaders = requestMessage.Headers;
+                }
+
                 var newEx = new HttpException(
-                    response.RequestMessage.RequestUri,
-                    response.RequestMessage.Method.ToString(),
-                    response.ReasonPhrase,
-                    response.RequestMessage.Headers,
-                    content,
-                    response.StatusCode,
-                    response.Headers,
-                    ex);
+                  requestUri,
+                  method,
+                  response.ReasonPhrase,
+                  requestHeaders,
+                  content,
+                  response.StatusCode,
+                  response.Headers,
+                  ex);
 
                 var handler = Settings.EncapsulateHttpExceptionHandler;
                 if (handler != null)

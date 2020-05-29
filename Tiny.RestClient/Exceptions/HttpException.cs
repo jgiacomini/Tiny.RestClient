@@ -30,7 +30,7 @@ namespace Tiny.RestClient
             HttpStatusCode statusCode,
             HttpResponseHeaders responseHeaders,
             Exception ex)
-        : base($"Response status code does not indicate success. Url : {uri.ToString()}, Verb : {verb}, StatusCode : {statusCode}, ReasonPhrase : {reasonPhrase}", ex)
+        : base($"Response status code does not indicate success. Url : {uri}, Verb : {verb}, StatusCode : {statusCode}, ReasonPhrase : {reasonPhrase}", ex)
         {
             Verb = verb;
             Uri = uri;
