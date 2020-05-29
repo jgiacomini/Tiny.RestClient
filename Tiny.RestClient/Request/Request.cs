@@ -59,6 +59,7 @@ namespace Tiny.RestClient
 
         #region Content
         public IParameterRequest AddContent<TContent>(TContent content, IFormatter serializer, ICompression compression)
+            where TContent : class
         {
             _content = new ToSerializeContent<TContent>(content, serializer, compression);
             return this;

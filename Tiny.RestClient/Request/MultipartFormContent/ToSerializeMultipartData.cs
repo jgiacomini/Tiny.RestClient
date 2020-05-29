@@ -4,6 +4,7 @@ using System.Text;
 namespace Tiny.RestClient
 {
     internal class ToSerializeMultipartData<T> : MultipartData, IToSerializeContent
+        where T : class
     {
         public ToSerializeMultipartData(T data, string name, string fileName, IFormatter serializer, ICompression compression)
             : base(name, fileName, null)
