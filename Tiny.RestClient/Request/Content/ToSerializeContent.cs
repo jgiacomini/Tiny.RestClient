@@ -4,6 +4,7 @@ using System.Text;
 namespace Tiny.RestClient
 {
     internal class ToSerializeContent<T> : BaseContent<T>, IToSerializeContent
+        where T : class
     {
         public ToSerializeContent(T data, IFormatter serializer, ICompression compression)
             : base(data, null)

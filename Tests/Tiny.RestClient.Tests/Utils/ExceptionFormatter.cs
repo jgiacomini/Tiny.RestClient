@@ -22,6 +22,7 @@ namespace Tiny.RestClient.Tests.Utils
         }
 
         public string Serialize<T>(T data, Encoding encoding)
+            where T : class
         {
             throw new System.NotImplementedException();
         }

@@ -53,6 +53,7 @@ namespace Tiny.RestClient
 
         /// <inheritdoc/>
         public string Serialize<T>(T data, Encoding encoding)
+            where T : class
         {
             if (data == default)
             {

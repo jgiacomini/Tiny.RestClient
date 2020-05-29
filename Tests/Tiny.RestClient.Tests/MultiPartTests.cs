@@ -35,14 +35,9 @@ namespace Tiny.RestClient.Tests
         [TestMethod]
         public async Task MultiPartAddStreamNull()
         {
-            var postRequest = new Request
-            {
-                Id = 42,
-                Data = "DATA"
-            };
             var client = GetClient();
 
-            var data = await client.
+            await client.
               PostRequest("MultiPart/Test").
               AsMultiPartFromDataRequest().
               AddStream(null).
@@ -53,14 +48,9 @@ namespace Tiny.RestClient.Tests
         [TestMethod]
         public async Task MultiPartAddByteArrayNull()
         {
-            var postRequest = new Request
-            {
-                Id = 42,
-                Data = "DATA"
-            };
             var client = GetClient();
 
-            var data = await client.
+            await client.
               PostRequest("MultiPart/Test").
               AsMultiPartFromDataRequest().
               AddByteArray(null, "bytesArray", "bytesArray.bin").
@@ -71,14 +61,9 @@ namespace Tiny.RestClient.Tests
         [TestMethod]
         public async Task MultiPartAddContentNull()
         {
-            var postRequest = new Request
-            {
-                Id = 42,
-                Data = "DATA"
-            };
             var client = GetClient();
 
-            var data = await client.
+            await client.
               PostRequest("MultiPart/Test").
               AsMultiPartFromDataRequest().
               AddContent<Request>(null).

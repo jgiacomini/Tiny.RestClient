@@ -28,7 +28,8 @@ namespace Tiny.RestClient
         /// <param name="data">The data.</param>
         /// <param name="encoding">The encoding.</param>
         /// <returns>System.String.</returns>
-        string Serialize<T>(T data, Encoding encoding);
+        string Serialize<T>(T data, Encoding encoding)
+            where T : class;
 
         /// <summary>
         /// Deserializes the specified stream.
