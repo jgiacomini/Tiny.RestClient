@@ -82,6 +82,7 @@ namespace Tiny.RestClient
 
         /// <inheritdoc/>
         public string Serialize<T>(T data, Encoding encoding)
+            where T : class
         {
             using (var stringWriter = new StringWriter(new StringBuilder(256), CultureInfo.InvariantCulture))
             {
