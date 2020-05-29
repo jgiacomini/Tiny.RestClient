@@ -18,7 +18,8 @@ namespace Tiny.RestClient
         /// <param name="serializer">Override the default serializer setted on the client.</param>
         /// <param name="compression">Add a compression system to compress your content.</param>
         /// <returns>The current request.</returns>
-        IParameterRequest AddContent<TContent>(TContent content, IFormatter serializer = null, ICompression compression = null);
+        IParameterRequest AddContent<TContent>(TContent content, IFormatter serializer = null, ICompression compression = null)
+            where TContent : class;
 
         /// <summary>
         /// Add byte array as content of request.

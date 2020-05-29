@@ -1,4 +1,8 @@
 # Release notes
+# 1.7.1
+* Fixes for Blazor WASM
+* Add class constraint for TContent types and serialization
+
 # 1.7.0
 * Add possibility for request with content (like POST, PUT ...) to use methods : WithBasicAuthentication WithOAuthBearer WithTimeout WithETagContainer.
 * Allow non 2xx response (see sample below)

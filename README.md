@@ -453,8 +453,8 @@ client.Settings.Formatters.Add(customFormatter, isDefaultFormatter);
 
 ### Remove a formatter
 ```cs
-var lastFormatter = client.Settings.Formatters.Where( f=> f is XmlSerializer>).First();
-client.Remove(lastFormatter);
+var lastFormatter = client.Settings.Formatters.First(f => f is XmlSerializer);
+client.Settings.Formatters.Remove(lastFormatter);
 ```
 
 ### Json custom formatting
