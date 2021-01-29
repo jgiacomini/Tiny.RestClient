@@ -11,7 +11,7 @@ namespace Tiny.RestClient
     /// </summary>
     public class Headers : IEnumerable<KeyValuePair<string, IEnumerable<string>>>
     {
-        private Dictionary<string, IEnumerable<string>> _headers;
+        private readonly Dictionary<string, IEnumerable<string>> _headers;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Headers"/> class.
@@ -48,7 +48,7 @@ namespace Tiny.RestClient
         /// <param name="value">header value.</param>
         public void Add(string name, string value)
         {
-            List<string> list = null;
+            List<string> list;
             if (!_headers.ContainsKey(name))
             {
                 list = new List<string>();
@@ -59,18 +59,16 @@ namespace Tiny.RestClient
                 list = _headers[name] as List<string>;
             }
 
-            list.Add(value);
+            list?.Add(value);
         }
 
         /// <summary>
         /// Removes the header with specified name.
         /// </summary>
         /// <param name="name">name of the header.</param>
-        /// <returns></returns>
+        /// <returns>true if the element is successfully found and removed, otherwise false</returns>
         public bool Remove(string name)
-        {
-            return _headers.Remove(name);
-        }
+            => _headers.Remove(name);
 
         internal void Add(string key, IEnumerable<string> values)
         {
@@ -81,7 +79,8 @@ namespace Tiny.RestClient
             else
             {
                 var currentList = _headers[key] as List<string>;
-                currentList.AddRange(values);
+
+                currentList?.AddRange(values);
             }
         }
 
@@ -100,25 +99,23 @@ namespace Tiny.RestClient
         /// <returns>return header's value.</returns>
         public IEnumerable<string> this[string name]
         {
-            get
-            {
-                return _headers[name];
-            }
-            set
-            {
-                Add(name, value);
-            }
+            get => _headers[name];
+            set => Add(name, value);
         }
+
+        /// <summary>
+        /// Determine whether the Headers contains a specified key.
+        /// </summary>
+        /// <param name="key">The key to locate in the Headers.</param>
+        /// <returns>true if the Headers contains the key, otherwise false.</returns>
+        public bool ContainsKey(string key)
+            => _headers.ContainsKey(key);
 
         /// <inheritdoc/>
         public IEnumerator<KeyValuePair<string, IEnumerable<string>>> GetEnumerator()
-        {
-            return _headers.GetEnumerator();
-        }
+            => _headers.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator()
-        {
-            return _headers.GetEnumerator();
-        }
+            => _headers.GetEnumerator();
     }
 }
