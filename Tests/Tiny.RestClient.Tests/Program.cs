@@ -1,6 +1,11 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -16,11 +21,15 @@ namespace Tiny.RestClient.Tests
         [AssemblyInitialize]
         public static void Initialize(TestContext testContext)
         {
-            _server = new TestServer(new WebHostBuilder().
-                UseUrls("http://localhost:4242").
-                UseStartup<Startup>());
+            var application = new WebApplicationFactory<TestProgram>()
+               .WithWebHostBuilder(builder =>
+               {
+                   builder.ConfigureServices(services =>
+                   {
+                   });
+               });
 
-            Client = _server.CreateClient();
+            Client = application.CreateClient();
         }
 
         [AssemblyCleanup]

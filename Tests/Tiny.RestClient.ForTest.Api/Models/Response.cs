@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Tiny.RestClient.Tests.Models
+namespace Tiny.RestClient.ForTest.Api.Models
 {
     public class Response
     {

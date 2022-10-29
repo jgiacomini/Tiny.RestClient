@@ -1,12 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
-namespace Tiny.RestClient.Tests.Models
+namespace Tiny.RestClient.ForTest.Api.Models
 {
     public class SnakeResponse
     {
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public int Id { get; set; }
-        [JsonProperty("response_data")]
+        [JsonPropertyName("response_data")]
         public string ResponseData { get; set; }
     }
 }

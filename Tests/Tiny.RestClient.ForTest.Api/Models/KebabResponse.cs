@@ -1,14 +1,14 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
+using System.Text.Json.Serialization;
 
-namespace Tiny.RestClient.Tests.Models
+namespace Tiny.RestClient.ForTest.Api.Models
 {
     public class KebabResponse
     {
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public int Id { get; set; }
 
-        [JsonProperty("response-data")]
+        [JsonPropertyName("response-data")]
         public string ResponseData { get; set; }
     }
 }
