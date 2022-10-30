@@ -7,7 +7,7 @@ namespace Tiny.RestClient
 {
     /// <summary>
     /// This class was took from this repository below:
-    /// https://github.com/YohDeadfall/Yoh.Text.Json.NamingPolicies/blob/main/src/JsonNamingPolicies.cs
+    /// https://github.com/YohDeadfall/Yoh.Text.Json.NamingPolicies/blob/main/src/JsonNamingPolicies.cs.
     /// </summary>
     internal abstract class JsonSeparatorNamingPolicy : JsonNamingPolicy
     {
