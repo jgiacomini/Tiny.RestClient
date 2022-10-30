@@ -345,7 +345,7 @@
         </member>
         <member name="T:Tiny.RestClient.JsonFormatter">
             <summary>
-             Serializes and deserializes objects into and from the JSON format using the Newtonsoft.Json.JsonSerializer.
+             Serializes and deserializes objects into and from the JSON format using the System.Text.Json.
             </summary>
             <seealso cref="T:Tiny.RestClient.IFormatter" />
         </member>

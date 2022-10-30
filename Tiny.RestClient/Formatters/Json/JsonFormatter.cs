@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Tiny.RestClient
 {
     /// <summary>
-    ///  Serializes and deserializes objects into and from the JSON format using the Newtonsoft.Json.JsonSerializer.
+    ///  Serializes and deserializes objects into and from the JSON format using the System.Text.Json.
     /// </summary>
     /// <seealso cref="IFormatter" />
     public class JsonFormatter : IFormatter
