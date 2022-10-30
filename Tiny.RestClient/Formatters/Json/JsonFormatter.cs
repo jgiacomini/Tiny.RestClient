@@ -19,12 +19,21 @@ namespace Tiny.RestClient
         public JsonFormatter()
         {
             JsonSerializerOptions = new JsonSerializerOptions();
+            UseCamelCase();
         }
 
         /// <summary>
         /// Gets the instance of JsonSerializerOptions.
         /// </summary>
         public JsonSerializerOptions JsonSerializerOptions { get; }
+
+        /// <summary>
+        /// Enable camel case for properties mapping. A property "PropertyName" will become "PropertyName".
+        /// </summary>
+        public void UsePascalCase()
+        {
+            JsonSerializerOptions.PropertyNamingPolicy = null;
+        }
 
         /// <summary>
         /// Enable camel case for properties mapping. A property "PropertyName" will become "propertyName".

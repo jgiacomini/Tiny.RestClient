@@ -11,6 +11,13 @@ namespace Tiny.RestClient.ForTest.Api.Controllers
     public class CaseController : Controller
     {
         // GET: api/<controller>
+        [HttpGet("Pascal")]
+        public PascalResponse PascalCase()
+        {
+            return new PascalResponse() { Id = 42, ResponseData = "REP" };
+        }
+
+        // GET: api/<controller>
         [HttpGet("Camel")]
         public CamelResponse CamelCase()
         {

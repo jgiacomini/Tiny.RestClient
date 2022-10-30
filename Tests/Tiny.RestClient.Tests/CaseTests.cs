@@ -34,6 +34,19 @@ namespace Tiny.RestClient.Tests
         }
 
         [TestMethod]
+        public async Task PascalTest()
+        {
+            var client = GetNewClient();
+            client.Settings.Formatters.OfType<JsonFormatter>().First().UsePascalCase();
+
+            var rep = await client.
+                GetRequest("case/Pascal").
+                ExecuteAsync<Response>();
+            Assert.AreEqual(rep.Id, 42);
+            Assert.AreEqual(rep.ResponseData, "REP");
+        }
+
+        [TestMethod]
         public async Task SnakeTest()
         {
             var client = GetNewClient();

@@ -359,6 +359,11 @@
             Gets the instance of JsonSerializerOptions.
             </summary>
         </member>
+        <member name="M:Tiny.RestClient.JsonFormatter.UsePascalCase">
+            <summary>
+            Enable camel case for properties mapping. A property "PropertyName" will become "PropertyName".
+            </summary>
+        </member>
         <member name="M:Tiny.RestClient.JsonFormatter.UseCamelCase">
             <summary>
             Enable camel case for properties mapping. A property "PropertyName" will become "propertyName".
