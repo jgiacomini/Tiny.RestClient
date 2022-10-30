@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -42,17 +44,17 @@ namespace Tiny.RestClient
         public XmlWriterSettings WriterSettings { get; }
 
         /// <inheritdoc/>
-        public T Deserialize<T>(Stream stream, Encoding encoding)
+        public ValueTask<T> DeserializeAsync<T>(Stream stream, Encoding encoding, CancellationToken cancellationToken)
         {
             using (var reader = new StreamReader(stream, encoding))
             {
                 var serializer = new XmlSerializer(typeof(T));
-                return (T)serializer.Deserialize(reader);
+                return ValueTask.FromResult((T)serializer.Deserialize(reader));
             }
         }
 
         /// <inheritdoc/>
-        public string Serialize<T>(T data, Encoding encoding)
+        public Task<string> SerializeAsync<T>(T data, Encoding encoding, CancellationToken cancellationToken)
             where T : class
         {
             if (data == default)
@@ -66,7 +68,7 @@ namespace Tiny.RestClient
                 using (var writer = XmlWriter.Create(stringWriter, WriterSettings))
                 {
                     serializer.Serialize(writer, data);
-                    return stringWriter.ToString();
+                    return Task.FromResult(stringWriter.ToString());
                 }
             }
         }

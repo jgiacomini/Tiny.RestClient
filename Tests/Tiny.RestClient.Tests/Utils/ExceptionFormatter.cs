@@ -16,12 +16,12 @@ namespace Tiny.RestClient.Tests.Utils
             }
         }
 
-        public T Deserialize<T>(Stream stream, Encoding encoding)
+        public ValueTask<T> DeserializeAsync<T>(Stream stream, Encoding encoding, CancellationToken cancellationToken)
         {
             throw new System.NotImplementedException();
         }
 
-        public string Serialize<T>(T data, Encoding encoding)
+        public Task<string> SerializeAsync<T>(T data, Encoding encoding, CancellationToken cancellationToken)
             where T : class
         {
             throw new System.NotImplementedException();

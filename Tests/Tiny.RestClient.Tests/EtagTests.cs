@@ -1,11 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Tiny.RestClient.Tests
 {
@@ -66,7 +60,7 @@ namespace Tiny.RestClient.Tests
 
             var fakeData = new List<string>() { "test1", "test2" };
 
-            var json = client.Settings.Formatters.FirstOrDefault().Serialize<List<string>>(fakeData, client.Settings.Encoding);
+            var json = await client.Settings.Formatters.FirstOrDefault().SerializeAsync<List<string>>(fakeData, client.Settings.Encoding, CancellationToken.None);
             await etagContainer.SaveDataAsync(actionUri, etagStored, new MemoryStream(Encoding.UTF8.GetBytes(json)), CancellationToken.None);
 
             data = await client.GetRequest("GetTest/complex").
@@ -109,7 +103,7 @@ namespace Tiny.RestClient.Tests
 
             var fakeData = new List<string>() { "test1", "test2" };
 
-            var json = client.Settings.Formatters.FirstOrDefault().Serialize<List<string>>(fakeData, client.Settings.Encoding);
+            var json = await client.Settings.Formatters.FirstOrDefault().SerializeAsync<List<string>>(fakeData, client.Settings.Encoding, CancellationToken.None);
             await etagContainer.SaveDataAsync(actionUri, etagStored, new MemoryStream(Encoding.UTF8.GetBytes(json)), CancellationToken.None);
 
             data = await client.GetRequest("GetTest/complex").

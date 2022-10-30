@@ -20,8 +20,8 @@ namespace Tiny.RestClient.Tests
                 PostRequest("PostTest/complex", postRequest, compression: client.Settings.Compressions["gzip"]).
                 ExecuteAsync<Response>();
 
-            Assert.AreEqual(postRequest.Id, response.Id);
-            Assert.AreEqual(postRequest.Data, response.ResponseData);
+            Assert.AreEqual(postRequest.Id, response.Id, "id doesn't match");
+            Assert.AreEqual(postRequest.Data, response.ResponseData, "data doesn't match");
         }
 
         [TestMethod]

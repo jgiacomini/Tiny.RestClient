@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Tiny.RestClient
 {
@@ -15,11 +17,11 @@ namespace Tiny.RestClient
 
         public Type TypeToSerialize => typeof(T);
 
-        public string GetSerializedString(IFormatter serializer, Encoding encoding)
+        public Task<string> GetSerializedStringAsync(IFormatter serializer, Encoding encoding, CancellationToken cancellationToken)
         {
             try
             {
-                return serializer.Serialize<T>(Data, encoding);
+                return serializer.SerializeAsync<T>(Data, encoding, cancellationToken);
             }
             catch (Exception ex)
             {

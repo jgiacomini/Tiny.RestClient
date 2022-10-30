@@ -1,10 +1,9 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Tiny.RestClient.Json;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Tiny.RestClient
 {
@@ -19,28 +18,20 @@ namespace Tiny.RestClient
         /// </summary>
         public JsonFormatter()
         {
-            JsonSerializer = new JsonSerializer();
+            JsonSerializerOptions = new JsonSerializerOptions();
         }
 
         /// <summary>
-        /// Gets the instance of JsonSerializer.
+        /// Gets the instance of JsonSerializerOptions.
         /// </summary>
-        public JsonSerializer JsonSerializer { get; }
-
-        /// <summary>
-        /// Enable snake case for properties mapping. A property "PropertyName" will become "property_name".
-        /// </summary>
-        public void UseSnakeCase()
-        {
-            JsonSerializer.ContractResolver = new SnakeCasePropertyNamesContractResolver();
-        }
+        public JsonSerializerOptions JsonSerializerOptions { get; }
 
         /// <summary>
         /// Enable camel case for properties mapping. A property "PropertyName" will become "propertyName".
         /// </summary>
         public void UseCamelCase()
         {
-            JsonSerializer.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         }
 
         /// <summary>
@@ -48,7 +39,15 @@ namespace Tiny.RestClient
         /// </summary>
         public void UseKebabCase()
         {
-            JsonSerializer.ContractResolver = new KebabCasePropertyNamesContractResolver();
+            JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicies.KebabCase;
+        }
+
+        /// <summary>
+        /// Enable snake case for properties mapping. A property "PropertyName" will become "property_name".
+        /// </summary>
+        public void UseSnakeCase()
+        {
+            JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicies.SnakeCase;
         }
 
         /// <inheritdoc/>
@@ -69,30 +68,21 @@ namespace Tiny.RestClient
         }
 
         /// <inheritdoc/>
-        public T Deserialize<T>(Stream stream, Encoding encoding)
+        public ValueTask<T> DeserializeAsync<T>(Stream stream, Encoding encoding, CancellationToken cancellationToken)
         {
-            using (var sr = new StreamReader(stream, encoding))
-            {
-                using (var jtr = new JsonTextReader(sr))
-                {
-                    return JsonSerializer.Deserialize<T>(jtr);
-                }
-            }
+            return JsonSerializer.DeserializeAsync<T>(stream, JsonSerializerOptions, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public string Serialize<T>(T data, Encoding encoding)
+        public async Task<string> SerializeAsync<T>(T data, Encoding encoding, CancellationToken cancellationToken)
             where T : class
         {
-            using (var stringWriter = new StringWriter(new StringBuilder(256), CultureInfo.InvariantCulture))
+            using (var stream = new MemoryStream())
             {
-                using (var jsonTextWriter = new JsonTextWriter(stringWriter))
-                {
-                    jsonTextWriter.Formatting = JsonSerializer.Formatting;
-                    JsonSerializer.Serialize(jsonTextWriter, data, typeof(T));
-                }
-
-                return stringWriter.ToString();
+                await JsonSerializer.SerializeAsync(stream, data, JsonSerializerOptions, cancellationToken);
+                stream.Position = 0;
+                using var reader = new StreamReader(stream);
+                return await reader.ReadToEndAsync();
             }
         }
     }

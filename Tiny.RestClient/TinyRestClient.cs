@@ -223,7 +223,7 @@ namespace Tiny.RestClient
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                using (HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, eTagContainer, formatter, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false))
+                using (var response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, eTagContainer, formatter, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false))
                 {
                     using (var stream = await ReadResponseAsync(response, tinyRequest.ResponseHeaders, tinyRequest.HttpStatusCodeAllowed, eTagContainer, cancellationToken).ConfigureAwait(false))
                     {
@@ -252,7 +252,7 @@ namespace Tiny.RestClient
                         try
                         {
                             stream.Position = 0;
-                            return formatter.Deserialize<TResult>(stream, Settings.Encoding);
+                            return await formatter.DeserializeAsync<TResult>(stream, Settings.Encoding, cancellationToken);
                         }
                         catch (Exception ex)
                         {
@@ -499,7 +499,7 @@ namespace Tiny.RestClient
             string serializedString;
             try
             {
-                serializedString = content.GetSerializedString(serializer, Settings.Encoding);
+                serializedString = await content.GetSerializedStringAsync(serializer, Settings.Encoding, cancellationToken);
             }
             catch (Exception ex)
             {

@@ -323,63 +323,25 @@
             </summary>
             <value>The type of the media.</value>
         </member>
-        <member name="M:Tiny.RestClient.IFormatter.Serialize``1(``0,System.Text.Encoding)">
+        <member name="M:Tiny.RestClient.IFormatter.SerializeAsync``1(``0,System.Text.Encoding,System.Threading.CancellationToken)">
             <summary>
             Serializes the specified data.
             </summary>
             <typeparam name="T">Type of data serialized.</typeparam>
             <param name="data">The data.</param>
             <param name="encoding">The encoding.</param>
+            <param name="cancellationToken">The cancellation token.</param>
             <returns>System.String.</returns>
         </member>
-        <member name="M:Tiny.RestClient.IFormatter.Deserialize``1(System.IO.Stream,System.Text.Encoding)">
+        <member name="M:Tiny.RestClient.IFormatter.DeserializeAsync``1(System.IO.Stream,System.Text.Encoding,System.Threading.CancellationToken)">
             <summary>
             Deserializes the specified stream.
             </summary>
             <typeparam name="T"></typeparam>
             <param name="stream">The stream.</param>
             <param name="encoding">The encoding.</param>
+            <param name="cancellationToken">The cancellation token.</param>
             <returns>An instance of type <typeparamref name="T"/>.</returns>
-        </member>
-        <member name="T:Tiny.RestClient.Json.KebabCasePropertyNamesContractResolver">
-            <summary>
-             Allow SnakeCase (or name also Spinal case) resolve of property (property-name become PropertyName).
-            </summary>
-            <seealso cref="T:Tiny.RestClient.IFormatter" />
-        </member>
-        <member name="M:Tiny.RestClient.Json.KebabCasePropertyNamesContractResolver.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:Tiny.RestClient.Json.SnakeCasePropertyNamesContractResolver"/>.
-            </summary>
-        </member>
-        <member name="T:Tiny.RestClient.Json.SeparatorPropertyNamesContractResolver">
-            <summary>
-             Allow a custom separator to resolve of property (propertySEPARATORname become PropertyName).
-            </summary>
-        </member>
-        <member name="M:Tiny.RestClient.Json.SeparatorPropertyNamesContractResolver.#ctor(System.Char)">
-            <summary>
-            Initializes a new instance of the <see cref="T:Tiny.RestClient.Json.SeparatorPropertyNamesContractResolver"/>.
-            </summary>
-            <param name="separator">separator bewteen words.</param>
-        </member>
-        <member name="M:Tiny.RestClient.Json.SeparatorPropertyNamesContractResolver.ResolvePropertyName(System.String)">
-            <summary>
-            Resolves a property name to a delimited name.
-            </summary>
-            <param name="propertyName">property name to resolve.</param>
-            <returns></returns>
-        </member>
-        <member name="T:Tiny.RestClient.Json.SnakeCasePropertyNamesContractResolver">
-            <summary>
-             Allow snake case resolve of property (property_name become PropertyName).
-            </summary>
-            <seealso cref="T:Tiny.RestClient.IFormatter" />
-        </member>
-        <member name="M:Tiny.RestClient.Json.SnakeCasePropertyNamesContractResolver.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:Tiny.RestClient.Json.SnakeCasePropertyNamesContractResolver"/>.
-            </summary>
         </member>
         <member name="T:Tiny.RestClient.JsonFormatter">
             <summary>
@@ -392,14 +354,9 @@
             Initializes a new instance of the <see cref="T:Tiny.RestClient.JsonFormatter"/>.
             </summary>
         </member>
-        <member name="P:Tiny.RestClient.JsonFormatter.JsonSerializer">
+        <member name="P:Tiny.RestClient.JsonFormatter.JsonSerializerOptions">
             <summary>
-            Gets the instance of JsonSerializer.
-            </summary>
-        </member>
-        <member name="M:Tiny.RestClient.JsonFormatter.UseSnakeCase">
-            <summary>
-            Enable snake case for properties mapping. A property "PropertyName" will become "property_name".
+            Gets the instance of JsonSerializerOptions.
             </summary>
         </member>
         <member name="M:Tiny.RestClient.JsonFormatter.UseCamelCase">
@@ -412,17 +369,28 @@
             Enable kebab case (also named spinal case) for properties mapping. A property "PropertyName" will become "property-name".
             </summary>
         </member>
+        <member name="M:Tiny.RestClient.JsonFormatter.UseSnakeCase">
+            <summary>
+            Enable snake case for properties mapping. A property "PropertyName" will become "property_name".
+            </summary>
+        </member>
         <member name="P:Tiny.RestClient.JsonFormatter.DefaultMediaType">
             <inheritdoc/>
         </member>
         <member name="P:Tiny.RestClient.JsonFormatter.SupportedMediaTypes">
             <inheritdoc/>
         </member>
-        <member name="M:Tiny.RestClient.JsonFormatter.Deserialize``1(System.IO.Stream,System.Text.Encoding)">
+        <member name="M:Tiny.RestClient.JsonFormatter.DeserializeAsync``1(System.IO.Stream,System.Text.Encoding,System.Threading.CancellationToken)">
             <inheritdoc/>
         </member>
-        <member name="M:Tiny.RestClient.JsonFormatter.Serialize``1(``0,System.Text.Encoding)">
+        <member name="M:Tiny.RestClient.JsonFormatter.SerializeAsync``1(``0,System.Text.Encoding,System.Threading.CancellationToken)">
             <inheritdoc/>
+        </member>
+        <member name="T:Tiny.RestClient.JsonSeparatorNamingPolicy">
+            <summary>
+            This class was took from this repository below:
+            https://github.com/YohDeadfall/Yoh.Text.Json.NamingPolicies/blob/main/src/JsonNamingPolicies.cs
+            </summary>
         </member>
         <member name="T:Tiny.RestClient.XmlFormatter">
             <summary>
@@ -446,10 +414,10 @@
             Gets the instance of WriterSettings.
             </summary>
         </member>
-        <member name="M:Tiny.RestClient.XmlFormatter.Deserialize``1(System.IO.Stream,System.Text.Encoding)">
+        <member name="M:Tiny.RestClient.XmlFormatter.DeserializeAsync``1(System.IO.Stream,System.Text.Encoding,System.Threading.CancellationToken)">
             <inheritdoc/>
         </member>
-        <member name="M:Tiny.RestClient.XmlFormatter.Serialize``1(``0,System.Text.Encoding)">
+        <member name="M:Tiny.RestClient.XmlFormatter.SerializeAsync``1(``0,System.Text.Encoding,System.Threading.CancellationToken)">
             <inheritdoc/>
         </member>
         <member name="T:Tiny.RestClient.HttpStatusRange">
