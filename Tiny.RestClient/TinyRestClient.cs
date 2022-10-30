@@ -419,14 +419,12 @@ namespace Tiny.RestClient
                 return await GetSerializedContentAsync(toSerializeContent, cancellationToken).ConfigureAwait(false);
             }
 
-            #if !FILEINFO_NOT_SUPPORTED
             if (content is FileContent fileContent)
             {
                 var currentFileContent = new HttpStreamContent(fileContent.Data.OpenRead());
                 SetContentType(fileContent.ContentType, currentFileContent);
                 return currentFileContent;
             }
-            #endif
 
             if (content is MultipartContent multiParts)
             {
@@ -466,15 +464,12 @@ namespace Tiny.RestClient
                         var serializedContent = await GetSerializedContentAsync(toSerializeMultiContent, cancellationToken).ConfigureAwait(false);
                         AddMultiPartContent(currentPart, serializedContent, multiPartContent);
                     }
-
-                    #if !FILEINFO_NOT_SUPPORTED
                     else if (currentPart is FileMultipartData currentFileMultipartData)
                     {
                         var currentStreamContent = new HttpStreamContent(currentFileMultipartData.Data.OpenRead());
                         SetContentType(currentFileMultipartData.ContentType, currentStreamContent);
                         AddMultiPartContent(currentPart, currentStreamContent, multiPartContent);
                     }
-                    #endif
                     else
                     {
                         throw new NotImplementedException($"GetContent multipart for '{currentPart.GetType().Name}' not implemented");

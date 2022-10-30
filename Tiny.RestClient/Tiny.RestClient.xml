@@ -389,7 +389,7 @@
         <member name="T:Tiny.RestClient.JsonSeparatorNamingPolicy">
             <summary>
             This class was took from this repository below:
-            https://github.com/YohDeadfall/Yoh.Text.Json.NamingPolicies/blob/main/src/JsonNamingPolicies.cs
+            https://github.com/YohDeadfall/Yoh.Text.Json.NamingPolicies/blob/main/src/JsonNamingPolicies.cs.
             </summary>
         </member>
         <member name="T:Tiny.RestClient.XmlFormatter">
