@@ -28,10 +28,10 @@ namespace Tiny.RestClient.Tests
         public async Task DeflateNoResponse()
         {
             var client = GetClient();
-            var data = await client.
+            await client.
                 GetRequest("GetTest/noResponse").
                 AddHeader("Accept-Encoding", "deflate").
-                ExecuteAsStringAsync();
+                ExecuteAsync();
         }
 
         [TestMethod]
