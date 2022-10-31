@@ -14,6 +14,8 @@ It hides all the complexity of communication, deserialisation ...
 ## Platform Support
 
 The support of **.NET Standard 1.1 to 2.0** allows you to use it with :
+- .NET Framework 4.6.1
+- .NET Standard 2.0
 - .NET 6.0 or superior (Blazor, ASP.NET Core, ...)
 
 ## Features
