@@ -1,11 +1,12 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Tiny.RestClient.PostMan;
@@ -76,20 +77,13 @@ namespace Tiny.RestClient
         {
             lock (_toLock)
             {
-                var serializer = new JsonSerializer
+                var options = new JsonSerializerOptions
                 {
-                    NullValueHandling = NullValueHandling.Ignore
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
                 };
-                using (var stringWriter = new StringWriter(new StringBuilder(1024), CultureInfo.InvariantCulture))
-                {
-                    using (var jsonTextWriter = new JsonTextWriter(stringWriter))
-                    {
-                        jsonTextWriter.Formatting = Formatting.Indented;
-                        serializer.Serialize(jsonTextWriter, Collection, typeof(PostmanCollection));
-                    }
+                options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 
-                    return stringWriter.ToString();
-                }
+                return JsonSerializer.Serialize<PostmanCollection>(Collection, options);
             }
         }
 

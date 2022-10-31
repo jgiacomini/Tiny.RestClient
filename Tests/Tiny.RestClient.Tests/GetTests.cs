@@ -162,7 +162,7 @@ namespace Tiny.RestClient.Tests
             var data = await client.GetRequest("GetTest/complex").
                 ExecuteAsStringAsync();
 
-            var dataObject = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(data);
+            var dataObject = System.Text.Json.JsonSerializer.Deserialize<List<string>>(data);
             Assert.AreEqual(dataObject.Count, 2);
             Assert.AreEqual(dataObject[0], "value1");
             Assert.AreEqual(dataObject[1], "value2");

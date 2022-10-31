@@ -7,7 +7,7 @@ namespace Tiny.RestClient
     /// <summary>
     /// Collection of <see cref="IFormatter"/>.
     /// </summary>
-    public class Formatters : IEnumerable<IFormatter>
+    public sealed class Formatters : IEnumerable<IFormatter>
     {
         private readonly List<IFormatter> _formatters;
         private IFormatter _defaultFormatter;

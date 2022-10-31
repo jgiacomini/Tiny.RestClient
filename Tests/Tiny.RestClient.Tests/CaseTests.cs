@@ -1,7 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
-using System.Threading.Tasks;
-using Tiny.RestClient.Tests.Models;
+using Tiny.RestClient.ForTest.Api.Models;
 
 namespace Tiny.RestClient.Tests
 {
@@ -30,6 +28,19 @@ namespace Tiny.RestClient.Tests
 
             var rep = await client.
                 GetRequest("case/Camel").
+                ExecuteAsync<Response>();
+            Assert.AreEqual(rep.Id, 42);
+            Assert.AreEqual(rep.ResponseData, "REP");
+        }
+
+        [TestMethod]
+        public async Task PascalTest()
+        {
+            var client = GetNewClient();
+            client.Settings.Formatters.OfType<JsonFormatter>().First().UsePascalCase();
+
+            var rep = await client.
+                GetRequest("case/Pascal").
                 ExecuteAsync<Response>();
             Assert.AreEqual(rep.Id, 42);
             Assert.AreEqual(rep.ResponseData, "REP");

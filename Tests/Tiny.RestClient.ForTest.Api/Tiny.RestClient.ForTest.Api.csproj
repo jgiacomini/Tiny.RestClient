@@ -1,17 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Update="wwwroot\pdf-sample.pdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
+	<ItemGroup>
+		<InternalsVisibleTo Include="Tiny.RestClient.Tests" />
+		<Content Update="wwwroot\pdf-sample.pdf">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 </Project>

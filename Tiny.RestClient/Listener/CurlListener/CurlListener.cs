@@ -28,21 +28,13 @@ namespace Tiny.RestClient
         /// <inheritdoc/>
         public Task OnFailedToReceiveResponseAsync(Uri uri, HttpMethod httpMethod, Exception exception, TimeSpan? elapsedTime, CancellationToken cancellationToken)
         {
-#if COMPLETED_TASK_NOT_SUPPORTED
-            return TaskHelper.CompletedTask;
-#else
             return Task.CompletedTask;
-#endif
         }
 
         /// <inheritdoc/>
         public Task OnReceivedResponseAsync(Uri uri, HttpMethod httpMethod, HttpResponseMessage response, TimeSpan? elapsedTime, CancellationToken cancellationToken)
         {
-#if COMPLETED_TASK_NOT_SUPPORTED
-            return TaskHelper.CompletedTask;
-#else
             return Task.CompletedTask;
-#endif
         }
 
         /// <inheritdoc/>
