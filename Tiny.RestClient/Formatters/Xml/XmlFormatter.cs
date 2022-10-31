@@ -49,7 +49,11 @@ namespace Tiny.RestClient
             using (var reader = new StreamReader(stream, encoding))
             {
                 var serializer = new XmlSerializer(typeof(T));
+#if VALUE_TASK_FROM_RESULT_NOT_SUPPORTED
+                return ValueTaskHelper.FromResult((T)serializer.Deserialize(reader));
+#else
                 return ValueTask.FromResult((T)serializer.Deserialize(reader));
+#endif
             }
         }
 
