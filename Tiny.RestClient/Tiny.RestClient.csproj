@@ -1,87 +1,74 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFrameworks>netstandard2.0;netstandard2.1;net6.0;net461</TargetFrameworks>
-        <Version>2.0.0</Version>
-        <Copyright>Copyright © Jérôme Giacomini 2022</Copyright>
-        <NeutralLanguage>en</NeutralLanguage>
-        <Title>Tiny.RestClient</Title>
-        <Authors>Jérôme Giacomini</Authors>
-        <Description>
-            Tiny.RestClient facilitates the dialog between your API and your application. It hides all the complexity of communication, deserialisation ...
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net6.0;net461</TargetFrameworks>
+    <Version>2.0.0-alpha001</Version>
+    <Copyright>Copyright © Jérôme Giacomini 2024</Copyright>
+    <NeutralLanguage>en</NeutralLanguage>
+    <Title>Tiny.RestClient</Title>
+    <Authors>Jérôme Giacomini</Authors>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/jgiacomini/Tiny.RestClient</PackageProjectUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/jgiacomini/Tiny.RestClient/master/icon.png</PackageIconUrl>
+    <PackageTags>httpClient;rest client;FluentHttp;Fluent;RestClient;REST;rest;TinyRestClient;postman;</PackageTags>
+    <RepositoryUrl>https://github.com/jgiacomini/Tiny.RestClient.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <MinClientVersion>3.0.3</MinClientVersion>
+    <PackageReleaseNotes>See release notes at https://github.com/jgiacomini/Tiny.RestClient/blob/master/RELEASE-NOTES.md</PackageReleaseNotes>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+  </PropertyGroup>
 
-            Features :
-            * Modern async http client for REST API.
-            * Support of verbs : GET, POST , PUT, DELETE, PATCH and custom http verbs
-            * Support of ETag
-            * Support of multi-part form data
-            * Support of cancellation token on each requests
-            * Support of : download file and Upload file
-            * Automatic XML and JSON serialization / deserialization
-            * Support of custom serialisation / deserialisation
-            * Support of camelCase, snakeCase kebabCase for json serialization
-            * Support of compression and decompression (gzip and deflate)
-            * Typed exceptions which are easier to interpret
-            * Define timeout globally or per request
-            * Timeout exception thrown if the request is in timeout (by default HttpClient sends OperationCancelledException, so we can't distinguish between user cancellation and timeout)
-            * Provide an easy way to log : all sending of request, failed to get response, and the time get response.
-            * Support of export requests to postman collection
-            * Support of display cURL requests in debug output
-            * Support of Basic Authentification
-            * Support of OAuth2 Authentification
-        </Description>
-        <PackageProjectUrl>https://github.com/jgiacomini/Tiny.RestClient</PackageProjectUrl>
-        <PackageIconUrl>https://raw.githubusercontent.com/jgiacomini/Tiny.RestClient/master/icon.png</PackageIconUrl>
-        <PackageTags>httpClient;rest client;FluentHttp;Fluent;RestClient;REST;rest;TinyRestClient;postman;</PackageTags>
-        <RepositoryUrl>https://github.com/jgiacomini/Tiny.RestClient.git</RepositoryUrl>
-        <RepositoryType>git</RepositoryType>
-        <MinClientVersion>3.0.3</MinClientVersion>
-        <PackageReleaseNotes>See release notes at https://github.com/jgiacomini/Tiny.RestClient/blob/master/RELEASE-NOTES.md</PackageReleaseNotes>
-        <PublishRepositoryUrl>true</PublishRepositoryUrl>
-        <EmbedUntrackedSources>true</EmbedUntrackedSources>
-        <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-        <PackageIcon>icon.png</PackageIcon>
-        <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    </PropertyGroup>
-    <ItemGroup>
-        <None Include="..\icon.png">
-            <Pack>True</Pack>
-            <PackagePath></PackagePath>
-        </None>
-        <None Include="licenses\LICENSE.txt" Pack="true" PackagePath="" />
-    </ItemGroup>
-    <PropertyGroup>
-        <LangVersion>latest</LangVersion>
-    </PropertyGroup>
-    <PropertyGroup>
-        <DocumentationFile>Tiny.RestClient.xml</DocumentationFile>
-        <SignAssembly>true</SignAssembly>
-        <AssemblyOriginatorKeyFile>strong_name.snk</AssemblyOriginatorKeyFile>
-    </PropertyGroup>
-    <ItemGroup>
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
-    </ItemGroup>
+  <ItemGroup>
+    <None Include="..\icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
 
-	<!--Support of NET Standard 2.0-->
-	<PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard2.0')) ">
-		<DefineConstants>$(DefineConstants);VALUE_TASK_FROM_RESULT_NOT_SUPPORTED</DefineConstants>
-	</PropertyGroup>
-	<PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard2.1')) ">
-		<DefineConstants>$(DefineConstants);VALUE_TASK_FROM_RESULT_NOT_SUPPORTED</DefineConstants>
-	</PropertyGroup>
-    <ItemGroup Condition=" $(TargetFramework) =='netstandard2.0' ">
-        <PackageReference Include="System.Text.Json" Version="6.0.6" />
-    </ItemGroup>
-        <ItemGroup Condition=" $(TargetFramework) =='netstandard2.1' ">
-        <PackageReference Include="System.Text.Json" Version="6.0.6" />
-    </ItemGroup>
+    <None Include="licenses\LICENSE.txt" Pack="true" PackagePath="" />
 
-	<!--Support of NET 4.6.1-->
-	<!--NET Framework 4.6.1-->
-	<PropertyGroup Condition=" $(TargetFramework.StartsWith('net461')) ">
-		<DefineConstants>$(DefineConstants);VALUE_TASK_FROM_RESULT_NOT_SUPPORTED</DefineConstants>
-	</PropertyGroup>
-	<ItemGroup Condition=" $(TargetFramework.StartsWith('net461')) ">
-		<Reference Include="System.Net.Http" />
-	    <PackageReference Include="System.Text.Json" Version="6.0.6" />
-	</ItemGroup>
+  </ItemGroup>
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DocumentationFile>Tiny.RestClient.xml</DocumentationFile>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>strong_name.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
+  <!--Support of NET Standard 2.0-->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard2.0')) ">
+    <DefineConstants>$(DefineConstants);VALUE_TASK_FROM_RESULT_NOT_SUPPORTED</DefineConstants>
+  </PropertyGroup>
+
+  <!--Support of NET Standard 2.0-->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard2.1')) ">
+    <DefineConstants>$(DefineConstants);VALUE_TASK_FROM_RESULT_NOT_SUPPORTED</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition=" $(TargetFramework) =='netstandard2.0' ">
+    <PackageReference Include="System.Text.Json" Version="6.0.6" />
+  </ItemGroup>
+  <ItemGroup Condition=" $(TargetFramework) =='netstandard2.1' ">
+    <PackageReference Include="System.Text.Json" Version="6.0.6" />
+  </ItemGroup>
+
+  <!--Support of NET 4.6.1-->
+  <!--NET Framework 4.6.1-->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net461')) ">
+    <DefineConstants>$(DefineConstants);VALUE_TASK_FROM_RESULT_NOT_SUPPORTED</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition=" $(TargetFramework.StartsWith('net461')) ">
+    <Reference Include="System.Net.Http" />
+    <PackageReference Include="System.Text.Json" Version="6.0.6" />
+  </ItemGroup>
 </Project>

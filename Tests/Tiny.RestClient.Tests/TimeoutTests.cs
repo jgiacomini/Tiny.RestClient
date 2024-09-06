@@ -35,7 +35,7 @@ namespace Tiny.RestClient.Tests
             Debug.WriteLine(data);
         }
 
-        [ExpectedException(typeof(OperationCanceledException))]
+        [ExpectedException(typeof(TaskCanceledException))]
         [TestMethod]
         public async Task LocalTimeoutCancelledByUserTest()
         {
@@ -51,7 +51,7 @@ namespace Tiny.RestClient.Tests
             }
         }
 
-        [ExpectedException(typeof(OperationCanceledException))]
+        [ExpectedException(typeof(TaskCanceledException))]
         [TestMethod]
         public async Task TimeoutCancelledByUserTest()
         {
