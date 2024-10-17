@@ -56,10 +56,10 @@
     <DefineConstants>$(DefineConstants);VALUE_TASK_FROM_RESULT_NOT_SUPPORTED</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition=" $(TargetFramework) =='netstandard2.0' ">
-    <PackageReference Include="System.Text.Json" Version="6.0.6" />
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
   </ItemGroup>
   <ItemGroup Condition=" $(TargetFramework) =='netstandard2.1' ">
-    <PackageReference Include="System.Text.Json" Version="6.0.6" />
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
   </ItemGroup>
 
   <!--Support of NET 4.6.1-->
@@ -69,6 +69,6 @@
   </PropertyGroup>
   <ItemGroup Condition=" $(TargetFramework.StartsWith('net461')) ">
     <Reference Include="System.Net.Http" />
-    <PackageReference Include="System.Text.Json" Version="6.0.6" />
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
   </ItemGroup>
 </Project>
