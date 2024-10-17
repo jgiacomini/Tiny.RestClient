@@ -425,10 +425,6 @@
         <member name="M:Tiny.RestClient.XmlFormatter.SerializeAsync``1(``0,System.Text.Encoding,System.Threading.CancellationToken)">
             <inheritdoc/>
         </member>
-        <member name="M:Tiny.RestClient.ValueTaskHelper.FromResult``1(``0)">
-            <summary>Creates a System.Threading.Tasks.ValueTask'1 that's completed successfully with the specified result.</summary>
-            <returns>The successfully completed task.</returns>
-        </member>
         <member name="T:Tiny.RestClient.HttpStatusRange">
             <summary>
             Represent a range of http code.

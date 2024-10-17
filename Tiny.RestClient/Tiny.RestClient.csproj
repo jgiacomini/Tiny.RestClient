@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;net6.0;net461</TargetFrameworks>
-    <Version>2.0.0-alpha001</Version>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0</TargetFrameworks>
+    <Version>2.0.0-alpha002</Version>
     <Copyright>Copyright © Jérôme Giacomini 2024</Copyright>
     <NeutralLanguage>en</NeutralLanguage>
     <Title>Tiny.RestClient</Title>
@@ -50,25 +50,21 @@
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard2.0')) ">
     <DefineConstants>$(DefineConstants);VALUE_TASK_FROM_RESULT_NOT_SUPPORTED</DefineConstants>
   </PropertyGroup>
-
-  <!--Support of NET Standard 2.0-->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard2.1')) ">
-    <DefineConstants>$(DefineConstants);VALUE_TASK_FROM_RESULT_NOT_SUPPORTED</DefineConstants>
-  </PropertyGroup>
   <ItemGroup Condition=" $(TargetFramework) =='netstandard2.0' ">
     <PackageReference Include="System.Text.Json" Version="8.0.5" />
   </ItemGroup>
+
+  <!--Support of NET Standard 2.1-->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard2.1')) ">
+    <DefineConstants>$(DefineConstants);VALUE_TASK_FROM_RESULT_NOT_SUPPORTED</DefineConstants>
+  </PropertyGroup>
+  
   <ItemGroup Condition=" $(TargetFramework) =='netstandard2.1' ">
     <PackageReference Include="System.Text.Json" Version="8.0.5" />
   </ItemGroup>
 
-  <!--Support of NET 4.6.1-->
-  <!--NET Framework 4.6.1-->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net461')) ">
-    <DefineConstants>$(DefineConstants);VALUE_TASK_FROM_RESULT_NOT_SUPPORTED</DefineConstants>
-  </PropertyGroup>
-  <ItemGroup Condition=" $(TargetFramework.StartsWith('net461')) ">
-    <Reference Include="System.Net.Http" />
+  <!--Support of NET Standard 8.0-->
+  <ItemGroup  Condition=" $(TargetFramework.StartsWith('net.8.0')) ">
     <PackageReference Include="System.Text.Json" Version="8.0.5" />
   </ItemGroup>
 </Project>

@@ -831,9 +831,9 @@ namespace Tiny.RestClient
                     response.EnsureSuccessStatusCode();
                 }
             }
-            catch (OperationCanceledException ex)
+            catch (OperationCanceledException)
             {
-                throw ex;
+                throw;
             }
             catch (Exception ex)
             {
