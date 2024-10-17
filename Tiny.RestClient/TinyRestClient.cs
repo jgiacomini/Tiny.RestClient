@@ -692,15 +692,15 @@ namespace Tiny.RestClient
                     await Settings.Listeners.OnReceivedResponseAsync(uri, httpMethod, response, stopwatch?.Elapsed, cancellationToken).ConfigureAwait(false);
                     return response;
                 }
-                catch (OperationCanceledException e)
+                catch (OperationCanceledException)
                 {
-                    throw e;
+                    throw;
                 }
-                catch (TimeoutException e)
+                catch (TimeoutException)
                 {
                     stopwatch?.Stop();
                     await Settings.Listeners.OnFailedToReceiveResponseAsync(uri, httpMethod, e, stopwatch?.Elapsed, cancellationToken).ConfigureAwait(false);
-                    throw e;
+                    throw;
                 }
                 catch (Exception ex)
                 {
