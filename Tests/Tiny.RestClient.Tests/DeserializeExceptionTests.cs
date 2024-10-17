@@ -23,7 +23,7 @@ namespace Tiny.RestClient.Tests
             catch (DeserializeException ex)
             {
                 Debug.WriteLine(ex.DataToDeserialize);
-                throw ex;
+                throw;
             }
         }
     }
