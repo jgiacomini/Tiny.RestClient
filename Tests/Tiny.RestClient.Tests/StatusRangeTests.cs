@@ -26,7 +26,7 @@ namespace Tiny.RestClient.Tests
             {
                 Assert.AreEqual(System.Net.HttpStatusCode.InternalServerError, ex.StatusCode);
 
-                throw ex;
+                throw;
             }
         }
 
