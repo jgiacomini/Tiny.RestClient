@@ -1,5 +1,4 @@
-﻿#if !FILEINFO_NOT_SUPPORTED
-using System.IO;
+﻿using System.IO;
 
 namespace Tiny.RestClient
 {
@@ -14,4 +13,3 @@ namespace Tiny.RestClient
         public FileInfo Data { get; set; }
     }
 }
-#endif

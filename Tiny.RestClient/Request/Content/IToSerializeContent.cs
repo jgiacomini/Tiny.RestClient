@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Tiny.RestClient
 {
@@ -8,6 +10,6 @@ namespace Tiny.RestClient
         Type TypeToSerialize { get; }
         IFormatter Serializer { get; }
         ICompression Compression { get; }
-        string GetSerializedString(IFormatter serializer, Encoding encoding);
+        Task<string> GetSerializedStringAsync(IFormatter serializer, Encoding encoding, CancellationToken cancellationToken);
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Threading.Tasks;
-using Tiny.RestClient.Tests.Models;
+using Tiny.RestClient.ForTest.Api.Models;
 
 namespace Tiny.RestClient.Tests
 {
@@ -29,10 +28,10 @@ namespace Tiny.RestClient.Tests
         public async Task DeflateNoResponse()
         {
             var client = GetClient();
-            var data = await client.
+            await client.
                 GetRequest("GetTest/noResponse").
                 AddHeader("Accept-Encoding", "deflate").
-                ExecuteAsStringAsync();
+                ExecuteAsync();
         }
 
         [TestMethod]

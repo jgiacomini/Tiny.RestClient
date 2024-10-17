@@ -1,39 +1,40 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
+
 namespace Tiny.RestClient.PostMan
 {
     internal class PostmanCollection
     {
-        [JsonProperty(PropertyName = "info")]
+        [JsonPropertyName("info")]
         public Info Info { get; set; }
 
-        [JsonProperty(PropertyName = "item")]
+        [JsonPropertyName("item")]
         public List<IItem> Items { get; set; }
     }
 
     internal class Info
     {
-        [JsonProperty(PropertyName = "_postman_id")]
+        [JsonPropertyName("_postman_id")]
         public string PostmanId { get; set; }
-        [JsonProperty(PropertyName = "name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
-        [JsonProperty(PropertyName = "schema")]
+        [JsonPropertyName("schema")]
         public string Schema { get; set; }
     }
 
     internal class Folder : IItem
     {
-        [JsonProperty(PropertyName = "name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
-        [JsonProperty(PropertyName = "item")]
+        [JsonPropertyName("item")]
         public List<Item> Items { get; set; }
     }
 
     internal class Item : IItem
     {
-        [JsonProperty(PropertyName = "name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
-        [JsonProperty(PropertyName = "request")]
+        [JsonPropertyName("request")]
         public Request Request { get; set; }
     }
 
@@ -44,63 +45,63 @@ namespace Tiny.RestClient.PostMan
 
     internal class Request
     {
-        [JsonProperty(PropertyName = "method")]
+        [JsonPropertyName("method")]
         public string Method { get; set; }
 
-        [JsonProperty(PropertyName = "header")]
+        [JsonPropertyName("header")]
         public List<Header> Headers { get; set; }
 
-        [JsonProperty(PropertyName = "body")]
+        [JsonPropertyName("body")]
         public Body Body { get; set; }
 
-        [JsonProperty(PropertyName = "url")]
+        [JsonPropertyName("url")]
         public Url Url { get; set; }
     }
 
     internal class Body
     {
-        [JsonProperty(PropertyName = "mode")]
+        [JsonPropertyName("mode")]
         public string Mode { get; set; }
 
-        [JsonProperty(PropertyName = "raw")]
+        [JsonPropertyName("raw")]
         public string Raw { get; set; }
     }
 
     internal class Url
     {
-        [JsonProperty(PropertyName = "raw")]
+        [JsonPropertyName("raw")]
         public string Raw { get; set; }
 
-        [JsonProperty(PropertyName = "protocol")]
+        [JsonPropertyName("protocol")]
         public string Protocol { get; set; }
-        [JsonProperty(PropertyName = "port")]
+        [JsonPropertyName("port")]
         public string Port { get; set; }
 
-        [JsonProperty(PropertyName = "host")]
+        [JsonPropertyName("host")]
         public string[] Host { get; set; }
 
-        [JsonProperty(PropertyName = "path")]
+        [JsonPropertyName("path")]
         public string[] Path { get; set; }
 
-        [JsonProperty(PropertyName = "query")]
+        [JsonPropertyName("query")]
         public List<Query> QueryParameters { get; set; }
     }
 
     internal class Query
     {
-        [JsonProperty(PropertyName = "key")]
+        [JsonPropertyName("key")]
         public string Key { get; set; }
 
-        [JsonProperty(PropertyName = "value")]
+        [JsonPropertyName("value")]
         public string Value { get; set; }
     }
 
     internal class Header
     {
-        [JsonProperty(PropertyName = "key")]
+        [JsonPropertyName("key")]
         public string Key { get; set; }
 
-        [JsonProperty(PropertyName = "value")]
+        [JsonPropertyName("value")]
         public string Value { get; set; }
     }
 }

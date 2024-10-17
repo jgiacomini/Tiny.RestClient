@@ -223,7 +223,7 @@ namespace Tiny.RestClient
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                using (HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, eTagContainer, formatter, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false))
+                using (var response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, eTagContainer, formatter, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false))
                 {
                     using (var stream = await ReadResponseAsync(response, tinyRequest.ResponseHeaders, tinyRequest.HttpStatusCodeAllowed, eTagContainer, cancellationToken).ConfigureAwait(false))
                     {
@@ -252,7 +252,7 @@ namespace Tiny.RestClient
                         try
                         {
                             stream.Position = 0;
-                            return formatter.Deserialize<TResult>(stream, Settings.Encoding);
+                            return await formatter.DeserializeAsync<TResult>(stream, Settings.Encoding, cancellationToken);
                         }
                         catch (Exception ex)
                         {
@@ -419,14 +419,12 @@ namespace Tiny.RestClient
                 return await GetSerializedContentAsync(toSerializeContent, cancellationToken).ConfigureAwait(false);
             }
 
-            #if !FILEINFO_NOT_SUPPORTED
             if (content is FileContent fileContent)
             {
                 var currentFileContent = new HttpStreamContent(fileContent.Data.OpenRead());
                 SetContentType(fileContent.ContentType, currentFileContent);
                 return currentFileContent;
             }
-            #endif
 
             if (content is MultipartContent multiParts)
             {
@@ -466,15 +464,12 @@ namespace Tiny.RestClient
                         var serializedContent = await GetSerializedContentAsync(toSerializeMultiContent, cancellationToken).ConfigureAwait(false);
                         AddMultiPartContent(currentPart, serializedContent, multiPartContent);
                     }
-
-                    #if !FILEINFO_NOT_SUPPORTED
                     else if (currentPart is FileMultipartData currentFileMultipartData)
                     {
                         var currentStreamContent = new HttpStreamContent(currentFileMultipartData.Data.OpenRead());
                         SetContentType(currentFileMultipartData.ContentType, currentStreamContent);
                         AddMultiPartContent(currentPart, currentStreamContent, multiPartContent);
                     }
-                    #endif
                     else
                     {
                         throw new NotImplementedException($"GetContent multipart for '{currentPart.GetType().Name}' not implemented");
@@ -499,7 +494,7 @@ namespace Tiny.RestClient
             string serializedString;
             try
             {
-                serializedString = content.GetSerializedString(serializer, Settings.Encoding);
+                serializedString = await content.GetSerializedStringAsync(serializer, Settings.Encoding, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -697,15 +692,15 @@ namespace Tiny.RestClient
                     await Settings.Listeners.OnReceivedResponseAsync(uri, httpMethod, response, stopwatch?.Elapsed, cancellationToken).ConfigureAwait(false);
                     return response;
                 }
-                catch (OperationCanceledException e)
+                catch (OperationCanceledException)
                 {
-                    throw e;
+                    throw;
                 }
                 catch (TimeoutException e)
                 {
                     stopwatch?.Stop();
                     await Settings.Listeners.OnFailedToReceiveResponseAsync(uri, httpMethod, e, stopwatch?.Elapsed, cancellationToken).ConfigureAwait(false);
-                    throw e;
+                    throw;
                 }
                 catch (Exception ex)
                 {

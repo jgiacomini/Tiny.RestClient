@@ -2,11 +2,12 @@
 
 namespace Tiny.RestClient.ForTest.Api.Models
 {
-    public class SnakeResponse
+    public class PascalResponse
     {
-        [JsonPropertyName("id")]
+        [JsonPropertyName("Id")]
         public int Id { get; set; }
-        [JsonPropertyName("response_data")]
+
+        [JsonPropertyName("ResponseData")]
         public string ResponseData { get; set; }
     }
 }

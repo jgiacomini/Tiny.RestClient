@@ -1,34 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.1;netstandard1.2;netstandard1.3;netstandard2.0;net45;net46</TargetFrameworks>
-    <Version>1.7.1</Version>
-    <Copyright>Copyright © Jérôme Giacomini 2019</Copyright>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net6.0;net461</TargetFrameworks>
+    <Version>2.0.0-alpha001</Version>
+    <Copyright>Copyright © Jérôme Giacomini 2024</Copyright>
     <NeutralLanguage>en</NeutralLanguage>
     <Title>Tiny.RestClient</Title>
     <Authors>Jérôme Giacomini</Authors>
-    <Description>
-      Tiny.RestClient facilitates the dialog between your API and your application. It hides all the complexity of communication, deserialisation ...
-
-      Features :
-      * Modern async http client for REST API.
-      * Support of verbs : GET, POST , PUT, DELETE, PATCH and custom http verbs
-      * Support of ETag
-      * Support of multi-part form data
-      * Support of cancellation token on each requests
-      * Support of : download file and Upload file
-      * Automatic XML and JSON serialization / deserialization
-      * Support of custom serialisation / deserialisation
-      * Support of camelCase, snakeCase kebabCase for json serialization
-      * Support of compression and decompression (gzip and deflate)
-      * Typed exceptions which are easier to interpret
-      * Define timeout globally or per request
-      * Timeout exception thrown if the request is in timeout (by default HttpClient sends OperationCancelledException, so we can't distinguish between user cancellation and timeout)
-      * Provide an easy way to log : all sending of request, failed to get response, and the time get response.
-      * Support of export requests to postman collection
-      * Support of display cURL requests in debug output
-      * Support of Basic Authentification
-      * Support of OAuth2 Authentification
-    </Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageProjectUrl>https://github.com/jgiacomini/Tiny.RestClient</PackageProjectUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/jgiacomini/Tiny.RestClient/master/icon.png</PackageIconUrl>
     <PackageTags>httpClient;rest client;FluentHttp;Fluent;RestClient;REST;rest;TinyRestClient;postman;</PackageTags>
@@ -42,64 +20,55 @@
     <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
   </PropertyGroup>
+
   <ItemGroup>
     <None Include="..\icon.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+
     <None Include="licenses\LICENSE.txt" Pack="true" PackagePath="" />
+
   </ItemGroup>
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
-    <DocumentationFile>$(TargetDir)\Tiny.RestClient.xml</DocumentationFile>
+    <DocumentationFile>Tiny.RestClient.xml</DocumentationFile>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>strong_name.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-18618-05" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.DotNet.Analyzers.Compatibility" Version="0.2.12-alpha" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
 
-  <!--NET Standard 1.1-->
-  <ItemGroup Condition=" $(TargetFramework) =='netstandard1.1' ">
-    <PackageReference Include="System.Xml.XmlSerializer" Version=" 4.3.0" />
-  </ItemGroup>
-
-  <PropertyGroup Condition=" $(TargetFramework) =='netstandard1.1' ">
-    <DefineConstants>$(DefineConstants);FILEINFO_NOT_SUPPORTED;COMPLETED_TASK_NOT_SUPPORTED</DefineConstants>
+  <!--Support of NET Standard 2.0-->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard2.0')) ">
+    <DefineConstants>$(DefineConstants);VALUE_TASK_FROM_RESULT_NOT_SUPPORTED</DefineConstants>
   </PropertyGroup>
 
-  <!--NET Standard 1.2-->
-  <ItemGroup Condition=" $(TargetFramework) =='netstandard1.2' ">
-    <PackageReference Include="System.Xml.XmlSerializer" Version=" 4.3.0" />
-  </ItemGroup>
-
-  <PropertyGroup Condition=" $(TargetFramework) =='netstandard1.2' ">
-    <DefineConstants>$(DefineConstants);FILEINFO_NOT_SUPPORTED;COMPLETED_TASK_NOT_SUPPORTED</DefineConstants>
+  <!--Support of NET Standard 2.0-->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard2.1')) ">
+    <DefineConstants>$(DefineConstants);VALUE_TASK_FROM_RESULT_NOT_SUPPORTED</DefineConstants>
   </PropertyGroup>
-
-  <!--NET Standard 1.3-->
-  <ItemGroup Condition=" $(TargetFramework) =='netstandard1.3' ">
-    <PackageReference Include="System.Xml.XmlSerializer" Version=" 4.3.0" />
+  <ItemGroup Condition=" $(TargetFramework) =='netstandard2.0' ">
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
+  </ItemGroup>
+  <ItemGroup Condition=" $(TargetFramework) =='netstandard2.1' ">
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
   </ItemGroup>
 
-  <!--NET Framework 4.5-->
-  <ItemGroup Condition=" $(TargetFramework.StartsWith('net45')) ">
-    <Reference Include="System.Net.Http" />
-  </ItemGroup>
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net45')) ">
-    <DefineConstants>$(DefineConstants);COMPLETED_TASK_NOT_SUPPORTED</DefineConstants>
+  <!--Support of NET 4.6.1-->
+  <!--NET Framework 4.6.1-->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net461')) ">
+    <DefineConstants>$(DefineConstants);VALUE_TASK_FROM_RESULT_NOT_SUPPORTED</DefineConstants>
   </PropertyGroup>
-  
-  <ItemGroup Condition=" $(TargetFramework.StartsWith('net45')) ">
+  <ItemGroup Condition=" $(TargetFramework.StartsWith('net461')) ">
     <Reference Include="System.Net.Http" />
-  </ItemGroup>
-
-  <!--NET Framework 4.6-->
-  <ItemGroup Condition=" $(TargetFramework.StartsWith('net46')) ">
-    <Reference Include="System.Net.Http" />
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
   </ItemGroup>
 </Project>

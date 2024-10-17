@@ -1,8 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using Tiny.RestClient.Tests.Models;
+using Tiny.RestClient.ForTest.Api.Models;
 
 namespace Tiny.RestClient.Tests
 {
@@ -66,22 +63,22 @@ namespace Tiny.RestClient.Tests
                 PostRequest("PostTest/complex", postRequest).
                 ExecuteAsync<Response>();
 
-            Assert.AreEqual(postRequest.Id, response.Id);
-            Assert.AreEqual(postRequest.Data, response.ResponseData);
+            Assert.AreEqual(postRequest.Id, response.Id, "id doesn't match (JSON serializer)");
+            Assert.AreEqual(postRequest.Data, response.ResponseData, "data doesn't match (JSON serializer)");
 
             response = await client.
                 PostRequest("PostTest/complex", postRequest, new XmlFormatter()).
                 ExecuteAsync<Response>();
 
-            Assert.AreEqual(postRequest.Id, response.Id);
-            Assert.AreEqual(postRequest.Data, response.ResponseData);
+            Assert.AreEqual(postRequest.Id, response.Id, "id doesn't match (XML serializer)");
+            Assert.AreEqual(postRequest.Data, response.ResponseData, "data doesn't match (XML serializer)");
 
             response = await client.
                 PostRequest("PostTest/complex", postRequest).
                 ExecuteAsync<Response>(new JsonFormatter());
 
-            Assert.AreEqual(postRequest.Id, response.Id);
-            Assert.AreEqual(postRequest.Data, response.ResponseData);
+            Assert.AreEqual(postRequest.Id, response.Id, "id doesn't match (JSON serializer 2)");
+            Assert.AreEqual(postRequest.Data, response.ResponseData, "id doesn't match (JSON serializer 2)");
 
             client = GetClientForUrl(_serverUrl + "PostTest/complex");
             response = await client.

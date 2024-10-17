@@ -14,12 +14,9 @@ It hides all the complexity of communication, deserialisation ...
 ## Platform Support
 
 The support of **.NET Standard 1.1 to 2.0** allows you to use it with :
-- .Net Framework 4.5+
-- Xamarin iOS, Xamarin Android
-- .Net Core
-- UWP
-- Windows Phone 8.1
-- Windows 8.1
+- .NET Framework 4.6.1
+- .NET Standard 2.0
+- .NET 6.0 or superior (Blazor, ASP.NET Core, ...)
 
 ## Features
 * Modern async http client for REST API.
@@ -459,20 +456,29 @@ client.Settings.Formatters.Remove(lastFormatter);
 
 ### Json custom formatting
 
-You can enable 3 types of formatting on JsonFormatter :
-- CamelCase (PropertyName => propertyName)
+You can enable 4 types of formatting on JsonFormatter :
+
+- PascalCase (PropertyName => PropertyName)
+- CamelCase (PropertyName => propertyName) (default)
 - SnakeCase (PropertyName => property_name)
 - KebabCase (aslo known as SpinalCase) (PropertyName => property-name).
 
-```cs
-// Enable KebabCase
-  client.Settings.Formatters.OfType<JsonFormatter>().First().UseKebabCase();
-```
 
 
 ```cs
 // Enable CamelCase
   client.Settings.Formatters.OfType<JsonFormatter>().First().UseCamelCase();
+```
+By default the JSONFormatter use camelCase.
+
+```cs
+// Enable PascalCase
+  client.Settings.Formatters.OfType<JsonFormatter>().First().UsePascalCase();
+```
+
+```cs
+// Enable KebabCase
+  client.Settings.Formatters.OfType<JsonFormatter>().First().UseKebabCase();
 ```
 
 ```cs
@@ -518,16 +524,16 @@ public class XmlFormatter : IFormatter
       }
    }
 
-   public T Deserialize<T>(Stream stream, Encoding encoding)
+   public ValueTask<T> DeserializeAsync<T>(Stream stream, Encoding encoding, CancellationToken cancellationToken)
    {
       using (var reader = new StreamReader(stream, encoding))
       {
          var serializer = new XmlSerializer(typeof(T));
-         return (T)serializer.Deserialize(reader);
+         return ValueTask.FromResult((T)serializer.Deserialize(reader));
       }
    }
 
-   public string Serialize<T>(T data, Encoding encoding)
+   public Task<string> SerializeAsync<T>(T data, Encoding encoding, CancellationToken cancellationToken)
    {
          if (data == default)
          {
@@ -538,7 +544,7 @@ public class XmlFormatter : IFormatter
          using (var stringWriter = new DynamicEncodingStringWriter(encoding))
          {
             serializer.Serialize(stringWriter, data);
-            return stringWriter.ToString();
+            return Task.FromResult(stringWriter.ToString());
          }
       }
    }
