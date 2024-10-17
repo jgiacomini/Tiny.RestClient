@@ -4,113 +4,6 @@
         <name>Tiny.RestClient</name>
     </assembly>
     <members>
-        <member name="T:Tiny.RestClient.Compressions">
-            <summary>
-            Represent headers of requests.
-            </summary>
-        </member>
-        <member name="M:Tiny.RestClient.Compressions.Add(Tiny.RestClient.ICompression)">
-            <summary>
-            Add header.
-            </summary>
-            <param name="compression">header name.</param>
-        </member>
-        <member name="M:Tiny.RestClient.Compressions.Remove(Tiny.RestClient.ICompression)">
-            <summary>
-            Removes the compression.
-            </summary>
-            <param name="compression">item to remove.</param>
-            <returns></returns>
-        </member>
-        <member name="M:Tiny.RestClient.Compressions.Contains(System.String)">
-            <summary>
-            Determines whether the <see cref="T:Tiny.RestClient.Compressions"/> contains the specified compression system.
-            </summary>
-            <param name="contentEncoding">content encoding.</param>
-            <returns>returns true if contains an element with this contentEncoding otherwise false.</returns>
-        </member>
-        <member name="P:Tiny.RestClient.Compressions.Item(System.String)">
-            <summary>
-            Gets or sets Compression system.
-            </summary>
-            <param name="contentEncoding">content encoding key.</param>
-            <returns>return compression system.</returns>
-        </member>
-        <member name="M:Tiny.RestClient.Compressions.GetEnumerator">
-            <inheritdoc/>
-        </member>
-        <member name="M:Tiny.RestClient.Compressions.Clear">
-            <summary>
-            Removes all <see cref="T:Tiny.RestClient.ICompression"/> system
-            ///. </summary>
-        </member>
-        <member name="T:Tiny.RestClient.DeflateCompression">
-            <summary>
-            Gzip compression.
-            </summary>
-        </member>
-        <member name="P:Tiny.RestClient.DeflateCompression.ContentEncoding">
-            <inheritdoc/>
-        </member>
-        <member name="P:Tiny.RestClient.DeflateCompression.AddAcceptEncodingHeader">
-            <inheritdoc/>
-        </member>
-        <member name="M:Tiny.RestClient.DeflateCompression.CompressAsync(System.IO.Stream,System.Int32,System.Threading.CancellationToken)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Tiny.RestClient.DeflateCompression.DecompressAsync(System.IO.Stream,System.Int32,System.Threading.CancellationToken)">
-            <inheritdoc/>
-        </member>
-        <member name="T:Tiny.RestClient.GzipCompression">
-            <summary>
-            Gzip compression.
-            </summary>
-        </member>
-        <member name="P:Tiny.RestClient.GzipCompression.ContentEncoding">
-            <inheritdoc/>
-        </member>
-        <member name="P:Tiny.RestClient.GzipCompression.AddAcceptEncodingHeader">
-            <inheritdoc/>
-        </member>
-        <member name="M:Tiny.RestClient.GzipCompression.CompressAsync(System.IO.Stream,System.Int32,System.Threading.CancellationToken)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Tiny.RestClient.GzipCompression.DecompressAsync(System.IO.Stream,System.Int32,System.Threading.CancellationToken)">
-            <inheritdoc/>
-        </member>
-        <member name="T:Tiny.RestClient.ICompression">
-            <summary>
-            Represent a way to manage compression / decompression.
-            </summary>
-        </member>
-        <member name="P:Tiny.RestClient.ICompression.ContentEncoding">
-            <summary>
-            Gets the content encoding of compression.
-            </summary>
-        </member>
-        <member name="P:Tiny.RestClient.ICompression.AddAcceptEncodingHeader">
-            <summary>
-            Gets or sets if the compression system add accept headers when the request is sended.
-            </summary>
-        </member>
-        <member name="M:Tiny.RestClient.ICompression.CompressAsync(System.IO.Stream,System.Int32,System.Threading.CancellationToken)">
-            <summary>
-             Compresses the stream.
-            </summary>
-            <param name="stream">the stream to compress.</param>
-            <param name="bufferSize">the buffer size to use.</param>
-            <param name="cancellationToken">the cancellation token.</param>
-            <returns>returns stream compressed.</returns>
-        </member>
-        <member name="M:Tiny.RestClient.ICompression.DecompressAsync(System.IO.Stream,System.Int32,System.Threading.CancellationToken)">
-            <summary>
-             Decompresses the stream.
-            </summary>
-            <param name="stream">the stream to decompress.</param>
-            <param name="bufferSize">the buffer size to use.</param>
-            <param name="cancellationToken">the cancellation token.</param>
-            <returns>returns stream compressed.</returns>
-        </member>
         <member name="T:Tiny.RestClient.ETagFileContainer">
             <summary>
             Class <see cref="T:Tiny.RestClient.ETagFileContainer"/> which store data of entity in a directory.
@@ -424,6 +317,10 @@
         </member>
         <member name="M:Tiny.RestClient.XmlFormatter.SerializeAsync``1(``0,System.Text.Encoding,System.Threading.CancellationToken)">
             <inheritdoc/>
+        </member>
+        <member name="M:Tiny.RestClient.ValueTaskHelper.FromResult``1(``0)">
+            <summary>Creates a System.Threading.Tasks.ValueTask'1 that's completed successfully with the specified result.</summary>
+            <returns>The successfully completed task.</returns>
         </member>
         <member name="T:Tiny.RestClient.HttpStatusRange">
             <summary>
@@ -1030,7 +927,7 @@
             <seealso cref="T:Tiny.RestClient.IFormRequest" />
             <seealso cref="T:Tiny.RestClient.IExecutableRequest" />
         </member>
-        <member name="M:Tiny.RestClient.IRequest.AddContent``1(``0,Tiny.RestClient.IFormatter,Tiny.RestClient.ICompression)">
+        <member name="M:Tiny.RestClient.IRequest.AddContent``1(``0,Tiny.RestClient.IFormatter)">
             <summary>
             Adds the content.
             </summary>
@@ -1124,7 +1021,7 @@
             <returns>The current request.</returns>
             <exception cref="T:System.ArgumentNullException">thrown when data is null.</exception>
         </member>
-        <member name="M:Tiny.RestClient.IMultipartFromDataRequest.AddContent``1(``0,System.String,System.String,Tiny.RestClient.IFormatter,Tiny.RestClient.ICompression)">
+        <member name="M:Tiny.RestClient.IMultipartFromDataRequest.AddContent``1(``0,System.String,System.String,Tiny.RestClient.IFormatter)">
             <summary>
             Adds the content.
             </summary>
@@ -1133,7 +1030,6 @@
             <param name="name">The name of the item.</param>
             <param name="fileName">The name of the file.</param>
             <param name="serializer">Override the default serializer setted on the client. If null use default serializer.</param>
-            <param name="compression">Add compresion system use ton compress content.</param>
             <returns>The current request.</returns>
             <exception cref="T:System.ArgumentNullException">thrown when content is null.</exception>
         </member>
@@ -1265,7 +1161,7 @@
         <member name="M:Tiny.RestClient.Request.Tiny#RestClient#IMultipartFromDataRequest#AddStream(System.IO.Stream,System.String,System.String,System.String)">
             <inheritdoc/>
         </member>
-        <member name="M:Tiny.RestClient.Request.Tiny#RestClient#IMultipartFromDataRequest#AddContent``1(``0,System.String,System.String,Tiny.RestClient.IFormatter,Tiny.RestClient.ICompression)">
+        <member name="M:Tiny.RestClient.Request.Tiny#RestClient#IMultipartFromDataRequest#AddContent``1(``0,System.String,System.String,Tiny.RestClient.IFormatter)">
             <inheritdoc/>
         </member>
         <member name="T:Tiny.RestClient.RestClientSettings">
@@ -1314,11 +1210,6 @@
         <member name="P:Tiny.RestClient.RestClientSettings.Formatters">
             <summary>
             Gets the list of formatter used to serialize and deserialize data.
-            </summary>
-        </member>
-        <member name="P:Tiny.RestClient.RestClientSettings.Compressions">
-            <summary>
-            Compression / decompression system enabled.
             </summary>
         </member>
         <member name="P:Tiny.RestClient.RestClientSettings.HttpStatusCodeAllowed">
@@ -1370,23 +1261,21 @@
             <param name="route">The route.</param>
             <returns>The new request.</returns>
         </member>
-        <member name="M:Tiny.RestClient.TinyRestClient.PostRequest``1(``0,Tiny.RestClient.IFormatter,Tiny.RestClient.ICompression)">
+        <member name="M:Tiny.RestClient.TinyRestClient.PostRequest``1(``0,Tiny.RestClient.IFormatter)">
             <summary>
             Create a new POST request.
             </summary>
             <param name="content">The content of the request.</param>
             <param name="formatter">The formatter use to serialize the content.</param>
-            <param name="compression">Add compresion system use to compress content.</param>
             <returns>The new request.</returns>
         </member>
-        <member name="M:Tiny.RestClient.TinyRestClient.PostRequest``1(System.String,``0,Tiny.RestClient.IFormatter,Tiny.RestClient.ICompression)">
+        <member name="M:Tiny.RestClient.TinyRestClient.PostRequest``1(System.String,``0,Tiny.RestClient.IFormatter)">
             <summary>
             Create a new POST request.
             </summary>
             <param name="route">The route.</param>
             <param name="content">The content of the request.</param>
             <param name="formatter">The formatter use to serialize the content.</param>
-            <param name="compression">Add compresion system use to compress content.</param>
             <returns>The new request.</returns>
         </member>
         <member name="M:Tiny.RestClient.TinyRestClient.PutRequest(System.String)">
@@ -1396,23 +1285,21 @@
             <param name="route">The route.</param>
             <returns>The new request.</returns>
         </member>
-        <member name="M:Tiny.RestClient.TinyRestClient.PutRequest``1(``0,Tiny.RestClient.IFormatter,Tiny.RestClient.ICompression)">
+        <member name="M:Tiny.RestClient.TinyRestClient.PutRequest``1(``0,Tiny.RestClient.IFormatter)">
             <summary>
             Create a new PUT request.
             </summary>
             <param name="content">The content of the request.</param>
             <param name="formatter">The formatter use to serialize the content.</param>
-            <param name="compression">Add compresion system use to compress content.</param>
             <returns>The new request.</returns>
         </member>
-        <member name="M:Tiny.RestClient.TinyRestClient.PutRequest``1(System.String,``0,Tiny.RestClient.IFormatter,Tiny.RestClient.ICompression)">
+        <member name="M:Tiny.RestClient.TinyRestClient.PutRequest``1(System.String,``0,Tiny.RestClient.IFormatter)">
             <summary>
             Create a new PUT request.
             </summary>
             <param name="route">The route.</param>
             <param name="content">The content of the request.</param>
             <param name="formatter">The formatter use to serialize the content.</param>
-            <param name="compression">Add compresion system use to compress content.</param>
             <returns>The new request.</returns>
         </member>
         <member name="M:Tiny.RestClient.TinyRestClient.PatchRequest(System.String)">
@@ -1422,23 +1309,21 @@
             <param name="route">The route.</param>
             <returns>The new request.</returns>
         </member>
-        <member name="M:Tiny.RestClient.TinyRestClient.PatchRequest``1(``0,Tiny.RestClient.IFormatter,Tiny.RestClient.ICompression)">
+        <member name="M:Tiny.RestClient.TinyRestClient.PatchRequest``1(``0,Tiny.RestClient.IFormatter)">
             <summary>
             Create a new PATCH request.
             </summary>
             <param name="content">The content of the request.</param>
             <param name="serializer">The serializer use to serialize it.</param>
-            <param name="compression">Add compresion system use to compress content.</param>
             <returns>The new request.</returns>
         </member>
-        <member name="M:Tiny.RestClient.TinyRestClient.PatchRequest``1(System.String,``0,Tiny.RestClient.IFormatter,Tiny.RestClient.ICompression)">
+        <member name="M:Tiny.RestClient.TinyRestClient.PatchRequest``1(System.String,``0,Tiny.RestClient.IFormatter)">
             <summary>
             Create a new PATCH request.
             </summary>
             <param name="route">The route.</param>
             <param name="content">The content of the request.</param>
             <param name="serializer">The serializer use to serialize it.</param>
-            <param name="compression">Add compresion system use ton compress content.</param>
             <returns>The new request.</returns>
         </member>
         <member name="M:Tiny.RestClient.TinyRestClient.DeleteRequest(System.String)">

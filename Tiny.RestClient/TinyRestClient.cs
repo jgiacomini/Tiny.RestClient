@@ -97,13 +97,12 @@ namespace Tiny.RestClient
         /// </summary>
         /// <param name="content">The content of the request.</param>
         /// <param name="formatter">The formatter use to serialize the content.</param>
-        /// <param name="compression">Add compresion system use to compress content.</param>
         /// <returns>The new request.</returns>
-        public IParameterRequest PostRequest<TContent>(TContent content, IFormatter formatter = null, ICompression compression = null)
+        public IParameterRequest PostRequest<TContent>(TContent content, IFormatter formatter = null)
             where TContent : class
         {
             return new Request(HttpMethod.Post, null, this).
-                AddContent<TContent>(content, formatter, compression);
+                AddContent<TContent>(content, formatter);
         }
 
         /// <summary>
@@ -112,13 +111,12 @@ namespace Tiny.RestClient
         /// <param name="route">The route.</param>
         /// <param name="content">The content of the request.</param>
         /// <param name="formatter">The formatter use to serialize the content.</param>
-        /// <param name="compression">Add compresion system use to compress content.</param>
         /// <returns>The new request.</returns>
-        public IParameterRequest PostRequest<TContent>(string route, TContent content, IFormatter formatter = null, ICompression compression = null)
+        public IParameterRequest PostRequest<TContent>(string route, TContent content, IFormatter formatter = null)
             where TContent : class
         {
             return new Request(HttpMethod.Post, route, this).
-                AddContent<TContent>(content, formatter, compression);
+                AddContent<TContent>(content, formatter);
         }
 
         /// <summary>
@@ -136,13 +134,12 @@ namespace Tiny.RestClient
         /// </summary>
         /// <param name="content">The content of the request.</param>
         /// <param name="formatter">The formatter use to serialize the content.</param>
-        /// <param name="compression">Add compresion system use to compress content.</param>
         /// <returns>The new request.</returns>
-        public IParameterRequest PutRequest<TContent>(TContent content, IFormatter formatter = null, ICompression compression = null)
+        public IParameterRequest PutRequest<TContent>(TContent content, IFormatter formatter = null)
             where TContent : class
         {
             return new Request(HttpMethod.Put, null, this).
-                AddContent<TContent>(content, formatter, compression);
+                AddContent<TContent>(content, formatter);
         }
 
         /// <summary>
@@ -151,13 +148,12 @@ namespace Tiny.RestClient
         /// <param name="route">The route.</param>
         /// <param name="content">The content of the request.</param>
         /// <param name="formatter">The formatter use to serialize the content.</param>
-        /// <param name="compression">Add compresion system use to compress content.</param>
         /// <returns>The new request.</returns>
-        public IParameterRequest PutRequest<TContent>(string route, TContent content, IFormatter formatter = null, ICompression compression = null)
+        public IParameterRequest PutRequest<TContent>(string route, TContent content, IFormatter formatter = null)
             where TContent : class
         {
             return new Request(HttpMethod.Put, route, this).
-                AddContent<TContent>(content, formatter, compression);
+                AddContent<TContent>(content, formatter);
         }
 
         /// <summary>
@@ -175,13 +171,12 @@ namespace Tiny.RestClient
         /// </summary>
         /// <param name="content">The content of the request.</param>
         /// <param name="serializer">The serializer use to serialize it.</param>
-        /// <param name="compression">Add compresion system use to compress content.</param>
         /// <returns>The new request.</returns>
-        public IParameterRequest PatchRequest<TContent>(TContent content, IFormatter serializer = null, ICompression compression = null)
+        public IParameterRequest PatchRequest<TContent>(TContent content, IFormatter serializer = null)
             where TContent : class
         {
             return new Request(_PatchMethod, null, this).
-                AddContent<TContent>(content, serializer, compression);
+                AddContent<TContent>(content, serializer);
         }
 
         /// <summary>
@@ -190,13 +185,12 @@ namespace Tiny.RestClient
         /// <param name="route">The route.</param>
         /// <param name="content">The content of the request.</param>
         /// <param name="serializer">The serializer use to serialize it.</param>
-        /// <param name="compression">Add compresion system use ton compress content.</param>
         /// <returns>The new request.</returns>
-        public IParameterRequest PatchRequest<TContent>(string route, TContent content, IFormatter serializer = null, ICompression compression = null)
+        public IParameterRequest PatchRequest<TContent>(string route, TContent content, IFormatter serializer = null)
             where TContent : class
         {
             return new Request(_PatchMethod, route, this).
-                AddContent<TContent>(content, serializer, compression);
+                AddContent<TContent>(content, serializer);
         }
 
         /// <summary>
@@ -506,21 +500,6 @@ namespace Tiny.RestClient
                 return null;
             }
 
-            var compression = content.Compression;
-            if (compression != null)
-            {
-                using (var stream = new MemoryStream(Settings.Encoding.GetBytes(serializedString)))
-                {
-                    var compressedStream = await compression.CompressAsync(stream, BufferSize, cancellationToken).ConfigureAwait(false);
-                    compressedStream.Position = 0;
-
-                    var compressedContent = new HttpStreamContent(compressedStream);
-                    compressedContent.Headers.ContentType = new MediaTypeHeaderValue(serializer.DefaultMediaType);
-                    compressedContent.Headers.ContentEncoding.Add(compression.ContentEncoding);
-                    return compressedContent;
-                }
-            }
-
             var stringContent = new HttpStringContent(serializedString, Settings.Encoding);
             stringContent.Headers.ContentType = new MediaTypeHeaderValue(serializer.DefaultMediaType);
             return stringContent;
@@ -619,11 +598,6 @@ namespace Tiny.RestClient
                 foreach (var item in Settings.DefaultHeaders)
                 {
                     request.Headers.Add(item.Key, item.Value);
-                }
-
-                foreach (var acceptEncoding in Settings.Compressions.Where(c => c.Value.AddAcceptEncodingHeader).Select(c => c.Key))
-                {
-                    request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue(acceptEncoding));
                 }
 
                 if (requestHeader != null)
@@ -767,25 +741,6 @@ namespace Tiny.RestClient
             }
 
             cancellationToken.ThrowIfCancellationRequested();
-            return await DecompressAsync(response, stream, cancellationToken).ConfigureAwait(false);
-        }
-
-        private async Task<Stream> DecompressAsync(HttpResponseMessage response, Stream stream, CancellationToken cancellationToken)
-        {
-            var encoding = response.Content.Headers.ContentEncoding.FirstOrDefault();
-            if (encoding != null && Settings.Compressions.Contains(encoding))
-            {
-                var compression = Settings.Compressions[encoding];
-                try
-                {
-                    return await compression.DecompressAsync(stream, BufferSize, cancellationToken).ConfigureAwait(false);
-                }
-                finally
-                {
-                    stream.Dispose();
-                }
-            }
-
             return stream;
         }
 

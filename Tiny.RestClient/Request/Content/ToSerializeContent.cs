@@ -8,11 +8,10 @@ namespace Tiny.RestClient
     internal class ToSerializeContent<T> : BaseContent<T>, IToSerializeContent
         where T : class
     {
-        public ToSerializeContent(T data, IFormatter serializer, ICompression compression)
+        public ToSerializeContent(T data, IFormatter serializer)
             : base(data, null)
         {
             Serializer = serializer;
-            Compression = compression;
         }
 
         public Type TypeToSerialize => typeof(T);
@@ -30,7 +29,5 @@ namespace Tiny.RestClient
         }
 
         public IFormatter Serializer { get; private set; }
-
-        public ICompression Compression { get; private set; }
     }
 }

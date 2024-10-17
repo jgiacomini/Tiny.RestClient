@@ -16,11 +16,6 @@ namespace Tiny.RestClient
             DefaultHeaders = new Headers();
             Listeners = new Listeners();
             Formatters = new Formatters();
-            Compressions = new Compressions
-            {
-                new GzipCompression(),
-                new DeflateCompression()
-            };
             _encoding = Encoding.UTF8;
             DefaultTimeout = TimeSpan.FromSeconds(100);
             HttpStatusCodeAllowed = new HttpStatusRanges();
@@ -81,11 +76,6 @@ namespace Tiny.RestClient
         /// Gets the list of formatter used to serialize and deserialize data.
         /// </summary>
         public Formatters Formatters { get; private set; }
-
-        /// <summary>
-        /// Compression / decompression system enabled.
-        /// </summary>
-        public Compressions Compressions { get; private set; }
 
         /// <summary>
         /// Range of status allowed if empty use default behavior.
