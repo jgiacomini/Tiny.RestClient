@@ -696,7 +696,7 @@ namespace Tiny.RestClient
                 {
                     throw;
                 }
-                catch (TimeoutException)
+                catch (TimeoutException e)
                 {
                     stopwatch?.Stop();
                     await Settings.Listeners.OnFailedToReceiveResponseAsync(uri, httpMethod, e, stopwatch?.Elapsed, cancellationToken).ConfigureAwait(false);
