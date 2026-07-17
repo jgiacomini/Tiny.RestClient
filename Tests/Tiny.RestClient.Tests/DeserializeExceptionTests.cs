@@ -8,23 +8,17 @@ namespace Tiny.RestClient.Tests
     [TestClass]
     public class DeserializeExceptionTests : BaseTest
     {
-        [ExpectedException(typeof(DeserializeException))]
         [TestMethod]
         public async Task DeserializeExceptionTestAsync()
         {
-            try
-            {
-                var client = GetClient();
+            var client = GetClient();
 
-                var data = await client.
+            var ex = await Assert.ThrowsExactlyAsync<DeserializeException>(async () =>
+                await client.
                     GetRequest("GetTest/complex").
-                    ExecuteAsync<string[]>(new ExceptionFormatter());
-            }
-            catch (DeserializeException ex)
-            {
-                Debug.WriteLine(ex.DataToDeserialize);
-                throw;
-            }
+                    ExecuteAsync<string[]>(new ExceptionFormatter()));
+
+            Debug.WriteLine(ex.DataToDeserialize);
         }
     }
 }

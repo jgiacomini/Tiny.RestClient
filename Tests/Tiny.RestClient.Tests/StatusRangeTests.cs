@@ -10,24 +10,17 @@ namespace Tiny.RestClient.Tests
     public class StatusRangeTests : BaseTest
     {
         #region Client scope
-        [ExpectedException(typeof(HttpException))]
         [TestMethod]
         public async Task GetErrorWhenCallApiWhenError500()
         {
             var client = GetClient();
 
-            try
-            {
-                var response = await client.
+            var ex = await Assert.ThrowsExactlyAsync<HttpException>(async () =>
+                await client.
                     GetRequest("GetTest/Status500Response").
-                    ExecuteAsync<IEnumerable<string>>();
-            }
-            catch (HttpException ex)
-            {
-                Assert.AreEqual(System.Net.HttpStatusCode.InternalServerError, ex.StatusCode);
+                    ExecuteAsync<IEnumerable<string>>());
 
-                throw;
-            }
+            Assert.AreEqual(System.Net.HttpStatusCode.InternalServerError, ex.StatusCode);
         }
 
         [TestMethod]
@@ -67,12 +60,12 @@ namespace Tiny.RestClient.Tests
             Assert.IsNotNull(response);
         }
 
-        [ExpectedException(typeof(ArgumentException))]
         [TestMethod]
         public void AddInvalidStatusRange()
         {
             var client = GetNewClient();
-            client.Settings.HttpStatusCodeAllowed.Add(new HttpStatusRange(500, 400));
+            Assert.ThrowsExactly<ArgumentException>(() =>
+                client.Settings.HttpStatusCodeAllowed.Add(new HttpStatusRange(500, 400)));
         }
         #endregion
 

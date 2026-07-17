@@ -24,12 +24,12 @@ namespace Tiny.RestClient.Tests
             var data = await client.
                 GetRequest("GetTest/simple").
                 ExecuteAsync<bool>();
-            Assert.AreEqual(data, true);
+            Assert.AreEqual(true, data);
             client = GetClientXML();
             data = await client.
                 GetRequest("GetTest/simple").
                 ExecuteAsync<bool>();
-            Assert.AreEqual(data, true);
+            Assert.AreEqual(true, data);
         }
 
         [TestMethod]
@@ -144,15 +144,15 @@ namespace Tiny.RestClient.Tests
         {
             var client = GetClient();
             var data = await client.GetRequest("GetTest/complex").ExecuteAsync<string[]>();
-            Assert.AreEqual(data.Length, 2);
-            Assert.AreEqual(data[0], "value1");
-            Assert.AreEqual(data[1], "value2");
+            Assert.AreEqual(2, data.Length);
+            Assert.AreEqual("value1", data[0]);
+            Assert.AreEqual("value2", data[1]);
 
             client = GetClientXML();
             data = await client.GetRequest("GetTest/complex").ExecuteAsync<string[]>();
-            Assert.AreEqual(data.Length, 2);
-            Assert.AreEqual(data[0], "value1");
-            Assert.AreEqual(data[1], "value2");
+            Assert.AreEqual(2, data.Length);
+            Assert.AreEqual("value1", data[0]);
+            Assert.AreEqual("value2", data[1]);
         }
 
         [TestMethod]
@@ -163,9 +163,9 @@ namespace Tiny.RestClient.Tests
                 ExecuteAsStringAsync();
 
             var dataObject = System.Text.Json.JsonSerializer.Deserialize<List<string>>(data);
-            Assert.AreEqual(dataObject.Count, 2);
-            Assert.AreEqual(dataObject[0], "value1");
-            Assert.AreEqual(dataObject[1], "value2");
+            Assert.AreEqual(2, dataObject.Count);
+            Assert.AreEqual("value1", dataObject[0]);
+            Assert.AreEqual("value2", dataObject[1]);
         }
 
         [TestMethod]
@@ -177,10 +177,10 @@ namespace Tiny.RestClient.Tests
 
             var dataStr = await data.Content.ReadAsStringAsync();
 
-            var dataObject = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(dataStr);
-            Assert.AreEqual(dataObject.Count, 2);
-            Assert.AreEqual(dataObject[0], "value1");
-            Assert.AreEqual(dataObject[1], "value2");
+            var dataObject = System.Text.Json.JsonSerializer.Deserialize<List<string>>(dataStr);
+            Assert.AreEqual(2, dataObject.Count);
+            Assert.AreEqual("value1", dataObject[0]);
+            Assert.AreEqual("value2", dataObject[1]);
         }
 
         [TestMethod]
@@ -190,7 +190,7 @@ namespace Tiny.RestClient.Tests
             var stream = await client.
                 GetRequest("GetTest/stream").
                 ExecuteAsStreamAsync();
-            Assert.AreEqual(stream.Length, 42);
+            Assert.AreEqual(42, stream.Length);
         }
     }
 }

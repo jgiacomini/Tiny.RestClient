@@ -49,9 +49,9 @@ namespace Tiny.RestClient.Tests
             var data = await client.GetRequest("GetTest/complex").
                 FillResponseHeaders(out Headers headers).
                 ExecuteAsync<string[]>();
-            Assert.AreEqual(data.Length, 2);
-            Assert.AreEqual(data[0], "value1");
-            Assert.AreEqual(data[1], "value2");
+            Assert.AreEqual(2, data.Length);
+            Assert.AreEqual("value1", data[0]);
+            Assert.AreEqual("value2", data[1]);
 
             var actionUri = new Uri($"{ServerUrl}GetTest/complex");
             var etag = headers["ETag"].FirstOrDefault();
@@ -65,9 +65,9 @@ namespace Tiny.RestClient.Tests
 
             data = await client.GetRequest("GetTest/complex").
                 ExecuteAsync<string[]>();
-            Assert.AreEqual(data.Length, 2);
-            Assert.AreEqual(data[0], "test1");
-            Assert.AreEqual(data[1], "test2");
+            Assert.AreEqual(2, data.Length);
+            Assert.AreEqual("test1", data[0]);
+            Assert.AreEqual("test2", data[1]);
 
             await etagContainer.SaveDataAsync(actionUri, "\"TEST\"", new MemoryStream(), CancellationToken.None);
 
@@ -77,9 +77,9 @@ namespace Tiny.RestClient.Tests
             etagStored = await etagContainer.GetExistingETagAsync(actionUri, CancellationToken.None);
             Assert.AreEqual(etagStored, etag);
 
-            Assert.AreEqual(data.Length, 2);
-            Assert.AreEqual(data[0], "value1");
-            Assert.AreEqual(data[1], "value2");
+            Assert.AreEqual(2, data.Length);
+            Assert.AreEqual("value1", data[0]);
+            Assert.AreEqual("value2", data[1]);
         }
 
         [TestMethod]
@@ -92,9 +92,9 @@ namespace Tiny.RestClient.Tests
                 WithETagContainer(etagContainer).
                 FillResponseHeaders(out Headers headers).
                 ExecuteAsync<string[]>();
-            Assert.AreEqual(data.Length, 2);
-            Assert.AreEqual(data[0], "value1");
-            Assert.AreEqual(data[1], "value2");
+            Assert.AreEqual(2, data.Length);
+            Assert.AreEqual("value1", data[0]);
+            Assert.AreEqual("value2", data[1]);
 
             var actionUri = new Uri($"{ServerUrl}GetTest/complex");
             var etag = headers["ETag"].FirstOrDefault();
@@ -109,9 +109,9 @@ namespace Tiny.RestClient.Tests
             data = await client.GetRequest("GetTest/complex").
                 WithETagContainer(etagContainer).
                 ExecuteAsync<string[]>();
-            Assert.AreEqual(data.Length, 2);
-            Assert.AreEqual(data[0], "test1");
-            Assert.AreEqual(data[1], "test2");
+            Assert.AreEqual(2, data.Length);
+            Assert.AreEqual("test1", data[0]);
+            Assert.AreEqual("test2", data[1]);
 
             await etagContainer.SaveDataAsync(actionUri, "\"TEST\"", new MemoryStream(), CancellationToken.None);
 
@@ -122,17 +122,16 @@ namespace Tiny.RestClient.Tests
             etagStored = await etagContainer.GetExistingETagAsync(actionUri, CancellationToken.None);
             Assert.AreEqual(etagStored, etag);
 
-            Assert.AreEqual(data.Length, 2);
-            Assert.AreEqual(data[0], "value1");
-            Assert.AreEqual(data[1], "value2");
+            Assert.AreEqual(2, data.Length);
+            Assert.AreEqual("value1", data[0]);
+            Assert.AreEqual("value2", data[1]);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(DirectoryNotFoundException))]
         public void ETagFileContainerDirectoryNotFound()
         {
-            new ETagFileContainer(@"C:\notfound");
-            Assert.Fail("It must not go here");
+            Assert.ThrowsExactly<DirectoryNotFoundException>(() =>
+                new ETagFileContainer(@"C:\notfound"));
         }
     }
 }

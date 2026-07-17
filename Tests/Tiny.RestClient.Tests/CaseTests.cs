@@ -16,8 +16,8 @@ namespace Tiny.RestClient.Tests
                 GetRequest("case/Kebab").
                 ExecuteAsync<Response>();
 
-            Assert.AreEqual(rep.Id, 42);
-            Assert.AreEqual(rep.ResponseData, "REP");
+            Assert.AreEqual(42, rep.Id);
+            Assert.AreEqual("REP", rep.ResponseData);
         }
 
         [TestMethod]
@@ -29,8 +29,8 @@ namespace Tiny.RestClient.Tests
             var rep = await client.
                 GetRequest("case/Camel").
                 ExecuteAsync<Response>();
-            Assert.AreEqual(rep.Id, 42);
-            Assert.AreEqual(rep.ResponseData, "REP");
+            Assert.AreEqual(42, rep.Id);
+            Assert.AreEqual("REP", rep.ResponseData);
         }
 
         [TestMethod]
@@ -42,8 +42,8 @@ namespace Tiny.RestClient.Tests
             var rep = await client.
                 GetRequest("case/Pascal").
                 ExecuteAsync<Response>();
-            Assert.AreEqual(rep.Id, 42);
-            Assert.AreEqual(rep.ResponseData, "REP");
+            Assert.AreEqual(42, rep.Id);
+            Assert.AreEqual("REP", rep.ResponseData);
         }
 
         [TestMethod]
@@ -55,8 +55,8 @@ namespace Tiny.RestClient.Tests
             var rep = await client.
                 GetRequest("case/Snake").
                 ExecuteAsync<Response>();
-            Assert.AreEqual(rep.Id, 42);
-            Assert.AreEqual(rep.ResponseData, "REP");
+            Assert.AreEqual(42, rep.Id);
+            Assert.AreEqual("REP", rep.ResponseData);
         }
     }
 }

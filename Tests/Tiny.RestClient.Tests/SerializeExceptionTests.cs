@@ -11,15 +11,15 @@ namespace Tiny.RestClient.Tests
     [TestClass]
     public class SerializeExceptionTests : BaseTest
     {
-        [ExpectedException(typeof(SerializeException))]
         [TestMethod]
         public async Task SerializeExceptionTestAsync()
         {
             var client = GetClient();
-            await client.
-                PostRequest().
-                AddContent<Request>(new Request(), new ExceptionFormatter()).
-                ExecuteAsync();
+            await Assert.ThrowsExactlyAsync<SerializeException>(async () =>
+                await client.
+                    PostRequest().
+                    AddContent<Request>(new Request(), new ExceptionFormatter()).
+                    ExecuteAsync());
         }
     }
 }
