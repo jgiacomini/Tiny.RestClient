@@ -1,0 +1,83 @@
+# Tiny.RestClient
+
+> Tiny.RestClient is a tiny, fluent, async HTTP client for consuming REST APIs from .NET. It hides the complexity of building requests, serialization/deserialization, error handling and streaming behind a chainable API built on top of `HttpClient`.
+
+Built for **.NET Standard 2.0**, **.NET Standard 2.1**, **.NET 8.0** and **.NET 10.0**. NuGet package: `Tiny.RestClient`.
+
+Key facts an assistant should know before generating code:
+
+- The entry point is `TinyRestClient(HttpClient httpClient, string baseAddress)` in the `Tiny.RestClient` namespace.
+- You create a request with a verb method (`GetRequest`, `PostRequest`, `PutRequest`, `PatchRequest`, `DeleteRequest`, or `NewRequest(HttpMethod, route)`), chain modifiers, then call an `ExecuteAs...Async` terminal method.
+- Terminal methods: `ExecuteAsync()`, `ExecuteAsync<T>()`, `ExecuteAsStringAsync()`, `ExecuteAsStreamAsync()`, `ExecuteAsByteArrayAsync()`, `ExecuteAsHttpResponseMessageAsync()`, `DownloadFileAsync(path)`, and `ExecuteAsSSEAsync()` (SSE streaming, not available on .NET Standard 2.0).
+- JSON is the default formatter (camelCase by default); XML is also registered. Serialization is automatic.
+- Requests can throw `ConnectionException`, `HttpException`, `SerializeException`, `DeserializeException`, or `TimeoutException`.
+
+## Quick start
+
+```cs
+using Tiny.RestClient;
+
+var client = new TinyRestClient(new HttpClient(), "http://MyAPI.com/api");
+
+// GET + automatic deserialization
+List<City> cities = await client.GetRequest("City/All").ExecuteAsync<List<City>>();
+
+// GET with query parameters
+City city = await client
+    .GetRequest("City")
+    .AddQueryParameter("id", 2)
+    .AddQueryParameter("country", "France")
+    .ExecuteAsync<City>();
+
+// POST with a serialized body
+var response = await client.PostRequest("City", city).ExecuteAsync<bool>();
+```
+
+## Common patterns
+
+- Headers: `client.Settings.DefaultHeaders.Add("Key", "Value")`, `.AddBearer("token")`, `.AddBasicAuthentication("user", "pwd")`; per request: `.AddHeader(...)`, `.WithOAuthBearer("token")`, `.WithBasicAuthentication("user", "pwd")`.
+- Form data: `.AddFormParameter("name", "value")`. File upload: `.AddFileContent(fileInfo, "text/plain")`.
+- Multipart: `.AsMultiPartFromDataRequest()` then `.AddContent<T>(...)`, `.AddByteArray(...)`, `.AddStream(...)`, `.AddString(...)`.
+- Raw content: `.AddStringContent(...)`, `.AddStreamContent(...)`, `.AddByteArrayContent(...)` (no serializer is used).
+- Timeout: global `client.Settings.DefaultTimeout = TimeSpan.FromSeconds(100)`; per request `.WithTimeout(...)`.
+- Non-2xx status: global `client.Settings.HttpStatusCodeAllowed.AllowAnyStatus = true` or `.Add(new HttpStatusRange(400, 420))`; per request `.AllowAllHttpStatusCode()`, `.AllowRangeHttpStatusCode(400, 420)`, `.AllowSpecificHttpStatusCode(409)`.
+- ETag: `client.Settings.ETagContainer = new ETagFileContainer(@"C:\ETagFolder")` or per request `.WithETagContainer(container)`.
+- JSON casing: `client.Settings.Formatters.OfType<JsonFormatter>().First().UseCamelCase()` (also `UsePascalCase`, `UseSnakeCase`, `UseKebabCase`).
+- Custom serialization: implement `IFormatter` and register with `client.Settings.Formatters.Add(formatter, isDefault)`.
+- Listeners (logging/export): `client.Settings.Listeners.AddDebug()`, `.AddCurl()`, `.AddPostman("collectionName")`; custom via `IListener`.
+
+## Server-Sent Events (SSE)
+
+Available on .NET Standard 2.1, .NET 8.0 and .NET 10.0 (relies on `IAsyncEnumerable<T>`; not on .NET Standard 2.0). The connection stays open until the server closes the stream or the `CancellationToken` is cancelled; the body is not buffered.
+
+```cs
+await foreach (var sse in client.GetRequest("notifications/stream").ExecuteAsSSEAsync(cancellationToken))
+{
+    Console.WriteLine($"{sse.Id} {sse.Event} {sse.Data} {sse.Retry}");
+}
+```
+
+`ServerSentEvent` exposes `Data`, `Event` (defaults to `message`), `Id` and `Retry`.
+
+## Error handling
+
+```cs
+try
+{
+    var response = await client.GetRequest("City").AddQueryParameter("Name", "Paris").ExecuteAsync<City>();
+}
+catch (HttpException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+{
+    // handle 404
+}
+```
+
+Encapsulate globally: `client.Settings.EncapsulateHttpExceptionHandler = ex => ...`.
+
+## Docs
+
+- [Full documentation and README](https://github.com/jgiacomini/Tiny.RestClient/blob/master/README.md): complete feature guide with all code samples.
+- [Project site](https://jgiacomini.github.io/Tiny.RestClient/): rendered documentation.
+- [NuGet package](https://www.nuget.org/packages/Tiny.RestClient/): install with `dotnet add package Tiny.RestClient`.
+- [Source repository](https://github.com/jgiacomini/Tiny.RestClient): source code and issues.
+- [Release notes](https://github.com/jgiacomini/Tiny.RestClient/blob/master/RELEASE-NOTES.md): version history.

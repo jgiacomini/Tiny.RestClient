@@ -404,6 +404,14 @@ namespace Tiny.RestClient
             return _client.ExecuteAsHttpResponseMessageResultAsync(this, cancellationToken);
         }
 
+#if SUPPORTS_ASYNC_ENUMERABLE
+        /// <inheritdoc/>
+        public IAsyncEnumerable<ServerSentEvent> ExecuteAsSSEAsync(CancellationToken cancellationToken)
+        {
+            return _client.ExecuteAsSSEAsync(this, cancellationToken);
+        }
+#endif
+
         /// <inheritdoc/>
         public async Task<FileInfo> DownloadFileAsync(string fileName, CancellationToken cancellationToken)
         {

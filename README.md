@@ -24,6 +24,7 @@ Built for **.NET Standard 2.0**, **.NET Standard 2.1**, **.NET 8.0** and **.NET 
 * Support of multi-part form data
 * Support of cancellation token on each requests
 * Support of : download file and Upload file
+* Support of Server-Sent Events (SSE) streaming (on .NET Standard 2.1, .NET 8.0 and .NET 10.0)
 * Automatic XML and JSON serialization / deserialization
 * Support of custom serialisation / deserialisation
 * Support of camelCase, snakeCase kebabCase for json serialization
@@ -248,6 +249,60 @@ string response = await client.
                 GetRequest("City/All").
                 ExecuteAsStringAsync();
 // GET http://MyAPI.com/api/City/All with from url encoded content
+```
+
+## Server-Sent Events (SSE)
+
+> Available on **.NET Standard 2.1**, **.NET 8.0** and **.NET 10.0** only.
+> This feature relies on `IAsyncEnumerable<T>` and is not available on .NET Standard 2.0.
+
+`ExecuteAsSSEAsync` opens a streaming connection and yields each event as it is received.
+The connection stays open until the server closes the stream or the `CancellationToken` is cancelled.
+Unlike the other `ExecuteAs...` methods, the response body is **not** buffered : events are delivered as soon as they arrive.
+
+```cs
+await foreach (var sse in client.
+                GetRequest("notifications/stream").
+                ExecuteAsSSEAsync(cancellationToken))
+{
+    Console.WriteLine($"id    : {sse.Id}");
+    Console.WriteLine($"event : {sse.Event}");
+    Console.WriteLine($"data  : {sse.Data}");
+    Console.WriteLine($"retry : {sse.Retry}");
+}
+// GET http://MyAPI.com/api/notifications/stream and stream each event
+```
+
+Each `ServerSentEvent` exposes the standard SSE fields :
+
+| Property | SSE field | Description |
+| -------- | --------- | ----------- |
+| `Data`   | `data`    | The event payload. Multiple `data:` lines are joined with a line feed (`\n`). |
+| `Event`  | `event`   | The event type. Defaults to `message` when the server does not provide one. |
+| `Id`     | `id`      | The event identifier, or `null` if not provided. |
+| `Retry`  | `retry`   | The reconnection time in milliseconds, or `null` if not provided. |
+
+Comment lines (starting with `:`) are ignored, as are unknown fields, per the SSE specification.
+
+To stop listening, cancel the `CancellationToken` you passed to `ExecuteAsSSEAsync` :
+
+```cs
+using var cts = new CancellationTokenSource();
+
+// Stop the stream after 30 seconds
+cts.CancelAfter(TimeSpan.FromSeconds(30));
+
+try
+{
+    await foreach (var sse in client.GetRequest("events").ExecuteAsSSEAsync(cts.Token))
+    {
+        Process(sse);
+    }
+}
+catch (OperationCanceledException)
+{
+    // Stream stopped
+}
 ```
 
 ## Multi-part form data
