@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0</TargetFrameworks>
-    <Version>2.0.0-alpha003</Version>
-    <Copyright>Copyright © Jérôme Giacomini 2024</Copyright>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0;net10.0</TargetFrameworks>
+    <Version>2.0.0-alpha004</Version>
+    <Copyright>Copyright © Jérôme Giacomini 2026</Copyright>
     <NeutralLanguage>en</NeutralLanguage>
     <Title>Tiny.RestClient</Title>
     <Authors>Jérôme Giacomini</Authors>
@@ -42,9 +42,6 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>strong_name.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
-  </ItemGroup>
 
   <!--Support of NET Standard 2.0-->
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard2.0')) ">

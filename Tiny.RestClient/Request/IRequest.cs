@@ -16,7 +16,6 @@ namespace Tiny.RestClient
         /// <typeparam name="TContent">The type of the t content.</typeparam>
         /// <param name="content">The content.</param>
         /// <param name="serializer">Override the default serializer setted on the client.</param>
-        /// <param name="compression">Add a compression system to compress your content.</param>
         /// <returns>The current request.</returns>
         IParameterRequest AddContent<TContent>(TContent content, IFormatter serializer = null)
             where TContent : class;
