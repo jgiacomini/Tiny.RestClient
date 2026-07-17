@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Tiny.RestClient
 {
@@ -27,8 +29,9 @@ namespace Tiny.RestClient
         /// <typeparam name="T">Type of data serialized.</typeparam>
         /// <param name="data">The data.</param>
         /// <param name="encoding">The encoding.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>System.String.</returns>
-        string Serialize<T>(T data, Encoding encoding)
+        Task<string> SerializeAsync<T>(T data, Encoding encoding, CancellationToken cancellationToken)
             where T : class;
 
         /// <summary>
@@ -37,7 +40,8 @@ namespace Tiny.RestClient
         /// <typeparam name="T"></typeparam>
         /// <param name="stream">The stream.</param>
         /// <param name="encoding">The encoding.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>An instance of type <typeparamref name="T"/>.</returns>
-        T Deserialize<T>(Stream stream, Encoding encoding);
+        ValueTask<T> DeserializeAsync<T>(Stream stream, Encoding encoding, CancellationToken cancellationToken);
     }
 }

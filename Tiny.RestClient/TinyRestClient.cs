@@ -97,13 +97,12 @@ namespace Tiny.RestClient
         /// </summary>
         /// <param name="content">The content of the request.</param>
         /// <param name="formatter">The formatter use to serialize the content.</param>
-        /// <param name="compression">Add compresion system use to compress content.</param>
         /// <returns>The new request.</returns>
-        public IParameterRequest PostRequest<TContent>(TContent content, IFormatter formatter = null, ICompression compression = null)
+        public IParameterRequest PostRequest<TContent>(TContent content, IFormatter formatter = null)
             where TContent : class
         {
             return new Request(HttpMethod.Post, null, this).
-                AddContent<TContent>(content, formatter, compression);
+                AddContent<TContent>(content, formatter);
         }
 
         /// <summary>
@@ -112,13 +111,12 @@ namespace Tiny.RestClient
         /// <param name="route">The route.</param>
         /// <param name="content">The content of the request.</param>
         /// <param name="formatter">The formatter use to serialize the content.</param>
-        /// <param name="compression">Add compresion system use to compress content.</param>
         /// <returns>The new request.</returns>
-        public IParameterRequest PostRequest<TContent>(string route, TContent content, IFormatter formatter = null, ICompression compression = null)
+        public IParameterRequest PostRequest<TContent>(string route, TContent content, IFormatter formatter = null)
             where TContent : class
         {
             return new Request(HttpMethod.Post, route, this).
-                AddContent<TContent>(content, formatter, compression);
+                AddContent<TContent>(content, formatter);
         }
 
         /// <summary>
@@ -136,13 +134,12 @@ namespace Tiny.RestClient
         /// </summary>
         /// <param name="content">The content of the request.</param>
         /// <param name="formatter">The formatter use to serialize the content.</param>
-        /// <param name="compression">Add compresion system use to compress content.</param>
         /// <returns>The new request.</returns>
-        public IParameterRequest PutRequest<TContent>(TContent content, IFormatter formatter = null, ICompression compression = null)
+        public IParameterRequest PutRequest<TContent>(TContent content, IFormatter formatter = null)
             where TContent : class
         {
             return new Request(HttpMethod.Put, null, this).
-                AddContent<TContent>(content, formatter, compression);
+                AddContent<TContent>(content, formatter);
         }
 
         /// <summary>
@@ -151,13 +148,12 @@ namespace Tiny.RestClient
         /// <param name="route">The route.</param>
         /// <param name="content">The content of the request.</param>
         /// <param name="formatter">The formatter use to serialize the content.</param>
-        /// <param name="compression">Add compresion system use to compress content.</param>
         /// <returns>The new request.</returns>
-        public IParameterRequest PutRequest<TContent>(string route, TContent content, IFormatter formatter = null, ICompression compression = null)
+        public IParameterRequest PutRequest<TContent>(string route, TContent content, IFormatter formatter = null)
             where TContent : class
         {
             return new Request(HttpMethod.Put, route, this).
-                AddContent<TContent>(content, formatter, compression);
+                AddContent<TContent>(content, formatter);
         }
 
         /// <summary>
@@ -175,13 +171,12 @@ namespace Tiny.RestClient
         /// </summary>
         /// <param name="content">The content of the request.</param>
         /// <param name="serializer">The serializer use to serialize it.</param>
-        /// <param name="compression">Add compresion system use to compress content.</param>
         /// <returns>The new request.</returns>
-        public IParameterRequest PatchRequest<TContent>(TContent content, IFormatter serializer = null, ICompression compression = null)
+        public IParameterRequest PatchRequest<TContent>(TContent content, IFormatter serializer = null)
             where TContent : class
         {
             return new Request(_PatchMethod, null, this).
-                AddContent<TContent>(content, serializer, compression);
+                AddContent<TContent>(content, serializer);
         }
 
         /// <summary>
@@ -190,13 +185,12 @@ namespace Tiny.RestClient
         /// <param name="route">The route.</param>
         /// <param name="content">The content of the request.</param>
         /// <param name="serializer">The serializer use to serialize it.</param>
-        /// <param name="compression">Add compresion system use ton compress content.</param>
         /// <returns>The new request.</returns>
-        public IParameterRequest PatchRequest<TContent>(string route, TContent content, IFormatter serializer = null, ICompression compression = null)
+        public IParameterRequest PatchRequest<TContent>(string route, TContent content, IFormatter serializer = null)
             where TContent : class
         {
             return new Request(_PatchMethod, route, this).
-                AddContent<TContent>(content, serializer, compression);
+                AddContent<TContent>(content, serializer);
         }
 
         /// <summary>
@@ -223,7 +217,7 @@ namespace Tiny.RestClient
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                using (HttpResponseMessage response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, eTagContainer, formatter, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false))
+                using (var response = await SendRequestAsync(tinyRequest.HttpMethod, requestUri, tinyRequest.Headers, content, eTagContainer, formatter, tinyRequest.Timeout, cancellationToken).ConfigureAwait(false))
                 {
                     using (var stream = await ReadResponseAsync(response, tinyRequest.ResponseHeaders, tinyRequest.HttpStatusCodeAllowed, eTagContainer, cancellationToken).ConfigureAwait(false))
                     {
@@ -252,7 +246,7 @@ namespace Tiny.RestClient
                         try
                         {
                             stream.Position = 0;
-                            return formatter.Deserialize<TResult>(stream, Settings.Encoding);
+                            return await formatter.DeserializeAsync<TResult>(stream, Settings.Encoding, cancellationToken);
                         }
                         catch (Exception ex)
                         {
@@ -419,14 +413,12 @@ namespace Tiny.RestClient
                 return await GetSerializedContentAsync(toSerializeContent, cancellationToken).ConfigureAwait(false);
             }
 
-            #if !FILEINFO_NOT_SUPPORTED
             if (content is FileContent fileContent)
             {
                 var currentFileContent = new HttpStreamContent(fileContent.Data.OpenRead());
                 SetContentType(fileContent.ContentType, currentFileContent);
                 return currentFileContent;
             }
-            #endif
 
             if (content is MultipartContent multiParts)
             {
@@ -466,15 +458,12 @@ namespace Tiny.RestClient
                         var serializedContent = await GetSerializedContentAsync(toSerializeMultiContent, cancellationToken).ConfigureAwait(false);
                         AddMultiPartContent(currentPart, serializedContent, multiPartContent);
                     }
-
-                    #if !FILEINFO_NOT_SUPPORTED
                     else if (currentPart is FileMultipartData currentFileMultipartData)
                     {
                         var currentStreamContent = new HttpStreamContent(currentFileMultipartData.Data.OpenRead());
                         SetContentType(currentFileMultipartData.ContentType, currentStreamContent);
                         AddMultiPartContent(currentPart, currentStreamContent, multiPartContent);
                     }
-                    #endif
                     else
                     {
                         throw new NotImplementedException($"GetContent multipart for '{currentPart.GetType().Name}' not implemented");
@@ -499,7 +488,7 @@ namespace Tiny.RestClient
             string serializedString;
             try
             {
-                serializedString = content.GetSerializedString(serializer, Settings.Encoding);
+                serializedString = await content.GetSerializedStringAsync(serializer, Settings.Encoding, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -509,21 +498,6 @@ namespace Tiny.RestClient
             if (serializedString == null)
             {
                 return null;
-            }
-
-            var compression = content.Compression;
-            if (compression != null)
-            {
-                using (var stream = new MemoryStream(Settings.Encoding.GetBytes(serializedString)))
-                {
-                    var compressedStream = await compression.CompressAsync(stream, BufferSize, cancellationToken).ConfigureAwait(false);
-                    compressedStream.Position = 0;
-
-                    var compressedContent = new HttpStreamContent(compressedStream);
-                    compressedContent.Headers.ContentType = new MediaTypeHeaderValue(serializer.DefaultMediaType);
-                    compressedContent.Headers.ContentEncoding.Add(compression.ContentEncoding);
-                    return compressedContent;
-                }
             }
 
             var stringContent = new HttpStringContent(serializedString, Settings.Encoding);
@@ -626,11 +600,6 @@ namespace Tiny.RestClient
                     request.Headers.Add(item.Key, item.Value);
                 }
 
-                foreach (var acceptEncoding in Settings.Compressions.Where(c => c.Value.AddAcceptEncodingHeader).Select(c => c.Key))
-                {
-                    request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue(acceptEncoding));
-                }
-
                 if (requestHeader != null)
                 {
                     foreach (var item in requestHeader)
@@ -697,15 +666,15 @@ namespace Tiny.RestClient
                     await Settings.Listeners.OnReceivedResponseAsync(uri, httpMethod, response, stopwatch?.Elapsed, cancellationToken).ConfigureAwait(false);
                     return response;
                 }
-                catch (OperationCanceledException e)
+                catch (OperationCanceledException)
                 {
-                    throw e;
+                    throw;
                 }
                 catch (TimeoutException e)
                 {
                     stopwatch?.Stop();
                     await Settings.Listeners.OnFailedToReceiveResponseAsync(uri, httpMethod, e, stopwatch?.Elapsed, cancellationToken).ConfigureAwait(false);
-                    throw e;
+                    throw;
                 }
                 catch (Exception ex)
                 {
@@ -772,25 +741,6 @@ namespace Tiny.RestClient
             }
 
             cancellationToken.ThrowIfCancellationRequested();
-            return await DecompressAsync(response, stream, cancellationToken).ConfigureAwait(false);
-        }
-
-        private async Task<Stream> DecompressAsync(HttpResponseMessage response, Stream stream, CancellationToken cancellationToken)
-        {
-            var encoding = response.Content.Headers.ContentEncoding.FirstOrDefault();
-            if (encoding != null && Settings.Compressions.Contains(encoding))
-            {
-                var compression = Settings.Compressions[encoding];
-                try
-                {
-                    return await compression.DecompressAsync(stream, BufferSize, cancellationToken).ConfigureAwait(false);
-                }
-                finally
-                {
-                    stream.Dispose();
-                }
-            }
-
             return stream;
         }
 
@@ -836,9 +786,9 @@ namespace Tiny.RestClient
                     response.EnsureSuccessStatusCode();
                 }
             }
-            catch (OperationCanceledException ex)
+            catch (OperationCanceledException)
             {
-                throw ex;
+                throw;
             }
             catch (Exception ex)
             {

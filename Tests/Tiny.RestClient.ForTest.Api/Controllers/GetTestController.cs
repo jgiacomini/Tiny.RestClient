@@ -54,9 +54,9 @@ namespace Tiny.RestClient.ForTest.Api.Controllers
         [HttpGet("HeadersOfResponse")]
         public void HeadersOfResponse()
         {
-            Response.Headers.Add("custom1", "custom1");
-            Response.Headers.Add("custom2", "custom2");
-            Response.Headers.Add("custom3", "custom3");
+            Response.Headers.Append("custom1", "custom1");
+            Response.Headers.Append("custom2", "custom2");
+            Response.Headers.Append("custom3", "custom3");
         }
 
         [HttpGet("WithHeaders")]

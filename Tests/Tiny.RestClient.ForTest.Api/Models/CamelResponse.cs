@@ -1,13 +1,14 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
-namespace Tiny.RestClient.Tests.Models
+namespace Tiny.RestClient.ForTest.Api.Models
 {
     public class CamelResponse
     {
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public int Id { get; set; }
 
-        [JsonProperty("responseData")]
+        [JsonPropertyName("responseData")]
         public string ResponseData { get; set; }
     }
 }

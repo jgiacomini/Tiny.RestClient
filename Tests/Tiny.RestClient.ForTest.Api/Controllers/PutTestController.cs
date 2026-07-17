@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Tiny.RestClient.Tests.Models;
+using Tiny.RestClient.ForTest.Api.Models;
 
 namespace Tiny.RestClient.ForTest.Api.Controllers
 {

@@ -1,25 +1,26 @@
 ﻿using System;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Tiny.RestClient
 {
     internal class ToSerializeContent<T> : BaseContent<T>, IToSerializeContent
         where T : class
     {
-        public ToSerializeContent(T data, IFormatter serializer, ICompression compression)
+        public ToSerializeContent(T data, IFormatter serializer)
             : base(data, null)
         {
             Serializer = serializer;
-            Compression = compression;
         }
 
         public Type TypeToSerialize => typeof(T);
 
-        public string GetSerializedString(IFormatter serializer, Encoding encoding)
+        public Task<string> GetSerializedStringAsync(IFormatter serializer, Encoding encoding, CancellationToken cancellationToken)
         {
             try
             {
-                return serializer.Serialize<T>(Data, encoding);
+                return serializer.SerializeAsync<T>(Data, encoding, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -28,7 +29,5 @@ namespace Tiny.RestClient
         }
 
         public IFormatter Serializer { get; private set; }
-
-        public ICompression Compression { get; private set; }
     }
 }

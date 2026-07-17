@@ -14,16 +14,16 @@ namespace Tiny.RestClient.Tests
         private const string FileName1 = "myTextFile1.txt";
         private const string FileName2 = "myTextFile2.txt";
 
-        [ExpectedException(typeof(ArgumentNullException))]
         [TestMethod]
         public async Task TestArgumentNullException()
         {
             var client = GetClient();
 
-            var data = await client.
-              PostRequest("File/One").
-              AddFileContent(null, "text/plain").
-              ExecuteAsync<string>();
+            await Assert.ThrowsExactlyAsync<ArgumentNullException>(async () =>
+                await client.
+                  PostRequest("File/One").
+                  AddFileContent(null, "text/plain").
+                  ExecuteAsync<string>());
         }
 
         [TestMethod]
@@ -54,58 +54,56 @@ namespace Tiny.RestClient.Tests
             data.Delete();
         }
 
-        [ExpectedException(typeof(ArgumentNullException))]
         [TestMethod]
         public async Task TestDownloadFileFilePathNull()
         {
             var client = GetClient();
 
-            var data = await client.
-              GetRequest("File/GetPdf").
-              DownloadFileAsync(null);
-            Assert.IsTrue(data.Exists);
-            data.Delete();
+            await Assert.ThrowsExactlyAsync<ArgumentNullException>(async () =>
+                await client.
+                  GetRequest("File/GetPdf").
+                  DownloadFileAsync(null));
         }
 
-        [ExpectedException(typeof(ArgumentNullException))]
         [TestMethod]
         public async Task TestMultiPartArgumentNullException()
         {
             var client = GetClient();
 
-            var data = await client.
-              PostRequest("File/One").
-              AsMultiPartFromDataRequest().
-              AddFileContent(null, "text/plain").
-              AddFileContent(null, "text/plain").
-              ExecuteAsync<string>();
+            await Assert.ThrowsExactlyAsync<ArgumentNullException>(async () =>
+                await client.
+                  PostRequest("File/One").
+                  AsMultiPartFromDataRequest().
+                  AddFileContent(null, "text/plain").
+                  AddFileContent(null, "text/plain").
+                  ExecuteAsync<string>());
         }
 
-        [ExpectedException(typeof(FileNotFoundException))]
         [TestMethod]
         public async Task TestFileNotFoundException()
         {
             var client = GetClient();
 
             var fileInfo = new FileInfo("NotFound.txt");
-            await client.
-              PostRequest("File/One").
-              AddFileContent(fileInfo, "text/plain").
-              ExecuteAsync();
+            await Assert.ThrowsExactlyAsync<FileNotFoundException>(async () =>
+                await client.
+                  PostRequest("File/One").
+                  AddFileContent(fileInfo, "text/plain").
+                  ExecuteAsync());
         }
 
-        [ExpectedException(typeof(FileNotFoundException))]
         [TestMethod]
         public async Task TestFileNotFoundMultipartException()
         {
             var client = GetClient();
 
             var fileInfo = new FileInfo("NotFound.txt");
-            await client.
-              PostRequest("File/One").
-              AsMultiPartFromDataRequest().
-              AddFileContent(fileInfo, "text/plain").
-              ExecuteAsync();
+            await Assert.ThrowsExactlyAsync<FileNotFoundException>(async () =>
+                await client.
+                  PostRequest("File/One").
+                  AsMultiPartFromDataRequest().
+                  AddFileContent(fileInfo, "text/plain").
+                  ExecuteAsync());
         }
 
         [TestMethod]
@@ -119,7 +117,7 @@ namespace Tiny.RestClient.Tests
               AddFileContent(fileInfo, "text/plain").
               ExecuteAsync<string>();
 
-            Assert.AreEqual<string>(data, Content);
+            Assert.AreEqual<string>(Content, data);
         }
 
         [TestMethod]

@@ -16,9 +16,8 @@ namespace Tiny.RestClient
         /// <typeparam name="TContent">The type of the t content.</typeparam>
         /// <param name="content">The content.</param>
         /// <param name="serializer">Override the default serializer setted on the client.</param>
-        /// <param name="compression">Add a compression system to compress your content.</param>
         /// <returns>The current request.</returns>
-        IParameterRequest AddContent<TContent>(TContent content, IFormatter serializer = null, ICompression compression = null)
+        IParameterRequest AddContent<TContent>(TContent content, IFormatter serializer = null)
             where TContent : class;
 
         /// <summary>
@@ -44,7 +43,7 @@ namespace Tiny.RestClient
         /// <param name="contentType">The content type.</param>
         /// <returns>The current request.</returns>
         IParameterRequest AddStringContent(string content, string contentType = "text/plain");
-#if !FILEINFO_NOT_SUPPORTED
+
         /// <summary>
         /// Adds file as content.
         /// </summary>
@@ -52,7 +51,6 @@ namespace Tiny.RestClient
         /// <param name="contentType">The content type.</param>
         /// <returns>The current request.</returns>
         IParameterRequest AddFileContent(FileInfo file, string contentType);
-#endif
 
         /// <summary>
         /// As a multipart data from request.

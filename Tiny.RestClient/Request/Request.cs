@@ -58,10 +58,10 @@ namespace Tiny.RestClient
         }
 
         #region Content
-        public IParameterRequest AddContent<TContent>(TContent content, IFormatter serializer, ICompression compression)
+        public IParameterRequest AddContent<TContent>(TContent content, IFormatter serializer)
             where TContent : class
         {
-            _content = new ToSerializeContent<TContent>(content, serializer, compression);
+            _content = new ToSerializeContent<TContent>(content, serializer);
             return this;
         }
 
@@ -83,7 +83,6 @@ namespace Tiny.RestClient
             return this;
         }
 
-#if !FILEINFO_NOT_SUPPORTED
         public IParameterRequest AddFileContent(FileInfo content, string contentType)
         {
             if (content == null)
@@ -99,7 +98,6 @@ namespace Tiny.RestClient
             _content = new FileContent(content, contentType);
             return this;
         }
-#endif
 
         #endregion
 
@@ -406,7 +404,6 @@ namespace Tiny.RestClient
             return _client.ExecuteAsHttpResponseMessageResultAsync(this, cancellationToken);
         }
 
-#if !FILEINFO_NOT_SUPPORTED
         /// <inheritdoc/>
         public async Task<FileInfo> DownloadFileAsync(string fileName, CancellationToken cancellationToken)
         {
@@ -434,7 +431,6 @@ namespace Tiny.RestClient
 
             return new FileInfo(fileName);
         }
-#endif
 
 #region MultiPart
 
@@ -486,14 +482,14 @@ namespace Tiny.RestClient
         }
 
         /// <inheritdoc/>
-        IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddContent<TContent>(TContent content, string name, string fileName, IFormatter serializer, ICompression compression)
+        IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddContent<TContent>(TContent content, string name, string fileName, IFormatter serializer)
         {
             if (content == null)
             {
                 throw new ArgumentNullException(nameof(content));
             }
 
-            _multiPartFormData.Add(new ToSerializeMultipartData<TContent>(content, name, fileName, serializer, compression));
+            _multiPartFormData.Add(new ToSerializeMultipartData<TContent>(content, name, fileName, serializer));
 
             return this;
         }
@@ -540,7 +536,6 @@ namespace Tiny.RestClient
             return this;
         }
 
-#if !FILEINFO_NOT_SUPPORTED
         IMultiPartFromDataExecutableRequest IMultipartFromDataRequest.AddFileContent(FileInfo content, string contentType)
         {
             IMultipartFromDataRequest me = this;
@@ -573,7 +568,6 @@ namespace Tiny.RestClient
 
             return this;
         }
-#endif
         #endregion
     }
 }

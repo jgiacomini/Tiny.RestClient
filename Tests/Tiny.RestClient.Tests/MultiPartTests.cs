@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Tiny.RestClient.Tests.Models;
+using Tiny.RestClient.ForTest.Api.Models;
 
 namespace Tiny.RestClient.Tests
 {
@@ -31,43 +31,43 @@ namespace Tiny.RestClient.Tests
             Assert.AreEqual<string>("request-request.json;bytesArray-bytesArray.bin;stream-stream.bin;string-string.txt;", data);
         }
 
-        [ExpectedException(typeof(ArgumentNullException))]
         [TestMethod]
         public async Task MultiPartAddStreamNull()
         {
             var client = GetClient();
 
-            await client.
-              PostRequest("MultiPart/Test").
-              AsMultiPartFromDataRequest().
-              AddStream(null).
-              ExecuteAsync<string>();
+            await Assert.ThrowsExactlyAsync<ArgumentNullException>(async () =>
+                await client.
+                  PostRequest("MultiPart/Test").
+                  AsMultiPartFromDataRequest().
+                  AddStream(null).
+                  ExecuteAsync<string>());
         }
 
-        [ExpectedException(typeof(ArgumentNullException))]
         [TestMethod]
         public async Task MultiPartAddByteArrayNull()
         {
             var client = GetClient();
 
-            await client.
-              PostRequest("MultiPart/Test").
-              AsMultiPartFromDataRequest().
-              AddByteArray(null, "bytesArray", "bytesArray.bin").
-              ExecuteAsync<string>();
+            await Assert.ThrowsExactlyAsync<ArgumentNullException>(async () =>
+                await client.
+                  PostRequest("MultiPart/Test").
+                  AsMultiPartFromDataRequest().
+                  AddByteArray(null, "bytesArray", "bytesArray.bin").
+                  ExecuteAsync<string>());
         }
 
-        [ExpectedException(typeof(ArgumentNullException))]
         [TestMethod]
         public async Task MultiPartAddContentNull()
         {
             var client = GetClient();
 
-            await client.
-              PostRequest("MultiPart/Test").
-              AsMultiPartFromDataRequest().
-              AddContent<Request>(null).
-              ExecuteAsync<string>();
+            await Assert.ThrowsExactlyAsync<ArgumentNullException>(async () =>
+                await client.
+                  PostRequest("MultiPart/Test").
+                  AsMultiPartFromDataRequest().
+                  AddContent<Request>(null).
+                  ExecuteAsync<string>());
         }
     }
 }
