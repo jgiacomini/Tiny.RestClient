@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace Tiny.RestClient.ForTest.Api.Controllers
         {
             foreach (var header in Request.Headers)
             {
-                Response.Headers.Add("FROM_CLIENT" + header.Key, header.Value);
+                Response.Headers.Append("FROM_CLIENT" + header.Key, header.Value);
             }
 
             return Task.Delay(1);

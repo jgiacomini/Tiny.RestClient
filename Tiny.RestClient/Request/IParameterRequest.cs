@@ -4,7 +4,8 @@ using System.Net;
 namespace Tiny.RestClient
 {
     /// <summary>
-    /// Interface IParameterRequest.
+    /// Represents a request that has a body (or needs none) and can still be configured with headers, query
+    /// parameters, authentication, timeout, allowed status codes and ETag before being executed.
     /// </summary>
     /// <seealso cref="IExecutableRequest" />
     public interface IParameterRequest : IExecutableRequest
@@ -71,7 +72,7 @@ namespace Tiny.RestClient
         /// With a specific etag container.
         /// </summary>
         /// <param name="eTagContainer">the eTag container.</param>
-        /// <returns></returns>
+        /// <returns>The current request.</returns>
         IParameterRequest WithETagContainer(IETagContainer eTagContainer);
 
         /// <summary>

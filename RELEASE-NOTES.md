@@ -1,4 +1,37 @@
 # Release notes
+# 2.0.0
+Major release. This version contains **breaking changes**, please read the migration notes below.
+
+## New features
+* **Server-Sent Events (SSE) streaming** : new `ExecuteAsSSEAsync` method which opens a streaming connection and yields each event (`ServerSentEvent`) as it is received. Available on **.NET Standard 2.1**, **.NET 8.0** and **.NET 10.0** (relies on `IAsyncEnumerable<T>`, not available on .NET Standard 2.0).
+
+```cs
+await foreach (var sse in client.
+                GetRequest("notifications/stream").
+                ExecuteAsSSEAsync(cancellationToken))
+{
+    Console.WriteLine($"id    : {sse.Id}");
+    Console.WriteLine($"event : {sse.Event}");
+    Console.WriteLine($"data  : {sse.Data}");
+    Console.WriteLine($"retry : {sse.Retry}");
+}
+```
+
+## Platform support
+* New target frameworks : **.NET Standard 2.0**, **.NET Standard 2.1**, **.NET 8.0** and **.NET 10.0**.
+* Legacy frameworks (.NET Framework 4.6.1 and older target frameworks) are no longer supported.
+
+## Breaking changes
+* **Migration from Newtonsoft.Json to System.Text.Json** : the library no longer depends on Newtonsoft.Json. JSON serialization / deserialization is now handled by `System.Text.Json`. Custom `JsonSerializerSettings` / `JsonConverter` based on Newtonsoft are no longer supported.
+* **camelCase is now the default JSON formatting** (was PascalCase). If you rely on the previous behavior, restore it explicitly :
+```cs
+client.Settings.Formatters.OfType<JsonFormatter>().First().UsePascalCase();
+```
+* **`IFormatter` is now fully asynchronous.** If you implemented a custom formatter, you must update your implementation :
+  * `string Serialize<T>(T data, Encoding encoding)` becomes `Task<string> SerializeAsync<T>(T data, Encoding encoding, CancellationToken cancellationToken)`
+  * `T Deserialize<T>(Stream stream, Encoding encoding)` becomes `ValueTask<T> DeserializeAsync<T>(Stream stream, Encoding encoding, CancellationToken cancellationToken)`
+* Compression support has been removed.
+
 # 1.7.1
 * Fixes for Blazor WASM
 * Add class constraint for TContent types and serialization

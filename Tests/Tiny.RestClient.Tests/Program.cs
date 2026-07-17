@@ -1,26 +1,23 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Tiny.RestClient.ForTest.Api;
 
 namespace Tiny.RestClient.Tests
 {
     [TestClass]
     public static class Program
     {
-        private static TestServer _server;
-
         [AssemblyInitialize]
         public static void Initialize(TestContext testContext)
         {
-            _server = new TestServer(new WebHostBuilder().
-                UseUrls("http://localhost:4242").
-                UseStartup<Startup>());
+            var application = new WebApplicationFactory<TestProgram>()
+               .WithWebHostBuilder(builder =>
+               {
+                   builder.ConfigureServices(services =>
+                   {
+                   });
+               });
 
-            Client = _server.CreateClient();
+            Client = application.CreateClient();
         }
 
         [AssemblyCleanup]
@@ -30,7 +27,6 @@ namespace Tiny.RestClient.Tests
             var postManListener = client.Settings.Listeners.OfType<PostmanListener>().First();
             await postManListener.SaveAsync(new System.IO.FileInfo("test_postMan.json"));
 
-            _server?.Dispose();
             Client?.Dispose();
         }
 

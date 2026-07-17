@@ -1,8 +1,7 @@
 <img src="https://raw.githubusercontent.com/jgiacomini/Tiny.RestClient/master/icon.png" width="200" height="200" />
 
+[![CI](https://github.com/jgiacomini/Tiny.RestClient/actions/workflows/ci.yml/badge.svg)](https://github.com/jgiacomini/Tiny.RestClient/actions/workflows/ci.yml)
 [![NuGet](https://img.shields.io/nuget/v/Tiny.RestClient.svg?label=NuGet)](https://www.nuget.org/packages/Tiny.RestClient/)
-[![Build status](https://ci.appveyor.com/api/projects/status/08prv6a3pon8vx86?svg=true)](https://ci.appveyor.com/project/jgiacomini/tinyhttp)
-[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/Tiny-RestClient/Lobby)
 [![StackOverflow](https://img.shields.io/badge/questions-on%20StackOverflow-orange.svg?style=flat)](http://stackoverflow.com/questions/tagged/tiny.restclient)
 
 [Please visit the main site.](https://jgiacomini.github.io/Tiny.RestClient/)
@@ -13,13 +12,10 @@ It hides all the complexity of communication, deserialisation ...
 
 ## Platform Support
 
-The support of **.NET Standard 1.1 to 2.0** allows you to use it with :
-- .Net Framework 4.5+
-- Xamarin iOS, Xamarin Android
-- .Net Core
-- UWP
-- Windows Phone 8.1
-- Windows 8.1
+Built for **.NET Standard 2.0**, **.NET Standard 2.1**, **.NET 8.0** and **.NET 10.0**, which allows you to use it with :
+- .NET Standard 2.0 / 2.1 compatible runtimes
+- .NET 8.0 (LTS)
+- .NET 10.0 (LTS) and superior (Blazor, ASP.NET Core, ...)
 
 ## Features
 * Modern async http client for REST API.
@@ -28,10 +24,10 @@ The support of **.NET Standard 1.1 to 2.0** allows you to use it with :
 * Support of multi-part form data
 * Support of cancellation token on each requests
 * Support of : download file and Upload file
+* Support of Server-Sent Events (SSE) streaming (on .NET Standard 2.1, .NET 8.0 and .NET 10.0)
 * Automatic XML and JSON serialization / deserialization
 * Support of custom serialisation / deserialisation
 * Support of camelCase, snakeCase kebabCase for json serialization
-* Support of compression and decompression (gzip and deflate)
 * Typed exceptions which are easier to interpret
 * Define timeout globally or per request
 * Timeout exception thrown if the request is in timeout (by default HttpClient sends OperationCancelledException, so we can't distinguish between user cancellation and timeout)
@@ -255,6 +251,60 @@ string response = await client.
 // GET http://MyAPI.com/api/City/All with from url encoded content
 ```
 
+## Server-Sent Events (SSE)
+
+> Available on **.NET Standard 2.1**, **.NET 8.0** and **.NET 10.0** only.
+> This feature relies on `IAsyncEnumerable<T>` and is not available on .NET Standard 2.0.
+
+`ExecuteAsSSEAsync` opens a streaming connection and yields each event as it is received.
+The connection stays open until the server closes the stream or the `CancellationToken` is cancelled.
+Unlike the other `ExecuteAs...` methods, the response body is **not** buffered : events are delivered as soon as they arrive.
+
+```cs
+await foreach (var sse in client.
+                GetRequest("notifications/stream").
+                ExecuteAsSSEAsync(cancellationToken))
+{
+    Console.WriteLine($"id    : {sse.Id}");
+    Console.WriteLine($"event : {sse.Event}");
+    Console.WriteLine($"data  : {sse.Data}");
+    Console.WriteLine($"retry : {sse.Retry}");
+}
+// GET http://MyAPI.com/api/notifications/stream and stream each event
+```
+
+Each `ServerSentEvent` exposes the standard SSE fields :
+
+| Property | SSE field | Description |
+| -------- | --------- | ----------- |
+| `Data`   | `data`    | The event payload. Multiple `data:` lines are joined with a line feed (`\n`). |
+| `Event`  | `event`   | The event type. Defaults to `message` when the server does not provide one. |
+| `Id`     | `id`      | The event identifier, or `null` if not provided. |
+| `Retry`  | `retry`   | The reconnection time in milliseconds, or `null` if not provided. |
+
+Comment lines (starting with `:`) are ignored, as are unknown fields, per the SSE specification.
+
+To stop listening, cancel the `CancellationToken` you passed to `ExecuteAsSSEAsync` :
+
+```cs
+using var cts = new CancellationTokenSource();
+
+// Stop the stream after 30 seconds
+cts.CancelAfter(TimeSpan.FromSeconds(30));
+
+try
+{
+    await foreach (var sse in client.GetRequest("events").ExecuteAsSSEAsync(cts.Token))
+    {
+        Process(sse);
+    }
+}
+catch (OperationCanceledException)
+{
+    // Stream stopped
+}
+```
+
 ## Multi-part form data
 
 ```cs
@@ -459,20 +509,29 @@ client.Settings.Formatters.Remove(lastFormatter);
 
 ### Json custom formatting
 
-You can enable 3 types of formatting on JsonFormatter :
-- CamelCase (PropertyName => propertyName)
+You can enable 4 types of formatting on JsonFormatter :
+
+- PascalCase (PropertyName => PropertyName)
+- CamelCase (PropertyName => propertyName) (default)
 - SnakeCase (PropertyName => property_name)
 - KebabCase (aslo known as SpinalCase) (PropertyName => property-name).
 
-```cs
-// Enable KebabCase
-  client.Settings.Formatters.OfType<JsonFormatter>().First().UseKebabCase();
-```
 
 
 ```cs
 // Enable CamelCase
   client.Settings.Formatters.OfType<JsonFormatter>().First().UseCamelCase();
+```
+By default the JSONFormatter use camelCase.
+
+```cs
+// Enable PascalCase
+  client.Settings.Formatters.OfType<JsonFormatter>().First().UsePascalCase();
+```
+
+```cs
+// Enable KebabCase
+  client.Settings.Formatters.OfType<JsonFormatter>().First().UseKebabCase();
 ```
 
 ```cs
@@ -518,16 +577,16 @@ public class XmlFormatter : IFormatter
       }
    }
 
-   public T Deserialize<T>(Stream stream, Encoding encoding)
+   public ValueTask<T> DeserializeAsync<T>(Stream stream, Encoding encoding, CancellationToken cancellationToken)
    {
       using (var reader = new StreamReader(stream, encoding))
       {
          var serializer = new XmlSerializer(typeof(T));
-         return (T)serializer.Deserialize(reader);
+         return ValueTask.FromResult((T)serializer.Deserialize(reader));
       }
    }
 
-   public string Serialize<T>(T data, Encoding encoding)
+   public Task<string> SerializeAsync<T>(T data, Encoding encoding, CancellationToken cancellationToken)
    {
          if (data == default)
          {
@@ -538,7 +597,7 @@ public class XmlFormatter : IFormatter
          using (var stringWriter = new DynamicEncodingStringWriter(encoding))
          {
             serializer.Serialize(stringWriter, data);
-            return stringWriter.ToString();
+            return Task.FromResult(stringWriter.ToString());
          }
       }
    }
@@ -597,41 +656,3 @@ IListener myCustomListerner = ..
 client.Settings.Listeners.Add(myCustomListerner);
 ```
 
-## Compression and Decompression
-By default, the client supports the decompression of Gzip and deflate.
-
-
-If the server respond with the header ContentEncoding "gzip" or "deflate" the client will decompress it automaticly.
-
-### Compression
-For each request which posts a content you can specified the compression algorithm like below
-```cs
-var response = await client.
-                PostRequest("Gzip/complex", postRequest, compression: client.Settings.Compressions["gzip"]).
-                ExecuteAsync<Response>();
-```
-Warning : the server must be able to decompress your content.
-
-### Decompression
-Even if it's supported the client didn't send Accept-Encoding header automaticaly.
-
-You can add it for gzip all request like below :
-```cs
-var compression = client.Settings.Compressions["gzip"];
-compression.AddAcceptEncodingHeader = true;
-```
-
-You can add it for deflate all requests like below :
-```cs
-var compression = client.Settings.Compressions["deflate"];
-compression.AddAcceptEncodingHeader = true;
-```
-
-If the server can compress response, it will respond with compressed content.
-
-### Custom ICompression
-You can add your own compression / decompression algorithm :
-```cs
-client.Settings.Add(new CustomCompression());
-```
-Your class must implement the interface ICompression.

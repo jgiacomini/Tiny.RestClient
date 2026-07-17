@@ -27,7 +27,6 @@ namespace Tiny.RestClient.Tests
             Assert.IsTrue(exceptionThrowed, $"An {nameof(HttpException)} must be throwed");
         }
 
-        [ExpectedException(typeof(NotFoundCustomException))]
         [TestMethod]
         public async Task CheckIfEnclapsulationWorks()
         {
@@ -43,7 +42,8 @@ namespace Tiny.RestClient.Tests
             };
 
             // Call an API wich throw NotFound error
-            await client.GetRequest("APIWhichNotExists").ExecuteAsync();
+            await Assert.ThrowsExactlyAsync<NotFoundCustomException>(async () =>
+                await client.GetRequest("APIWhichNotExists").ExecuteAsync());
         }
 
         internal class NotFoundCustomException : Exception
