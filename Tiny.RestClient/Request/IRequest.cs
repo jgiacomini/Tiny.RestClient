@@ -4,7 +4,8 @@ using System.IO;
 namespace Tiny.RestClient
 {
     /// <summary>
-    /// Interface IRequest.
+    /// Represents a request whose body has not been set yet. Add a body (serialized content, string, stream,
+    /// byte array or file), switch to a multipart request, or execute it directly.
     /// </summary>
     /// <seealso cref="IFormRequest" />
     /// <seealso cref="IExecutableRequest" />
@@ -53,10 +54,19 @@ namespace Tiny.RestClient
         IParameterRequest AddFileContent(FileInfo file, string contentType);
 
         /// <summary>
-        /// As a multipart data from request.
+        /// Switches the request to a multipart/form-data request, allowing several parts (objects, byte arrays, streams, strings, files) to be added.
         /// </summary>
-        /// <param name="contentType">content type of the request (default value  = "multipart/form-data").</param>
-        /// <returns>The current request.</returns>
+        /// <param name="contentType">Content type of the request (default value = "multipart/form-data").</param>
+        /// <returns>The current request as a multipart request.</returns>
+        /// <example>
+        /// <code>
+        /// await client.PostRequest("MultiPart/Test")
+        ///     .AsMultiPartFromDataRequest()
+        ///     .AddContent&lt;City&gt;(city1, "city1", "city1.json")
+        ///     .AddContent&lt;City&gt;(city2, "city2", "city2.json")
+        ///     .ExecuteAsync();
+        /// </code>
+        /// </example>
         IMultipartFromDataRequest AsMultiPartFromDataRequest(string contentType = "multipart/form-data");
     }
 }

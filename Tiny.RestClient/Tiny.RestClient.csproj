@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0;net10.0</TargetFrameworks>
-    <Version>2.0.0-alpha004</Version>
+    <Version>2.0.0</Version>
     <Copyright>Copyright © Jérôme Giacomini 2026</Copyright>
     <NeutralLanguage>en</NeutralLanguage>
     <Title>Tiny.RestClient</Title>
@@ -16,7 +16,8 @@
     <PackageReleaseNotes>See release notes at https://github.com/jgiacomini/Tiny.RestClient/blob/master/RELEASE-NOTES.md</PackageReleaseNotes>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
   </PropertyGroup>
@@ -38,9 +39,16 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
-    <DocumentationFile>Tiny.RestClient.xml</DocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- Fail the build when a public member is missing its XML documentation, so the docs shipped in the package stay complete. -->
+    <WarningsAsErrors>$(WarningsAsErrors);CS1591</WarningsAsErrors>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>strong_name.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <!--Server-Sent Events (SSE) support : only for frameworks with native IAsyncEnumerable (all but netstandard2.0)-->
+  <PropertyGroup Condition=" '$(TargetFramework)' != 'netstandard2.0' ">
+    <DefineConstants>$(DefineConstants);SUPPORTS_ASYNC_ENUMERABLE</DefineConstants>
   </PropertyGroup>
 
   <!--Support of NET Standard 2.0-->

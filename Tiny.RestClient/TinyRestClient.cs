@@ -7,6 +7,9 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+#if SUPPORTS_ASYNC_ENUMERABLE
+using System.Runtime.CompilerServices;
+#endif
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,8 +19,23 @@ using HttpStringContent = System.Net.Http.StringContent;
 namespace Tiny.RestClient
 {
     /// <summary>
-    /// Class <see cref="TinyRestClient"/>.
+    /// A tiny, fluent, asynchronous HTTP client for consuming REST APIs.
+    /// <para>
+    /// Create an instance from an <see cref="HttpClient"/> and a base address, build a request with one of the
+    /// verb methods (<see cref="GetRequest"/>, <see cref="PostRequest(string)"/>, ...), chain modifiers, then call
+    /// one of the <c>ExecuteAs...Async</c> methods to send it.
+    /// </para>
     /// </summary>
+    /// <example>
+    /// <code>
+    /// using Tiny.RestClient;
+    ///
+    /// var client = new TinyRestClient(new HttpClient(), "http://MyAPI.com/api");
+    ///
+    /// // GET http://MyAPI.com/api/City/All and deserialize the JSON response.
+    /// List&lt;City&gt; cities = await client.GetRequest("City/All").ExecuteAsync&lt;List&lt;City&gt;&gt;();
+    /// </code>
+    /// </example>
     public class TinyRestClient
     {
         #region Fields
@@ -32,8 +50,14 @@ namespace Tiny.RestClient
         /// <summary>
         /// Initializes a new instance of the <see cref="TinyRestClient"/> class.
         /// </summary>
-        /// <param name="httpClient">The httpclient used.</param>
-        /// <param name="serverAddress">The server address.</param>
+        /// <param name="httpClient">The <see cref="HttpClient"/> used to send requests. Its timeout is managed by <see cref="RestClientSettings"/>.</param>
+        /// <param name="serverAddress">The base address of the API. A trailing slash is appended if missing.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="httpClient"/> or <paramref name="serverAddress"/> is <c>null</c>.</exception>
+        /// <example>
+        /// <code>
+        /// var client = new TinyRestClient(new HttpClient(), "http://MyAPI.com/api");
+        /// </code>
+        /// </example>
         public TinyRestClient(HttpClient httpClient, string serverAddress)
         {
             _serverAddress = serverAddress ?? throw new ArgumentNullException(nameof(serverAddress));
@@ -75,8 +99,18 @@ namespace Tiny.RestClient
         /// <summary>
         /// Create a new GET request.
         /// </summary>
-        /// <param name="route">The route.</param>
-        /// <returns>The new request.</returns>
+        /// <param name="route">The route appended to the base address.</param>
+        /// <returns>The new request, ready to be chained and executed.</returns>
+        /// <example>
+        /// <code>
+        /// // GET http://MyAPI.com/api/City?id=2&amp;country=France
+        /// City city = await client
+        ///     .GetRequest("City")
+        ///     .AddQueryParameter("id", 2)
+        ///     .AddQueryParameter("country", "France")
+        ///     .ExecuteAsync&lt;City&gt;();
+        /// </code>
+        /// </example>
         public IRequest GetRequest(string route = null)
         {
             return new Request(HttpMethod.Get, route, this);
@@ -106,12 +140,20 @@ namespace Tiny.RestClient
         }
 
         /// <summary>
-        /// Create a new POST request.
+        /// Create a new POST request with a body that will be serialized (JSON by default).
         /// </summary>
-        /// <param name="route">The route.</param>
-        /// <param name="content">The content of the request.</param>
-        /// <param name="formatter">The formatter use to serialize the content.</param>
-        /// <returns>The new request.</returns>
+        /// <param name="route">The route appended to the base address.</param>
+        /// <param name="content">The content of the request, serialized with the resolved formatter.</param>
+        /// <param name="formatter">Optional formatter used to serialize the content. When <c>null</c>, the default formatter is used.</param>
+        /// <returns>The new request, ready to be chained and executed.</returns>
+        /// <example>
+        /// <code>
+        /// var city = new City { Name = "Paris", Country = "France" };
+        ///
+        /// // POST http://MyAPI.com/api/City with the serialized city as body.
+        /// bool created = await client.PostRequest("City", city).ExecuteAsync&lt;bool&gt;();
+        /// </code>
+        /// </example>
         public IParameterRequest PostRequest<TContent>(string route, TContent content, IFormatter formatter = null)
             where TContent : class
         {
@@ -375,6 +417,159 @@ namespace Tiny.RestClient
             }
         }
 
+#if SUPPORTS_ASYNC_ENUMERABLE
+        internal async IAsyncEnumerable<ServerSentEvent> ExecuteAsSSEAsync(
+           Request tinyRequest,
+           [EnumeratorCancellation] CancellationToken cancellationToken)
+        {
+            var content = await CreateContentAsync(tinyRequest.Content, cancellationToken).ConfigureAwait(false);
+            try
+            {
+                var requestUri = BuildRequestUri(tinyRequest.Route, tinyRequest.QueryParameters);
+                var eTagContainer = GetETagContainer(tinyRequest);
+
+                // ResponseHeadersRead is mandatory : it returns as soon as headers are received
+                // so the body can be consumed incrementally instead of being fully buffered.
+                var response = await SendRequestAsync(
+                    tinyRequest.HttpMethod,
+                    requestUri,
+                    tinyRequest.Headers,
+                    content,
+                    eTagContainer,
+                    null,
+                    tinyRequest.Timeout,
+                    cancellationToken,
+                    HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+
+                try
+                {
+                    await HandleResponseAsync(response, tinyRequest.ResponseHeaders, tinyRequest.HttpStatusCodeAllowed, eTagContainer, cancellationToken).ConfigureAwait(false);
+
+#if NET8_0_OR_GREATER
+                    using (var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false))
+#else
+                    using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+#endif
+                    using (var reader = new StreamReader(stream, Settings.Encoding))
+                    {
+                        await foreach (var sse in ParseServerSentEventsAsync(reader, cancellationToken).ConfigureAwait(false))
+                        {
+                            yield return sse;
+                        }
+                    }
+                }
+                finally
+                {
+                    response.Dispose();
+                }
+            }
+            finally
+            {
+                content?.Dispose();
+            }
+        }
+
+        private static async IAsyncEnumerable<ServerSentEvent> ParseServerSentEventsAsync(
+            StreamReader reader,
+            [EnumeratorCancellation] CancellationToken cancellationToken)
+        {
+            string id = null;
+            string eventType = null;
+            int? retry = null;
+            StringBuilder dataBuilder = null;
+
+            while (true)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var line = await reader.ReadLineAsync().ConfigureAwait(false);
+
+                if (line == null)
+                {
+                    // End of stream : dispatch a pending event if any.
+                    if (dataBuilder != null || eventType != null || id != null || retry != null)
+                    {
+                        yield return new ServerSentEvent(id, eventType ?? "message", dataBuilder?.ToString(), retry);
+                    }
+
+                    yield break;
+                }
+
+                if (line.Length == 0)
+                {
+                    // Blank line : dispatch the accumulated event.
+                    if (dataBuilder != null || eventType != null || id != null || retry != null)
+                    {
+                        yield return new ServerSentEvent(id, eventType ?? "message", dataBuilder?.ToString(), retry);
+                    }
+
+                    id = null;
+                    eventType = null;
+                    retry = null;
+                    dataBuilder = null;
+                    continue;
+                }
+
+                if (line[0] == ':')
+                {
+                    // Comment line : ignored.
+                    continue;
+                }
+
+                string field;
+                string value;
+                var colonIndex = line.IndexOf(':');
+                if (colonIndex == -1)
+                {
+                    field = line;
+                    value = string.Empty;
+                }
+                else
+                {
+                    field = line.Substring(0, colonIndex);
+                    value = line.Substring(colonIndex + 1);
+
+                    // A single leading space after the colon is removed.
+                    if (value.Length > 0 && value[0] == ' ')
+                    {
+                        value = value.Substring(1);
+                    }
+                }
+
+                switch (field)
+                {
+                    case "event":
+                        eventType = value;
+                        break;
+                    case "data":
+                        if (dataBuilder == null)
+                        {
+                            dataBuilder = new StringBuilder();
+                        }
+                        else
+                        {
+                            dataBuilder.Append('\n');
+                        }
+
+                        dataBuilder.Append(value);
+                        break;
+                    case "id":
+                        id = value;
+                        break;
+                    case "retry":
+                        if (int.TryParse(value, out var retryValue))
+                        {
+                            retry = retryValue;
+                        }
+
+                        break;
+                    default:
+                        // Unknown fields are ignored per the SSE specification.
+                        break;
+                }
+            }
+        }
+#endif
+
         private async Task<HttpContent> CreateContentAsync(IContent content, CancellationToken cancellationToken)
         {
             if (content == null)
@@ -561,7 +756,8 @@ namespace Tiny.RestClient
             IETagContainer eTagContainer,
             IFormatter deserializer,
             TimeSpan? localTimeout,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken,
+            HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead)
         {
             cancellationToken.ThrowIfCancellationRequested();
             Stopwatch stopwatch = null;
@@ -652,7 +848,7 @@ namespace Tiny.RestClient
                                 token = cts.Token;
                             }
 
-                            response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead, token).ConfigureAwait(false);
+                            response = await _httpClient.SendAsync(request, completionOption, token).ConfigureAwait(false);
                             cts?.Token.ThrowIfCancellationRequested();
                         }
                         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
