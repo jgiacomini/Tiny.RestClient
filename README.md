@@ -2,7 +2,6 @@
 
 [![CI](https://github.com/jgiacomini/Tiny.RestClient/actions/workflows/ci.yml/badge.svg)](https://github.com/jgiacomini/Tiny.RestClient/actions/workflows/ci.yml)
 [![NuGet](https://img.shields.io/nuget/v/Tiny.RestClient.svg?label=NuGet)](https://www.nuget.org/packages/Tiny.RestClient/)
-[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/Tiny-RestClient/Lobby)
 [![StackOverflow](https://img.shields.io/badge/questions-on%20StackOverflow-orange.svg?style=flat)](http://stackoverflow.com/questions/tagged/tiny.restclient)
 
 [Please visit the main site.](https://jgiacomini.github.io/Tiny.RestClient/)
