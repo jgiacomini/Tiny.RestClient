@@ -1,14 +1,30 @@
 # Release notes
+
+# 2.0.1
+
+This maintenance release improves the release and distribution process. The public API and runtime behavior are unchanged from 2.0.0.
+
+## Release improvements
+
+* Add an automated GitHub release workflow triggered by version tags.
+* Verify that the Git tag matches the package version before publishing.
+* Build and test the complete solution before creating a release.
+* Attach the NuGet package (`.nupkg`) and symbol package (`.snupkg`) to the GitHub release.
+* Use the matching section of this file as the GitHub release description.
+
 # 2.0.0
-Major release. This version contains **breaking changes**, please read the migration notes below.
+
+Major release. This version contains **breaking changes**; please read the migration notes below.
 
 ## New features
-* **Server-Sent Events (SSE) streaming** : new `ExecuteAsSSEAsync` method which opens a streaming connection and yields each event (`ServerSentEvent`) as it is received. Available on **.NET Standard 2.1**, **.NET 8.0** and **.NET 10.0** (relies on `IAsyncEnumerable<T>`, not available on .NET Standard 2.0).
+
+* Add Server-Sent Events (SSE) streaming through `ExecuteAsSSEAsync`. The method opens a streaming connection and yields each `ServerSentEvent` as it is received.
+* SSE streaming is available on **.NET Standard 2.1**, **.NET 8.0**, and **.NET 10.0**. It relies on `IAsyncEnumerable<T>` and is therefore unavailable on .NET Standard 2.0.
 
 ```cs
-await foreach (var sse in client.
-                GetRequest("notifications/stream").
-                ExecuteAsSSEAsync(cancellationToken))
+await foreach (var sse in client
+    .GetRequest("notifications/stream")
+    .ExecuteAsSSEAsync(cancellationToken))
 {
     Console.WriteLine($"id    : {sse.Id}");
     Console.WriteLine($"event : {sse.Event}");
@@ -18,19 +34,23 @@ await foreach (var sse in client.
 ```
 
 ## Platform support
-* New target frameworks : **.NET Standard 2.0**, **.NET Standard 2.1**, **.NET 8.0** and **.NET 10.0**.
-* Legacy frameworks (.NET Framework 4.6.1 and older target frameworks) are no longer supported.
+
+* Target **.NET Standard 2.0**, **.NET Standard 2.1**, **.NET 8.0**, and **.NET 10.0**.
+* Remove support for .NET Framework 4.6.1 and other legacy target frameworks.
 
 ## Breaking changes
-* **Migration from Newtonsoft.Json to System.Text.Json** : the library no longer depends on Newtonsoft.Json. JSON serialization / deserialization is now handled by `System.Text.Json`. Custom `JsonSerializerSettings` / `JsonConverter` based on Newtonsoft are no longer supported.
-* **camelCase is now the default JSON formatting** (was PascalCase). If you rely on the previous behavior, restore it explicitly :
+
+* Replace Newtonsoft.Json with `System.Text.Json`. Newtonsoft-based `JsonSerializerSettings` and `JsonConverter` customizations are no longer supported.
+* Use camel case as the default JSON property naming policy instead of Pascal case. The previous behavior can be restored explicitly:
+
 ```cs
 client.Settings.Formatters.OfType<JsonFormatter>().First().UsePascalCase();
 ```
-* **`IFormatter` is now fully asynchronous.** If you implemented a custom formatter, you must update your implementation :
-  * `string Serialize<T>(T data, Encoding encoding)` becomes `Task<string> SerializeAsync<T>(T data, Encoding encoding, CancellationToken cancellationToken)`
-  * `T Deserialize<T>(Stream stream, Encoding encoding)` becomes `ValueTask<T> DeserializeAsync<T>(Stream stream, Encoding encoding, CancellationToken cancellationToken)`
-* Compression support has been removed.
+
+* Make `IFormatter` fully asynchronous. Custom formatter implementations must be updated:
+  * `string Serialize<T>(T data, Encoding encoding)` becomes `Task<string> SerializeAsync<T>(T data, Encoding encoding, CancellationToken cancellationToken)`.
+  * `T Deserialize<T>(Stream stream, Encoding encoding)` becomes `ValueTask<T> DeserializeAsync<T>(Stream stream, Encoding encoding, CancellationToken cancellationToken)`.
+* Remove compression support.
 
 # 1.7.1
 * Fixes for Blazor WASM
