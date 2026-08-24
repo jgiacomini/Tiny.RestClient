@@ -2,14 +2,16 @@ name: Release
 
 on:
   push:
-    tags:
-      - '*.*.*'
+    branches:
+      - master
+    paths:
+      - Tiny.RestClient/Tiny.RestClient.csproj
 
 permissions:
   contents: write
 
 concurrency:
-  group: release-${{ github.ref }}
+  group: release-master
   cancel-in-progress: false
 
 jobs:
@@ -19,44 +21,61 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Setup .NET SDK (from global.json)
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
           global-json-file: global.json
 
-      - name: Check tag matches project version
+      - name: Resolve release version
+        id: release
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          project_version="$(dotnet msbuild Tiny.RestClient/Tiny.RestClient.csproj -nologo -getProperty:Version)"
-          tag_version="${GITHUB_REF_NAME#v}"
+          version="$(dotnet msbuild Tiny.RestClient/Tiny.RestClient.csproj -nologo -getProperty:Version)"
 
-          if [[ "$tag_version" != "$project_version" ]]; then
-            echo "Tag version '$tag_version' does not match project version '$project_version'."
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+([-.][0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error title=Invalid package version::'$version' is not a supported release version."
             exit 1
           fi
 
-      - name: Restore
-        run: dotnet restore
+          git fetch --force --tags origin
 
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
+          tag_exists=false
+          should_publish=true
 
-      - name: Test
-        run: dotnet test --configuration Release --no-build --verbosity normal
+          if git rev-parse --verify --quiet "refs/tags/${version}^{commit}" >/dev/null; then
+            tag_exists=true
+            tag_commit="$(git rev-parse "refs/tags/${version}^{commit}")"
 
-      - name: Pack
-        run: dotnet pack Tiny.RestClient/Tiny.RestClient.csproj --configuration Release --no-build --output artifacts
+            if [[ "$tag_commit" != "$GITHUB_SHA" ]]; then
+              echo "::error title=Version already tagged::Tag '$version' points to commit '$tag_commit', not '$GITHUB_SHA'. Increment the project version before merging into master."
+              exit 1
+            fi
+
+            if gh release view "$version" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+              should_publish=false
+              echo "Release '$version' already exists for this commit; nothing to publish."
+            else
+              echo "Tag '$version' already exists for this commit; the missing release will be created."
+            fi
+          fi
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag_exists=$tag_exists" >> "$GITHUB_OUTPUT"
+          echo "should_publish=$should_publish" >> "$GITHUB_OUTPUT"
 
       - name: Extract release notes
+        if: steps.release.outputs.should_publish == 'true'
         shell: bash
+        env:
+          RELEASE_VERSION: ${{ steps.release.outputs.version }}
         run: |
-          version="${GITHUB_REF_NAME#v}"
-
-          awk -v version="$version" '
+          awk -v version="$RELEASE_VERSION" '
             $0 == "# " version { found = 1; next }
             found && /^# [^#]/ { exit }
             found { print }
@@ -64,17 +83,46 @@ jobs:
           ' RELEASE-NOTES.md > release-notes.md
 
           if [[ ! -s release-notes.md ]]; then
-            echo "No release notes found for version '$version'."
+            echo "::error title=Missing release notes::No release notes found for version '$RELEASE_VERSION'."
             exit 1
           fi
 
+      - name: Restore
+        if: steps.release.outputs.should_publish == 'true'
+        run: dotnet restore
+
+      - name: Build
+        if: steps.release.outputs.should_publish == 'true'
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test
+        if: steps.release.outputs.should_publish == 'true'
+        run: dotnet test --configuration Release --no-build --verbosity normal
+
+      - name: Pack
+        if: steps.release.outputs.should_publish == 'true'
+        run: dotnet pack Tiny.RestClient/Tiny.RestClient.csproj --configuration Release --no-build --output artifacts
+
+      - name: Create tag
+        if: steps.release.outputs.should_publish == 'true' && steps.release.outputs.tag_exists == 'false'
+        shell: bash
+        env:
+          RELEASE_VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag --annotate "$RELEASE_VERSION" "$GITHUB_SHA" --message "Release $RELEASE_VERSION"
+          git push origin "refs/tags/$RELEASE_VERSION"
+
       - name: Create GitHub release
+        if: steps.release.outputs.should_publish == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ steps.release.outputs.version }}
         run: >-
-          gh release create "$GITHUB_REF_NAME"
+          gh release create "$RELEASE_VERSION"
           artifacts/*.nupkg
           artifacts/*.snupkg
           --verify-tag
           --notes-file release-notes.md
-          --title "$GITHUB_REF_NAME"
+          --title "$RELEASE_VERSION"
