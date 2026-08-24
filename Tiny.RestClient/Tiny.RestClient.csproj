@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0;net10.0</TargetFrameworks>
-    <Version>2.0.0</Version>
+    <Version>2.0.1</Version>
     <Copyright>Copyright © Jérôme Giacomini 2026</Copyright>
     <NeutralLanguage>en</NeutralLanguage>
     <Title>Tiny.RestClient</Title>
